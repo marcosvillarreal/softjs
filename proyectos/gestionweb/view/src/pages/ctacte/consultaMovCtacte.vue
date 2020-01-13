@@ -84,9 +84,9 @@ export default {
         spinnerSize: 100
       })
 
-		var url         = 'http://santarossa.ddns.net:1337/consultaStock';
+	//var url         = 'http://santarossa.ddns.net:1337/consultaStock';
       //var url = 'http://localhost:1337/consultaMovCtacte'
-      //var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
+      var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
 	  //var url = 'http://distribuidorakleja.ddns.net:1337/consultaMovCtacte'
 	  //var url = 'http://190.92.109.239:1337/'
 	  
@@ -137,8 +137,8 @@ export default {
       this.$q.localStorage.remove('movCtacte')
 
       //var url = 'http://localhost:1337/consultaMovCtacte'
-      //var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
-	  var url = 'http://distribuidorakleja.ddns.net:1337/consultaMovCtacte'
+      var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
+	  //var url = 'http://distribuidorakleja.ddns.net:1337/consultaMovCtacte'
       this.lbBuscando = true
 
       // alert("VerConsolidado");
@@ -179,8 +179,8 @@ export default {
       this.$q.localStorage.remove('movCtacte')
 
       //var url = 'http://localhost:1337/consultaMovCtacte'
-      //var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
-	  var url = 'http://distribuidorakleja.ddns.net:1337/consultaMovCtacte'
+      var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
+	  //var url = 'http://distribuidorakleja.ddns.net:1337/consultaMovCtacte'
       this.lbBuscando = true
       //this.fecDesde = '20190306'
 

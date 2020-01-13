@@ -57,9 +57,9 @@ export default {
         password: '',
         username: ''
       },
-      url : 'http://distribuidorakleja.ddns.net:1337/'
+      //url : 'http://distribuidorakleja.ddns.net:1337/'
       //url = 'http://localhost:1337/'
-      //url : 'http://gestionweb-test.ddns.net:1337/'
+      url : 'http://gestionweb-test.ddns.net:1337/'
 	  //url : 'http://190.92.109.239:1337/'
     }
   },
@@ -80,12 +80,6 @@ export default {
       })
 
       // alert(this.login.username + " " + this.login.password );
-
-      // your code to login user
-      //var url = 'http://localhost:1337/LoginUser'
-      //var url = 'http://192.168.1.105:1337/LoginUser'
-      //var url = 'http://gestionweb-test.ddns.net:1337/LoginUser'
-      //var url = 'http://distribuidorakleja.ddns.net:1337/LoginUser'
 
       var url = this.url+'LoginUser'
 

@@ -8,7 +8,7 @@
       >
         <q-toolbar-title>
           Mobile Distribuidora
-          <div slot="subtitle">Versión v1.01.2</div>
+          <div slot="subtitle">Versión v1.01.3</div>
           <div class="q-mt-md q-mr-sm" style="width: 500px; max-width: 90vw;">
             <!--
             <img alt="Distribuidora" src="~assets/logo-header_1.jpg">
