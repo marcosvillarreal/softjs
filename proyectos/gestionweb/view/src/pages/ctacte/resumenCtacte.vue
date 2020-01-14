@@ -3,63 +3,77 @@
     <div class="q-mt-md q-mr-sm" style="width: 500px; max-width: 90vw;">
       <br>
         <q-btn @click="$router.push('/consultaMovCtacte')"  icon="home" color="primary" />
-		  <br><br>
-      <q-table
+        <q-btn @click="generarPDF"  icon="pdf" color="primary" label="PDF" />
+		  <br>
+      <br>
+      <div id='content'>
+        <q-table
 
-        :data="tableData"
-        :columns="columns"
-        :filter="filter"
-        :visible-columns="visibleColumns"
-        :separator="separator"
-        :selection="selection"
-        :selected.sync="selected"
-        :pagination.sync="pagination"
-        row-key="row_key"
-        color="secondary"
+          :data="tableData"
+          :columns="columns"
+          :filter="filter"
+          :visible-columns="visibleColumns"
+          :separator="separator"
+          :selection="selection"
+          :selected.sync="selected"
+          :pagination.sync="pagination"
+          row-key="row_key"
+          color="secondary"
 
-      >
-        <template slot="top-left" slot-scope="props">
-          <q-search
-            hide-underline
-            color="secondary"
-            v-model="filter"
-            class="col-6"
-            label="Comprobante"
-          />
-        </template>
-        <template slot="top-right" slot-scope="props">
-          <q-table-columns
-            color="secondary"
-            class="q-mr-sm"
-            v-model="visibleColumns"
-            :columns="columns"
-            label="Columnas"
-          />
-          <q-select
-            color="secondary"
-            v-model="separator"
-            :options="[
-              { label: 'Horizontal', value: 'horizontal' },
-              { label: 'Vertical', value: 'vertical' },
-              { label: 'Cell', value: 'cell' },
-              { label: 'None', value: 'none' }
-            ]"
-            hide-underline
-          />
-          <q-btn
-            flat round dense
-            :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-            @click="props.toggleFullscreen"
-          />
-        </template>
-      </q-table>
-
-
-    	</div>
+        >
+          <template slot="top-left" slot-scope="props">
+            <q-search
+              hide-underline
+              color="secondary"
+              v-model="filter"
+              class="col-6"
+              label="Comprobante"
+            />
+          </template>
+          <template slot="top-right" slot-scope="props">
+            <q-table-columns
+              color="secondary"
+              class="q-mr-sm"
+              v-model="visibleColumns"
+              :columns="columns"
+              label="Columnas"
+            />
+            <q-select
+              color="secondary"
+              v-model="separator"
+              :options="[
+                { label: 'Horizontal', value: 'horizontal' },
+                { label: 'Vertical', value: 'vertical' },
+                { label: 'Cell', value: 'cell' },
+                { label: 'None', value: 'none' }
+              ]"
+              hide-underline
+            />
+            <q-btn
+              flat round dense
+              :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+              @click="props.toggleFullscreen"
+            />
+          </template>
+        </q-table>
+      </div>
+    </div>
+    <div id='elementH'></div>
   </q-page>
 </template>
 
 <script>
+// jQuery library
+// src="js/jquery.min.js"
+// jsPDF library
+// src="js/jsPDF/dist/jspdf.min.js"
+// import JsPDF from './../../plugins/jsPDF.js'
+
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
+// import html2canvas from "html2canvas"
+
 // import tableData from 'assets/table-data'
 export default {
   name: 'resumen',
@@ -98,7 +112,7 @@ export default {
 
 
       ],
-      visibleColumns: ['comprobante', 'fecha_emi', 'debe','haber','saldo' ],
+      visibleColumns: ['comprobante', 'fecha_emi', 'debe', 'haber', 'saldo'],
       row_key: 'name',
       filter: '',
       separator: 'horizontal',
@@ -136,11 +150,13 @@ export default {
     }
   },
   computed: {
+
     tableClass () {
       if (this.dark) {
-        return 'bg-black'
+          return 'bg-black'
       }
     }
+
   },
   methods: {
     deleteRow () {
@@ -149,6 +165,47 @@ export default {
         icon: 'delete',
         message: `Will delete the selected row${this.selectedSecond.length > 1 ? 's' : ''} later, ok?`
       })
+    },
+
+    /*
+    generarPDF () {
+      var doc = new JsPDF()
+      var elementHTML = document.getElementById('doc-table').html()
+      var specialElementHandlers = document.getElementById('elementH', function (element, renderer) {
+        return true
+      });
+
+      doc.fromHTML(elementHTML, 15, 15, {
+        'width': 170,
+        'elementHandlers': specialElementHandlers
+      }),
+
+      // Save the PDF
+      doc.save('sample-document.pdf')
+    }
+    */
+
+    generarPDF () {
+      var vm = this
+      var columns = [
+        {title: 'Comprobante', dataKey: 'comproba'},
+        {title: 'F.Emision', dataKey: 'fechaemi'},
+        {title: 'Debe', dataKey: 'debe'},
+        {title: 'Haber', dataKey: 'haber'},
+        {title: 'Saldo', dataKey: 'saldoacu'}
+      ]
+      const doc = new jsPDF('p', 'pt')
+      doc.autoTable(columns, vm.tableData)
+
+      /*
+      const contentHTML = document.getElementById('content').innerHTML
+      doc.fromHTML(contentHTML, 15, 15, {
+        width: 170
+      })
+      */
+
+      doc.save('sample.pdf')
+
     }
   }
 }
