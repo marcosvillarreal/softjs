@@ -47,9 +47,9 @@ export default {
         dayNames: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes' /* and all the rest of days - remember starting with Sunday */],
         monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre','Octubre','Noviembre','Diciembre' /* and all the rest of months */]
       }),
-      //url : 'http://distribuidorakleja.ddns.net:1337/'
+      url : 'http://distribuidorakleja.ddns.net:3000/'
       //url = 'http://localhost:1337/'
-      url : 'http://gestionweb-test.ddns.net:1337/'
+      //url : 'http://gestionweb-test.ddns.net:1337/'
 	  //url : 'http://190.92.109.239:1337/'
 	  }
   },

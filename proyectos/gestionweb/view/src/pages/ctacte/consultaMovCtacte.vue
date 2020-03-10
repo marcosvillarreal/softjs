@@ -84,10 +84,9 @@ export default {
         spinnerSize: 100
       })
 
-	//var url         = 'http://santarossa.ddns.net:1337/consultaStock';
       //var url = 'http://localhost:1337/consultaMovCtacte'
-      var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
-	  //var url = 'http://distribuidorakleja.ddns.net:1337/consultaMovCtacte'
+      //var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
+	  var url = 'http://distribuidorakleja.ddns.net:3000/consultaMovCtacte'
 	  //var url = 'http://190.92.109.239:1337/'
 	  
       this.lbBuscando = true
