@@ -136,7 +136,7 @@ export default {
       this.$q.localStorage.remove('movCtacte')
 
       //var url = 'http://localhost:1337/consultaMovCtacte'
-      var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
+      //var url = 'http://gestionweb-test.ddns.net:1337/consultaMovCtacte'
 	  //var url = 'http://distribuidorakleja.ddns.net:1337/consultaMovCtacte'
       this.lbBuscando = true
 
