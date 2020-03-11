@@ -86,15 +86,18 @@ export default {
         spinnerColor: 'amber',
         spinnerSize: 100
       })
-
-      var url = this.url+'consultaMovCtacte'
-
+	  console.log('buscarCtacte')
+	  console.log('Nombre: ' + this.nombre)
+      var _url = this.url + 'consultaMovCtacte'
+		
+	  //alert("buscarCtacte " + this.url);
+		 
       this.lbBuscando = true
       this.hayCliente = false
       var modulo      = "Cons_Ctacte";
       //alert(modulo)
 
-		  this.$axios.post(url, { codctacte: this.codCtacte, strmodulo: modulo })
+		  this.$axios.post(_url, { codctacte: this.codCtacte, strmodulo: modulo })
 		    .then((response) => {
 			    this.$q.loading.hide()
           var json = response.data
@@ -134,19 +137,20 @@ export default {
       })
 
       this.$q.localStorage.remove('movCtacte')
-
+	  
+	   //alert("VerConsolidado " + this.url);
+	   
       var url = this.url+'consultaMovCtacte'
 
       this.lbBuscando = true
-
-      // alert("VerConsolidado");
+     
 
       this.$axios.post(url, { codctacte: this.codCtacte, strmodulo: 'Mov_SinRango' })
 		    .then((response) => {
 			    this.$q.loading.hide()
           var json = response.data
 
-		  	  //alert(JSON.stringify(json))
+		  //alert(JSON.stringify(json))
 
           this.$q.localStorage.set('movCtacte', json)
           this.lbBuscando = false
@@ -154,14 +158,14 @@ export default {
           this.$router.push('/listaConsolidado')
 		    })
 		    .catch(() => {
-          this.lbBuscando = false
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            position: 'bottom',
-            message: 'No se encontraron datos para esta búsqueda',
-            icon: 'report_problem'
-          })
+				//this.lbBuscando = false
+				this.$q.loading.hide()
+				this.$q.notify({
+				color: 'negative',
+				position: 'bottom',
+				message: 'No se encontraron datos para esta búsqueda',
+				icon: 'report_problem'
+			})
           // setTimeout(() => { this.leerQR() }, 500);
           // document.getElementById("btn_consolidado").focus;
         })
@@ -199,14 +203,14 @@ export default {
           this.$router.push('/resumenCtacte')
 		    })
 		    .catch(() => {
-          this.lbBuscando = false
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            position: 'bottom',
-            message: 'No se encontraron datos para esta búsqueda',
-            icon: 'report_problem'
-          })
+				//this.lbBuscando = false
+				this.$q.loading.hide()
+				this.$q.notify({
+				color: 'negative',
+				position: 'bottom',
+				message: 'No se encontraron datos para esta búsqueda',
+				icon: 'report_problem'
+			})
           // setTimeout(() => { this.leerQR() }, 500);
           // document.getElementById("btn_consolidado").focus;
         })

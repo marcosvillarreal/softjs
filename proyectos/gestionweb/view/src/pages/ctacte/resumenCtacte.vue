@@ -2,7 +2,7 @@
   <q-page padding class="docs-table">
     <div class="q-mt-md q-mr-sm" style="width: 500px; max-width: 90vw;">
       <br>
-        <q-btn @click="$router.push('/consultaMovCtacte')"  icon="home" color="primary" />
+        <q-btn @click="$router.push('/consultaCtacte')"  icon="home" color="primary" />
         <q-btn @click="generarPDF"  icon="pdf" color="primary" label="PDF" />
 		  <br>
       <br>
