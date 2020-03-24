@@ -1,12 +1,8 @@
 import Default from 'layouts/default'
-import listaProductos from 'pages/listaProductos'
-import listaCarrito from 'pages/listaCarrito'
-import listaConsolidado from 'pages/ctacte/listaConsolidado'
-import indexPrecio from 'pages/indexPrecio' // 'pages/index'
 import index from 'pages/session/login'
-import consultaMovCtacte from 'pages/ctacte/consultaMovctacte'
-import consultaCtacte from 'pages/ctacte/consultaCtacte'
-import resumenCtacte from 'pages/ctacte/resumenCtacte'
+import menu from 'pages/menu/menu'
+import nuevaTienda from 'pages/tienda/nuevaTienda'
+import nuevoPedido from 'pages/tienda/nuevoPedido'
 
 export default [
   {
@@ -14,13 +10,9 @@ export default [
     component: Default,
     children: [
       { path: '', component: index },
-      { path: 'listaProductos', component: listaProductos },
-      { path: 'listaCarrito', component: listaCarrito },
-      { path: 'listaConsolidado', component: listaConsolidado },
-      { path: 'indexPrecio', component: indexPrecio },
-      { path: 'consultaMovCtacte', component: consultaMovCtacte },
-      { path: 'consultaCtacte', component: consultaCtacte },
-      { path: 'resumenCtacte', component: resumenCtacte }
+      { path: 'menu', component: menu },
+	  { path: 'nuevaTienda', component: nuevaTienda },
+	  { path: 'nuevoPedido', component: nuevoPedido }
     ]
   },
 
