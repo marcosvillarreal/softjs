@@ -39,7 +39,10 @@ module.exports.routes = {
  'GET /LoginUser': 'LoginUserController.index',
  'POST /loginUser': 'LoginUserController.index',
  'POST /LoginUser': 'LoginUserController.index'
-
+ 'GET /loginUserTienda': 'LoginUserTiendaController.index',
+ 'GET /LoginUserTienda': 'LoginUserTiendaController.index',
+ 'POST /loginUserTienda': 'LoginUserTiendaController.index',
+ 'POST /LoginUserTienda`': 'LoginUserTiendaController.index'
   /***************************************************************************
   *                                                                          *
   * More custom routes here...                                               *
