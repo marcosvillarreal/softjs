@@ -38,7 +38,7 @@ module.exports.routes = {
  'GET /loginUser': 'LoginUserController.index',
  'GET /LoginUser': 'LoginUserController.index',
  'POST /loginUser': 'LoginUserController.index',
- 'POST /LoginUser': 'LoginUserController.index'
+ 'POST /LoginUser': 'LoginUserController.index',
  'GET /loginUserTienda': 'LoginUserTiendaController.index',
  'GET /LoginUserTienda': 'LoginUserTiendaController.index',
  'POST /loginUserTienda': 'LoginUserTiendaController.index',

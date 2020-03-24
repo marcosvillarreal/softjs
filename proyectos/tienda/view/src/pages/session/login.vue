@@ -54,12 +54,13 @@ export default {
       loading: false,
       login: {
         email: '',
-        password: '',
-        username: ''
+        password: '1234',
+        username: 'marcos',
+		inactive: 0
       },
-      url : 'http://distribuidorakleja.ddns.net:3000/'
+      //url : 'http://distribuidorakleja.ddns.net:3000/'
       //url = 'http://localhost:1337/'
-      //url : 'http://gestionweb-test.ddns.net:1337/'
+      url : 'http://gestionweb-test.ddns.net:1337/'
 	  //url : 'http://190.92.109.239:1337/'
     }
   },
@@ -81,11 +82,11 @@ export default {
 
       // alert(this.login.username + " " + this.login.password );
 
-      var url = this.url+'LoginUser'
+      var url = this.url+'LoginUserTienda'
 
       var idusuario = 0
       this.loading = true
-
+		this.inactive = 0
       this.$axios.post(url, { username: this.login.username, password: this.login.password })
 		    .then((response) => {
 			    this.$q.loading.hide()
@@ -94,9 +95,17 @@ export default {
           if (json.length > 0) {
             idusuario = json[0].id
             this.$q.localStorage.set('UserLogin', json)
-
-            // this.$router.push('/index');
-            this.$router.push('/consultaCtacte')
+			this.inactive = json[0].inactive
+			console.log('Inactivo',this.inactive)
+			if (this.inactive == 0){
+				this.$router.push('/menu')
+			} else {
+				this.$q.notify({
+					color: 'negative',
+					position: 'bottom',
+					message: 'Usuario BLOQUEADO',
+				icon: 'report_problem'})
+            }
           } else {
             this.$q.notify({
               color: 'negative',
