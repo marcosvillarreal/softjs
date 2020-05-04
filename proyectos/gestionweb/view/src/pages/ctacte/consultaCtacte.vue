@@ -3,7 +3,8 @@
 	<div class="q-mt-md q-mr-sm" style="width: 500px; max-width: 90vw;">
 
 		<br><br>
-		<q-search clearable class="q-subtitle" @focus="buscarFocusCodigo" autofocus="true" icon="sync" type="number" :decimals="0" color="amber" v-model="codCtacte" placeholder="Código de Cliente" />
+		<q-search clearable class="q-subtitle" @focus="buscarFocusCodigo" autofocus="true" icon="sync" type="number" :decimals="0" color="amber" v-model="codCtacte" placeholder="Código de Cliente" 
+		v-on:keyup.enter="buscarCtacte" />
 		<br>
 		 <q-btn @click="buscarCtacte"  icon="search" color="primary"  label="Buscar"/>
 
@@ -38,6 +39,7 @@ export default {
   name: 'PageIndex',
   data () {
     return {
+      //json: null,
       nombre: '',
       direccion: '',
       codCtacte: null,
@@ -53,9 +55,35 @@ export default {
 	  //url : 'http://190.92.109.239:1337/'
 	  }
   },
-
+  mounted(){
+	  var datosjson = null
+	  datosjson = this.$q.localStorage.get.item('buscoCtacte')
+	   
+	  
+	   if (datosjson == null){
+	   }
+	   else {
+		
+		try {
+			this.nombre = '(' + datosjson[0].codigo + ') ' + datosjson[0].nombre.trim()
+			alert(this.nombre)
+			alert( '(' + datosjson[0].codigo + ') ' + datosjson[0].nombre.trim())
+			this.direccion = datosjson[0].direccion.trim()
+			this.hayCliente = true
+			//alert(JSON.stringify(datosjson));
+		} catch(e){
+			this.hayCliente = false
+		}
+	   }
+	   
+	   
+		   
+  },
   methods: {
-
+    //createBefore{
+	//	
+	//},
+	
 	  show (options) {
       this.$q.loading.show(options)
       setTimeout(() => {
@@ -98,27 +126,29 @@ export default {
       //alert(modulo)
 
 		  this.$axios.post(_url, { codctacte: this.codCtacte, strmodulo: modulo })
-		    .then((response) => {
+			.then((response) => {
 			    this.$q.loading.hide()
-          var json = response.data
+				var datosjson = response.data
 
-		  	  // alert(JSON.stringify(json));
+				//alert(JSON.stringify(datosjson));
 
-          this.$q.localStorage.set('buscoCtacte', json)
-          this.nombre = '(' + json[0].codigo + ') ' + json[0].nombre.trim()
-          this.direccion = json[0].direccion.trim()
-          this.lbBuscando = false
-          this.hayCliente = true
-		    })
-		    .catch(() => {
-          this.lbBuscando = false
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            position: 'bottom',
-            message: 'No se encontraron datos para esta búsqueda',
-            icon: 'report_problem'
-          })
+				this.$q.localStorage.set('buscoCtacte', datosjson)
+				
+				
+				this.nombre = '*(' + datosjson[0].codigo + ') ' + datosjson[0].nombre.trim()
+				this.direccion = datosjson[0].direccion.trim()
+				this.lbBuscando = false
+				this.hayCliente = true
+			})
+			.catch(() => {
+				this.lbBuscando = false
+				this.$q.loading.hide()
+				this.$q.notify({
+					color: 'negative',
+					position: 'bottom',
+					message: 'No se encontraron datos para esta búsqueda',
+					icon: 'report_problem'
+			})
           // setTimeout(() => { this.leerQR() }, 500);
           // document.getElementById("btn_consolidado").focus;
         })

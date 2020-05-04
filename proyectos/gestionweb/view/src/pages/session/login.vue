@@ -57,9 +57,9 @@ export default {
         password: '',
         username: ''
       },
-      url : 'http://distribuidorakleja.ddns.net:3000/'
+      // url : 'http://distribuidorakleja.ddns.net:3000/'
       //url = 'http://localhost:1337/'
-      //url : 'http://gestionweb-test.ddns.net:1337/'
+      url : 'http://gestionweb-test.ddns.net:1337/'
 	  //url : 'http://190.92.109.239:1337/'
     }
   },
