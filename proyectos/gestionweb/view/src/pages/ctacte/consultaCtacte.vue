@@ -56,8 +56,10 @@ export default {
 	  }
   },
   mounted(){
+	  this.getCtacte()
+	  /*
 	  var datosjson = null
-	  datosjson = this.$q.localStorage.get.item('buscoCtacte')
+	  datosjson = this.$q.localStorage.getItem('buscoCtacte')
 	   
 	  
 	   if (datosjson == null){
@@ -75,7 +77,7 @@ export default {
 			this.hayCliente = false
 		}
 	   }
-	   
+	   */
 	   
 		   
   },
@@ -90,7 +92,26 @@ export default {
         this.$q.loading.hide()
       }, 15000)
     },
-
+    getCtacte() {
+	  var datosjson = null
+	  datosjson = this.$q.localStorage.get.item('buscoCtacte')
+	   
+	  
+	   if (datosjson == null){
+	     return
+	   }
+	   try {
+			this.nombre = '(' + datosjson[0].codigo + ') ' + datosjson[0].nombre.trim()
+			alert(this.nombre)
+			alert( '(' + datosjson[0].codigo + ') ' + datosjson[0].nombre.trim())
+			this.direccion = datosjson[0].direccion.trim()
+			this.hayCliente = true
+			//alert(JSON.stringify(datosjson));
+		} catch(e){
+			this.hayCliente = false
+		}
+	},
+	
 	  procesarEntrada () {
 	  },
 
