@@ -1,0 +1,16 @@
+			  
+			    <template v-if="parseFloat(listaProductos[0].canbase).toFixed(0)>0">
+				
+					<q-input @click="$router.push('/')"  class="justify-end"  type="number" :decimals="1" prefix="$" style="font-size:26px;font-weight:bold;align:right;"  v-model="parseFloat(listaProductos[0].prevtaf1).toFixed(1)" readonly inverted-light color="white" float-label="Precio" />				  				 							
+					<q-input :float-label=labelOferta @click="$router.push('/')"  class="justify-end"  type="number" :decimals="1" prefix="$" style="font-size:26px;font-weight:bold;align:right;"  v-model="parseFloat(listaProductos[0].prevtaporcant).toFixed(1)" readonly inverted-light color="amber"/>
+
+			
+		        </template>	
+				
+					    
+			    <template v-else>
+				   
+					<q-input @click="$router.push('/')"  class="justify-end"  type="number" :decimals="1" prefix="$" style="font-size:26px;font-weight:bold;align:right;"  v-model="parseFloat(listaProductos[0].prevtaf1).toFixed(0)" readonly inverted-light color="white" float-label="Precio" />
+				  
+		        </template>		
+				
