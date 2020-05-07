@@ -45,92 +45,139 @@
 
 <script>
 
-import { QSpinnerFacebook } from 'quasar'
-
-export default {
-  name: 'App',
-  data () {
-    return {
-      loading: false,
-      login: {
-        email: '',
-        password: '',
-        username: ''
-      },
-      url : 'http://distribuidorakleja.ddns.net:3000/'
-      //url : 'http://localhost:1337/'
-      //url : 'http://gestionweb-test.ddns.net:1337/'
-	  //url : 'http://190.92.109.239:1337/'
-    }
-  },
-  methods: {
-
-    show (options) {
-      this.$q.loading.show(options)
-      setTimeout(() => {
-        this.$q.loading.hide()
-      }, 15000)
+  import { QSpinnerFacebook } from 'quasar'
+  import { axios } from 'axios'
+  export default {
+  
+    name: 'App',
+    data () {
+	  return {
+        loading: false,
+        login: {
+	      email: '',
+	      password: '',
+	      username: ''
+        },
+        url : 'http://distribuidorakleja.ddns.net:3000/'
+        //url : 'http://localhost:1337/'
+        //url : 'http://gestionweb-test.ddns.net:1337/'
+        //url : 'http://190.92.109.239:1337/'
+      }
     },
+  
+    methods: {
 
-    auth () {
-      this.show({
-        spinner: QSpinnerFacebook,
-        spinnerColor: 'amber',
-        spinnerSize: 100
-      })
+      show (options) {
+        this.$q.loading.show(options)
+        setTimeout(() => {
+          this.$q.loading.hide()
+        }, 15000)
+      },
 
-      // alert(this.login.username + " " + this.login.password );
+      auth () {
+        this.show({
+          spinner: QSpinnerFacebook,
+          spinnerColor: 'amber',
+          spinnerSize: 100
+        })
 
-      var url = this.url+'LoginUser'
+        // alert(this.login.username + " " + this.login.password );      
 
-      var idusuario = 0
-      this.loading = true
+        var idusuario = 0
+        this.loading = true
+	  
+	    var url = this.url+'LoginUser'
+	  
+	  
+	    var headers = new Headers();
+        headers.append('username', this.login.username)
+        headers.append('password', this.login.password)
+	    headers.append('Access-Control-Allow-Origin' , '*')
+	    headers.append('Access-Control-Allow-Credentials', 'true')
+        headers.append('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT')
+        headers.append('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers')
+        headers.append('Accept', 'application/json')
+	    headers.append('Content-Type', 'application/json')
+	  
+	  
+	    var request = new Request(url, {
+	      method: "post",
+          headers: headers
+        });
+	  
+	    console.log('request =', request)
+	  
+	  
+	    url, {
+	      method: "post",
+		  credentials: 'include',
+		  body: JSON.stringify({"username": this.login.username, "password": this.login.password}), 
+          headers: {'Accept': 'application/json','Content-Type': 'application/json'}
+		}
+	  
+	  
+        fetch(request)
+          .then((response)=>{
+            return response.text();
+          })
+		  .then((data)=>{
+            this.conectado=1
+            this.navegarAxios(urlnavegar,m4oarguments,callback)
+          })
+          .catch(err=>{
+            console.log(err);
+          }) 
+		  
+      
+        /*
+	  
+	    //var url = this.url+'LoginUser'
+	  
+        axios
+	      .post(url, { username: this.login.username, password: this.login.password })
+          .then((response) => {
+            this.$q.loading.hide()
+            var json = response.data
 
-      this.$axios.post(url, { username: this.login.username, password: this.login.password })
-		    .then((response) => {
-			    this.$q.loading.hide()
-          var json = response.data
+            if (json.length > 0) {
+              idusuario = json[0].id
+              this.$q.localStorage.set('UserLogin', json)
 
-          if (json.length > 0) {
-            idusuario = json[0].id
-            this.$q.localStorage.set('UserLogin', json)
-
-            // this.$router.push('/index');
-            this.$router.push('/consultaCtacte')
-          } else {
+              // this.$router.push('/index');
+              this.$router.push('/consultaCtacte')
+            } else {
+              this.$q.notify({
+                color: 'negative',
+                position: 'bottom',
+                message: 'Usuario no encontrado',
+                icon: 'report_problem'
+              })
+              this.login.username = ''
+              this.login.password = ''
+            };
+          })
+          .catch(() => {
+            this.lbBuscando = false
+            this.$q.loading.hide()
             this.$q.notify({
               color: 'negative',
               position: 'bottom',
-              message: 'Usuario no encontrado',
+              message: 'Error al establecer busqueda con el servidor',
               icon: 'report_problem'
-
             })
+            // setTimeout(() => { this.leerQR() }, 500);
             this.login.username = ''
             this.login.password = ''
-          };
-		    })
-		    .catch(() => {
-          this.lbBuscando = false
-          this.$q.loading.hide()
-          this.$q.notify({
-            color: 'negative',
-            position: 'bottom',
-            message: 'Error al establecer busqueda con el servidor',
-            icon: 'report_problem'
+            document.getElementById('username').focus
           })
-          // setTimeout(() => { this.leerQR() }, 500);
-          this.login.username = ''
-          this.login.password = ''
-          document.getElementById('username').focus
-        })
-      // this is only for example of loading
+        // this is only for example of loading
 
-      setTimeout(() => {
-        this.loading = false
-      }, 5000)
+        setTimeout(() => {
+          this.loading = false
+        }, 5000)        
+	  }  
     }
   }
-}
 </script>
 
 <<!--
