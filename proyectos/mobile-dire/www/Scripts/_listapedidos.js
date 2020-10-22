@@ -28,7 +28,8 @@ preventamobile.ui.listaPedidos = function () {
         on_success_pedido,
         obtenerObservacionesClienteSeleccionado,
         renderPedidoRentablePage,
-        pedidoRentablePage;
+        pedidoRentablePage,
+		obtenerPerceClienteSeleccionado;
 
 
 
@@ -69,7 +70,9 @@ preventamobile.ui.listaPedidos = function () {
         if (!hayPedidoSeleccionado()) {
 
             var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
-            pedido = preventamobile.dal().factory().pedido(codigoCliente);
+			var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
+			//var porcePerceCliente = 2.5
+            pedido = preventamobile.dal().factory().pedido(codigoCliente,'',porcePerceCliente);
 
             // Si hay observaciones para el cliente, mostrarlas
             var observaciones = obtenerObservacionesClienteSeleccionado(codigoCliente);
@@ -108,7 +111,15 @@ preventamobile.ui.listaPedidos = function () {
         }
         return '';
     }
-
+	
+	obtenerPerceClienteSeleccionado = function (id) {
+        var cliente = preventamobile.dal().obtenerCliente(id);
+        if (cliente && cliente.porceperce) {
+            return cliente.porceperce;
+        }
+        return '';
+    }
+	
     establecerIdClienteSeleccionado = function (id) {
         localStorage.setItem("CurrentClienteId", id);
     };
@@ -120,7 +131,7 @@ preventamobile.ui.listaPedidos = function () {
         }
         return clienteId;
     };
-
+		
     hayClienteSeleccionado = function () {
         var currentId = localStorage.getItem("CurrentClienteId");
         return currentId != undefined && currentId != 0;
@@ -268,13 +279,22 @@ preventamobile.ui.listaPedidos = function () {
         var observaciones = $('#textObserva').val();
         // Utiliza momentjs para formatear la fecha que se va a guardar en el objeto con formato dd/mm/yyyy
         var fechaEntrega = moment($('#date2').val()).format("DD/MM/YYYY");
-
+		
+		// Valores pagados
+		var pagoEfectivo = $('#pagoEfectivo').val().replaceAll('$','');
+		//pagoEfectivo = pagoEfectivo.replaceAll('$','');
+		var pagoCheque = $('#pagoCheque').val().replaceAll('$','');
+		var pagoTransferencia = $('#pagoTransferencia').val().replaceAll('$','');
+		
         pedido.tipoDePedido = tipoDePedido;
         pedido.vales = vales;
         pedido.remito = remito;
         pedido.bonificaciones = bonificaciones;
         pedido.observaciones = observaciones;
         pedido.fechaEntrega = fechaEntrega;
+		pedido.pagoEfectivo = pagoEfectivo.trim();
+		pedido.pagoCheque	= pagoCheque.trim();
+		pedido.pagoTransferencia = pagoTransferencia.trim();
 
         preventamobile.dal().guardarPedido(pedido);
 
@@ -369,7 +389,8 @@ preventamobile.ui.listaPedidos = function () {
         on_success_pedido: on_success_pedido,
         limpiarLineaSeleccionada: limpiarLineaSeleccionada,
         renderPedidoRentablePage: renderPedidoRentablePage,
-        pedidoRentablePage: pedidoRentablePage
+        pedidoRentablePage: pedidoRentablePage,
+		obtenerPerceClienteSeleccionado: obtenerPerceClienteSeleccionado
     };
 };
 

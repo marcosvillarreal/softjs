@@ -272,6 +272,14 @@
         </div>
         <div data-role='fieldcontain'><label for='date2'>Fecha Entrega:</label><input type='date' name='date2' id='date2' value='{{:~toDate(fechaEntrega)}}' /></div>
         <div data-role='fieldcontain'><label for='total'>Total:</label><input type="text" readonly="readonly" value='$ {{:total}}' name='total' id='total' /></div>
+		<div data-role='fieldcontain'><label for='total'>Bonificacion General:</label><input type="text" readonly="readonly" value='$ {{:bonifpedido}}' name='bonifpedido' id='bonifpedido' /></div>
+		<div data-role='fieldcontain'><label for='total'>Total Percibido:</label><input type="text" readonly="readonly" value='$ {{:perceiibb}}' name='perceiibb' id='perceiibb' /></div>
+		
+		<legend>PAGOS RECIBIDOS</legend>
+		<div data-role='fieldcontain'><label for='pagoEfectivo'>Efectivo:</label><input type="text" value='$ {{:pagoEfectivo}}' name='pagoEfectivo' id='pagoEfectivo' /></div>
+		<div data-role='fieldcontain'><label for='pagoCheque'>Cheque:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoCheque' id='pagoCheque' /></div>
+		<div data-role='fieldcontain'><label for='pagoTransferencia'>Transferencia:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoTransferencia' id='pagoTransferencia' /></div>
+		
     </script>
     <script id="headerEditaLineaPedidoTmpl" type="text/x-jsrender">
         <div data-role='navbar'>
@@ -293,6 +301,10 @@
         <div data-role='fieldcontain'>
             <label for='editaLineaCantidad'>Cantidad</label>
             <input type='number' name='editaLineaCantidad' step="{{:decimales}}" id='editaLineaCantidad' value='{{:linea.cantidad}}' />
+        </div>
+		<div data-role='fieldcontain'>
+            <label for='editaLineaCantidad'>Kilos</label>
+            <input type='number' name='editaLineaKilos' step="{{:decimales}}" id='editaLineaKilos' value='{{:linea.kilos}}' />
         </div>
         <div data-role='fieldcontain'>
             <label for='editaLineaBonif1'>Bonificaci&oacuten</label>
@@ -410,7 +422,7 @@
                     </a>
                 </li>
             </ul>
-            <p id="geolocation">Versión 4.1.0.0</p>
+            <p id="geolocation">Versión 0.1.0.0</p>
         </div>
     </div>
     <!--#endregion-->
@@ -501,6 +513,9 @@
                 <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='articulo' id='articulo' value='' style="font-size: medium;" />
                 <input type="hidden" id="articuloUnidadesPorBulto" />
                 <input type="hidden" id="articuloSiKilos" />
+				<input type="hidden" id="articuloTipoBonif" />
+				<input type="hidden" id="articuloPorceMerma" />
+				<input type="hidden" id="articuloMaxBonif" />
             </div>
 
             <div class="ui-grid-a">
@@ -523,6 +538,10 @@
                         <option value='on'>Bultos</option>
                     </select>
                 </div>
+				<div class="ui-block-a">
+                    <label id='labelkilos'>Kilos</label>
+                    <input type='number' data-theme='b' step="0.1" name='kilos' id='kilos' value='' style="font-size: x-large;" onchange="preventamobile.ui.editaLineaPedido().recalcularLineaEnEdicion();" />
+                </div>
             </div>
             <fieldset class="ui-grid-a">
                 <div class="ui-block-a"><a id="confirmaAltaLineaPedidoOk" href="#" data-role="button">Guardar</a></div>
@@ -544,6 +563,20 @@
                 <label>Precio Bonificado</label>
                 <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='articuloPrecioBonificado' id='articuloPrecioBonificado' value='' style="font-size: x-large;" />
             </div>
+			<!-- Totales en Neto  -->
+			<div>
+                <label>Total Neto</label>
+                <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='totalNetoLinea' id='totalNetoLinea' value='' style="font-size: x-large;" />
+            </div>
+            <div>
+                <label>Precio Neto</label>
+                <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='articuloNetoUnitario' id='articuloNetoUnitario' value='' style="font-size: x-large;" />
+            </div>
+            <div>
+                <label>Precio Neto Bonificado</label>
+                <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='articuloNetoBonificado' id='articuloNetoBonificado' value='' style="font-size: x-large;" />
+            </div>
+			
         </div>
     </div>
     <!-- Pagina Editar linea Pedidos -->
