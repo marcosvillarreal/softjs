@@ -327,27 +327,23 @@ preventamobile.dal = function () {
                         try {
                             preventamobile.util().log("Finalizada llamada ajax");
                             var parsedResponse = JSON.parse(response);
-							
-							preventamobile.util().log("Iniciando guardarArticulosEnStorage");
+
                             var articulos = JSON.hunpack(JSON.parse(parsedResponse.articulos));
-							//alert(JSON.parse(parsedResponse.articulos))
                             if (articulos && articulos.length > 0) {
-                                // preventamobile.util().log("Iniciando guardarArticulosEnStorage");
+                                preventamobile.util().log("Iniciando guardarArticulosEnStorage");
                                 guardarArticulosEnStorage(articulos);
                             }
-							
-                            preventamobile.util().log("Iniciando guardarSeccionesEnStorage");
-							//alert(JSON.parse(parsedResponse.secciones))
-							var secciones = JSON.hunpack(JSON.parse(parsedResponse.secciones));                            
-							if (secciones && secciones.length > 0) {
-                                // preventamobile.util().log("Iniciando guardarSeccionesEnStorage");
+
+                            var secciones = JSON.hunpack(JSON.parse(parsedResponse.secciones));
+                            if (secciones && secciones.length > 0) {
+                                preventamobile.util().log("Iniciando guardarSeccionesEnStorage");
                                 guardarSeccionesEnStorage(secciones);
-                            } 
-							preventamobile.util().log("Iniciando guardarProveedoresEnStorage");
+                            }
+
                             if (parsedResponse.proveedores !== ''){
                                 var proveedores = JSON.hunpack(JSON.parse(parsedResponse.proveedores));
                                 if (proveedores && proveedores.length > 0) {
-                                    // preventamobile.util().log("Iniciando guardarProveedoresEnStorage");
+                                    preventamobile.util().log("Iniciando guardarProveedoresEnStorage");
                                     guardarProveedoresEnStorage(proveedores);
                                 }
                             }
@@ -478,8 +474,7 @@ preventamobile.dal = function () {
         }
         return false;
     };
-	
-	
+
     obtenerCuentaCorriente = function (cliente) {
 
         if (!cliente  || !cliente.cuentaCorriente) {
@@ -970,8 +965,7 @@ preventamobile.dal = function () {
             pedido = JSON.parse(pedido);
         } else {
             var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
-			var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
-            pedido = preventamobile.dal().factory().pedido(codigoCliente, id, porcePerceCliente);
+            pedido = preventamobile.dal().factory().pedido(codigoCliente, id);
         }
 
         return pedido;
@@ -1050,26 +1044,17 @@ preventamobile.dal = function () {
             var bonif1 = linea.bonif1 ? parseInt(linea.bonif1, 10) : 0;
             var bonif2 = linea.bonif2 ? parseInt(linea.bonif2, 10) : 0;
             var peso = linea.peso ? parseFloat(linea.peso) : 1;
-			var kilos = 0;
             if (peso == 0) { peso = 1 };
             var sikilos = linea.sikilos;
-			if (sikilos == 'N'){
-				if (univenta) {
-					cantidad = cantidad * unibulto;
-				};
-				kilos = 1;
-			}else{
-				kilos = linea.kilos ;
-				
-			}
-            
-            var subTotal = cantidad * precio * kilos;
+
+            if (univenta) {
+                cantidad = cantidad * unibulto;
+            }
+            var subTotal = cantidad * precio * peso;
             var importeBonif1 = (subTotal * bonif1) / 100;
             var importeBonif2 = ((subTotal - importeBonif1) * bonif2) / 100;
             totalLinea = (subTotal - importeBonif1 - importeBonif2);
             totalLinea = parseInt((totalLinea + 0.005) * 100) / 100;
-			
-					
         }
         return totalLinea;
 
@@ -1081,11 +1066,7 @@ preventamobile.dal = function () {
 
             pedido.total = 0;
             pedido.costoProveedor = {};
-			pedido.totalNeto = 0;
-			
-			var SubPerce;
-			
-			SubPerce = 0;
+
             for (var lineaId in pedido.lineas) {
                 var linea = pedido.lineas[lineaId];
                 if (linea && linea.precio) {
@@ -1094,32 +1075,19 @@ preventamobile.dal = function () {
                     var univenta = linea.univenta ? parseInt(linea.univenta, 10) : 0;
                     var unibulto = linea.unibulto ? parseInt(linea.unibulto, 10) : 0;
                     var precio = linea.precio ? parseFloat(linea.precio) : 0;
-					var neto = linea.neto ? parseFloat(linea.neto) : 0;
                     var costo = linea.costo ? parseFloat(linea.costo) : 0;
                     var bonif1 = linea.bonif1 ? parseInt(linea.bonif1, 10) : 0;
                     var bonif2 = linea.bonif2 ? parseInt(linea.bonif2, 10) : 0;
                     var peso = linea.peso ? parseFloat(linea.peso) : 1;
-					var kilos = 1;
                     if (peso == 0) { peso = 1 };
-                    var sikilos = linea.sikilos;
-					if (sikilos == 'N'){
-						if (univenta) {
-							cantidad = cantidad * unibulto;
-						};
-					}else{
-						kilos = linea.kilos ;
-						cantidad = 1;
-						
-					}
-                    var subTotal = cantidad * precio * kilos;
-                    var subTotalCosto = cantidad * costo * kilos;
+                    if (univenta) {
+                        cantidad = cantidad * unibulto;
+                    }
+                    var subTotal = cantidad * precio * peso;
+                    var subTotalCosto = cantidad * costo * peso;
                     var importeBonif1 = (subTotal * bonif1) / 100;
                     var importeBonif2 = ((subTotal - importeBonif1) * bonif2) / 100;
-					// Totales del neto
-					var subTotalNeto = cantidad * neto * kilos;
-					var netoBonif1	 = (subTotalNeto * bonif1) / 100;
-					var netoBonif2	 = ((subTotalNeto - netoBonif1) * bonif2) / 100;
-					
+
                     var costoProveedor;
                     if (!pedido.costoProveedor[linea.idproveedor]) {
                         var proveedor = obtenerProveedor(linea.idproveedor);
@@ -1134,26 +1102,15 @@ preventamobile.dal = function () {
 
                     costoProveedor.costo += subTotalCosto;
                     costoProveedor.total += subTotal;
-					
-					
+
                     pedido.total += (subTotal - importeBonif1 - importeBonif2);
                     pedido.total = parseInt((pedido.total + 0.005) * 100) / 100;
-					//Total neto
-					pedido.totalNeto += (subTotalNeto - netoBonif1 - netoBonif2);
-					pedido.totalNeto = parseInt((pedido.totalNeto + 0.005) *100) / 100;
-					
+
                     pedido.costoProveedor[linea.idproveedor] = costoProveedor;
-					
-					
                 }
 
             }
-			console.log('pedido.totalNeto ' + pedido.totalNeto);
-			console.log('perce: ' + pedido.porcePerce);
-			//Almacenamos el total de la percepcion
-			pedido.perceiibb = ((pedido.totalNeto * pedido.porcePerce) / 100).toFixed(3);
-			pedido.total += parseFloat(pedido.perceiibb);
-			
+
             $.each(pedido.costoProveedor,
                 function (index, value) {
 
@@ -1442,13 +1399,13 @@ preventamobile.dal = function () {
             pedido,
             lineaVariedad;
 
-        pedido = function (codigoCliente, pedidoId ,porcePerceCliente) {
+        pedido = function (codigoCliente, pedidoId) {
 
             var f = new Date();
             var dia = moment(f).format('DD/MM/YYYY');
             var hora = preventamobile.util().strZ(f.getHours()) + ":" + preventamobile.util().strZ(f.getMinutes()) + ":" + preventamobile.util().strZ(f.getSeconds());
 
-            if (!pedidoId && pedidoId == '')
+            if (!pedidoId)
                 pedidoId = preventamobile.util().generateUUID();
 
             return {
@@ -1466,14 +1423,7 @@ preventamobile.dal = function () {
                 tipoDePedido: 1,
                 total: "",
                 lineas: {},
-                costoProveedor: {},
-				pagoEfectivo: "",
-				pagoCheque: "",
-				pagoTransferencia: "",
-				totalNeto: "",
-				perceiibb: "",
-				porcePerce: porcePerceCliente,
-				bonifpedido: ""
+                costoProveedor: {}
             };
         };
 
@@ -1501,11 +1451,7 @@ preventamobile.dal = function () {
                 bonif2: 0,
                 peso: 1,
                 sikilos: 'N',
-                variedades: {},
-				kilos: 0,
-				neto: 0,
-				estopebonif: '1',
-				porceMerma: 0,
+                variedades: {}
             };
         };
 
