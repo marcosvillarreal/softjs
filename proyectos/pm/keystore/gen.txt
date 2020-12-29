@@ -1,0 +1,10 @@
+http://taco.visualstudio.com/en-us/docs/tutorial-package-publish-readme/#package-the-android-version-of-your-app
+
+Mi ruta actual para keytool es C:\Program Files (x86)\Java\jdk1.7.0_55\bin
+
+keytool -genkey -v -keystore C:\Desarrollo\preventamovil\keystore\intap-release-key.keystore -alias intap
+-keyalg RSA -keysize 2048 -validity 10000
+
+pass: preventa11
+
+archivo generado en C:\Desarrollo\preventamovil\src\preventamobile.client.cordova\platforms\android\build\outputs\apk\android-release.apk

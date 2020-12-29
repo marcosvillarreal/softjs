@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>QUnit Test for PM</title>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
+</head>
+<body>
+
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+
+    <!--Librerias-->
+    <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
+    <script type="text/javascript" src="../../www/Scripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="../../www/Scripts/jsrender.min.js"></script>
+    <script type="text/javascript" src="../../www/Scripts/jquery.mobile-1.3.2.js"></script>
+    <script type="text/javascript" src="../../www/Scripts/jquery.base64.js"></script>
+    <script type="text/javascript" src="../../www/Scripts/json.hpack.min.js"></script>
+    <script type="text/javascript" src="../../www/Scripts/jquery.inputmask.bundle.min.js"></script>
+    <script type="text/javascript" src="../../www/Scripts/moment.min.js"></script>
+    <!--<script type="text/javascript" src="../../www/Scripts/fastclick.min.js"></script>-->
+
+    <!--Tests-->
+    <script type="text/javascript" src="tests.js"></script>
+
+    <!--Fuentes-->
+    <script src="../../www/Scripts/_altalineapedido.js"></script>
+    <script src="../../www/Scripts/_cliente.js"></script>
+    <script src="../../www/Scripts/_configuration.js"></script>
+    <script src="../../www/Scripts/_dal.js"></script>
+    <script src="../../www/Scripts/_editalineapedido.js"></script>
+    <script src="../../www/Scripts/_editalineavariedades.js"></script>
+    <script src="../../www/Scripts/_gridcargarapidaarticulo.js"></script>
+    <script src="../../www/Scripts/_index.js"></script>
+    <script src="../../www/Scripts/_listaarticulospedido.js"></script>
+    <script src="../../www/Scripts/_listapedidos.js"></script>
+    <script src="../../www/Scripts/_noventa.js"></script>
+    <script src="../../www/Scripts/_parametros.js"></script>
+    <script src="../../www/Scripts/_precios.js"></script>
+    <script src="../../www/Scripts/_sync.js"></script>
+    <script src="../../www/Scripts/_util.js"></script>
+
+    <!-- Templates copiados desde el index.html para testing, actualizar si hay modificaciones -->
+    <script id="pedidoRentableTmpl" type="text/x-jsrender">
+        <br />
+        {{for}}
+            {{if (nombre)}}
+                <div class="ui-corner-all custom-corners">
+                    <div class="ui-bar ui-bar-a">
+                        <h3>Proveedor: {{:nombre}}</h3>
+                    </div>
+                    <div class="ui-body ui-body-a">
+                        <div data-role='fieldcontain'>Coeficiente Rentabilidad: {{:coeficienteRentabilidad}}</div>
+                        <div data-role='fieldcontain'>Total: {{:total}}</div>
+                        <div data-role='fieldcontain'>Costo: {{:costo}}</div>
+                        <div data-role='fieldcontain'>
+                            <label for='esRentableSlider'>Es Rentable:</label>
+                            <select name='esRentableSlider' id='esRentableSlider' data-role='slider' readonly="readonly">
+                                <option value='off'>No</option>
+                                <option value='on' {{if esRentable}} selected="selected" {{/if}}>Si</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <br />
+            {{else}}
+                <div class="ui-corner-all custom-corners">
+                    <div class="ui-bar ui-bar-a">
+                        <h3>Proveedor no encontrado: {{:idproveedor}}</h3>
+                    </div>
+                </div>
+            {{/if}}
+        {{/for}}
+    </script>
+</body>
+</html>
