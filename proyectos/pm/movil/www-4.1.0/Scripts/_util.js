@@ -192,8 +192,8 @@ preventamobile.util = function () {
     exitFromApp = function () {
 
         if (navigator && navigator.app && navigator.app.exitApp) {
-            window.plugins.appMinimize.minimize();
-            //navigator.app.exitApp();
+            //window.plugins.appMinimize.minimize();
+            navigator.app.exitApp();
         } else {
             preventamobile.util().showDialog("No se puede cerrar la app en este dispositivo", function () { $.mobile.changePage("#homePage"); });
         }

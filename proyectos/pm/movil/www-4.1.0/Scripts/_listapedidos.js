@@ -28,8 +28,7 @@ preventamobile.ui.listaPedidos = function () {
         on_success_pedido,
         obtenerObservacionesClienteSeleccionado,
         renderPedidoRentablePage,
-        pedidoRentablePage,
-		obtenerPerceClienteSeleccionado;
+        pedidoRentablePage;
 
 
 
@@ -70,9 +69,7 @@ preventamobile.ui.listaPedidos = function () {
         if (!hayPedidoSeleccionado()) {
 
             var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
-			var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
-			//var porcePerceCliente = 2.5
-            pedido = preventamobile.dal().factory().pedido(codigoCliente,'',porcePerceCliente);
+            pedido = preventamobile.dal().factory().pedido(codigoCliente);
 
             // Si hay observaciones para el cliente, mostrarlas
             var observaciones = obtenerObservacionesClienteSeleccionado(codigoCliente);
@@ -111,15 +108,7 @@ preventamobile.ui.listaPedidos = function () {
         }
         return '';
     }
-	
-	obtenerPerceClienteSeleccionado = function (id) {
-        var cliente = preventamobile.dal().obtenerCliente(id);
-        if (cliente && cliente.porceperce) {
-            return cliente.porceperce;
-        }
-        return '';
-    }
-	
+
     establecerIdClienteSeleccionado = function (id) {
         localStorage.setItem("CurrentClienteId", id);
     };
@@ -131,7 +120,7 @@ preventamobile.ui.listaPedidos = function () {
         }
         return clienteId;
     };
-		
+
     hayClienteSeleccionado = function () {
         var currentId = localStorage.getItem("CurrentClienteId");
         return currentId != undefined && currentId != 0;
@@ -253,6 +242,7 @@ preventamobile.ui.listaPedidos = function () {
 
         var pedidoId = $('#pedidoId').text();
         var pedido = preventamobile.dal().obtenerPedido(pedidoId);
+
         var tipoDePedido, tP;
 
         tP = $('input[name="radio-choice-1"]:checked').val();
@@ -278,22 +268,13 @@ preventamobile.ui.listaPedidos = function () {
         var observaciones = $('#textObserva').val();
         // Utiliza momentjs para formatear la fecha que se va a guardar en el objeto con formato dd/mm/yyyy
         var fechaEntrega = moment($('#date2').val()).format("DD/MM/YYYY");
-		
-		// Valores pagados
-		var pagoEfectivo = $('#pagoEfectivo').val().replaceAll('$','');
-		//pagoEfectivo = pagoEfectivo.replaceAll('$','');
-		var pagoCheque = $('#pagoCheque').val().replaceAll('$','');
-		var pagoTransferencia = $('#pagoTransferencia').val().replaceAll('$','');
-		
+
         pedido.tipoDePedido = tipoDePedido;
         pedido.vales = vales;
         pedido.remito = remito;
         pedido.bonificaciones = bonificaciones;
         pedido.observaciones = observaciones;
         pedido.fechaEntrega = fechaEntrega;
-		pedido.pagoEfectivo = pagoEfectivo.trim();
-		pedido.pagoCheque	= pagoCheque.trim();
-		pedido.pagoTransferencia = pagoTransferencia.trim();
 
         preventamobile.dal().guardarPedido(pedido);
 
@@ -320,26 +301,15 @@ preventamobile.ui.listaPedidos = function () {
                 //preventamobile.ui.gridCargaRapidaArticulo().lanzarLista();
                 break;
             case 3:
-			
-				//console.log(pedido.codigoCliente);
-            
-				var r = confirm("Desea sincronizar el pedido?");
+
+                var r = confirm("Desea sincronizar el pedido?");
                 if (r == true) {
                     var lista = [];
                     lista[0] = pedido;
-					
-					var cliente = preventamobile.dal().obtenerCliente(pedido.codigoCliente);
-					
+
                     var noventa = [];
-					var cuentaCorriente = preventamobile.dal().obtenerCuentaCorriente(cliente);
-					//console.log(cuentaCorriente);
-					//console.log(cliente);
-                    var model = { 
-						data: preventamobile.util().serializar(preventamobile.util().comprimir(lista)), 
-						noventa: preventamobile.util().serializar(noventa), 
-						cuentaCorriente: preventamobile.util().serializar(cuentaCorriente),
-						login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo()) 
-					};
+
+                    var model = { data: preventamobile.util().serializar(preventamobile.util().comprimir(lista)), noventa: preventamobile.util().serializar(noventa), login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo()) };
                     preventamobile.dal().syncPedidosConServidor(model, informarPedidoSyncOk, informarPedidoSyncError);
 
 
@@ -399,8 +369,7 @@ preventamobile.ui.listaPedidos = function () {
         on_success_pedido: on_success_pedido,
         limpiarLineaSeleccionada: limpiarLineaSeleccionada,
         renderPedidoRentablePage: renderPedidoRentablePage,
-        pedidoRentablePage: pedidoRentablePage,
-		obtenerPerceClienteSeleccionado: obtenerPerceClienteSeleccionado
+        pedidoRentablePage: pedidoRentablePage
     };
 };
 

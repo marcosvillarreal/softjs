@@ -13,11 +13,8 @@ preventamobile.configuration = function () {
 
     //#region Configuration
     // urlServerOptions = ["http://10.0.0.149:8084/preventamobile/"];
-    // urlServerOptions = ["http://preventa.cloudapp.net:8889/", "http://preventa.cloudapp.net:8890/", "http://compufar.dyndns.org:8888/preventamobile/","http://gestionweb-test.ddns.net:8084/preventamobile/"];
-    urlServerOptions = ["http://gmsoftware.ddns.net:8084/preventamobile/"];
-	
-	// urlServerOptions = [];
-	
+     urlServerOptions = ["http://preventa.cloudapp.net:8889/", "http://preventa.cloudapp.net:8890/"];
+
     getUrlBase = function () {
         var urlServer = localStorage.getItem("urlServer");
         if (!urlServer) {
