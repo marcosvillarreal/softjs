@@ -63,10 +63,38 @@ preventamobile.ui.listaArticulosPedido = function () {
         ;
 
     };
+	
+	var recalcularBonificacionGral = function() {
+		
+		
+		var lineasPedido,
+            articulo,
+            html,pedido;
+        
+        var pedidoId = preventamobile.ui.listaPedidos().obtenerIdPedidoSeleccionado();
+        $('#ullistartped').empty();
+        lineasPedido = preventamobile.dal().listarPedidoLineas(pedidoId);
+        
+        
+		pedido = preventamobile.dal().obtenerPedido(pedidoId);
+		
 
+		$.each(lineasPedido, function (index, value) {
+			articulo = preventamobile.dal().obtenerArticulo(value.idarticulo);
+			$('#articuloTipoBonif').val('2');
+			$('#bonif1').val($('#bonifpedido').val());
+			preventamobile.ui.editaLineaPedido().recalcularLineaEnEdicion();
+			
+		});
+		
+        pedido.total = preventamobile.dal().calcularLineaTotal(value);
+		
+	};
+	
     return {
         render: render,
-        lineaSeleccionada: lineaSeleccionada
+        lineaSeleccionada: lineaSeleccionada,
+		recalcularBonificacionGral: recalcularBonificacionGral
     };
     
 };

@@ -272,7 +272,7 @@
         </div>
         <div data-role='fieldcontain'><label for='date2'>Fecha Entrega:</label><input type='date' name='date2' id='date2' value='{{:~toDate(fechaEntrega)}}' /></div>
         <div data-role='fieldcontain'><label for='total'>Total:</label><input type="text" readonly="readonly" value='$ {{:total}}' name='total' id='total' /></div>
-		<div data-role='fieldcontain'><label for='total'>Bonificacion General:</label><input type="text" readonly="readonly" value='$ {{:bonifpedido}}' name='bonifpedido' id='bonifpedido' /></div>
+		<div data-role='fieldcontain'><label for='total'>Bonificacion General:</label><input type="text" value='$ {{:bonifpedido}}' name='bonifpedido' id='bonifpedido' onchange="preventamobile.ui.listaArticulosPedido().recalcularBonificacionGral();" /></div>
 		<div data-role='fieldcontain'><label for='total'>Total Percibido:</label><input type="text" readonly="readonly" value='$ {{:perceiibb}}' name='perceiibb' id='perceiibb' /></div>
 		
 		<legend>PAGOS RECIBIDOS</legend>
@@ -422,7 +422,7 @@
                     </a>
                 </li>
             </ul>
-            <p id="geolocation">Versión 0.1.0.0</p>
+            <p id="geolocation">Versión 0.1.0.2</p>
         </div>
     </div>
     <!--#endregion-->

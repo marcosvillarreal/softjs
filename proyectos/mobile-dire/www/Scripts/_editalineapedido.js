@@ -91,7 +91,9 @@ preventamobile.ui.editaLineaPedido = function () {
         $("#confirmaAltaLineaPedidoCancel").unbind().click(cancel);
 
     };
+	
 
+	
     var guardarLinea = function (edicion) {
 
         var articuloId = preventamobile.ui.listaPedidos().obtenerIdArticuloSeleccionado();
@@ -113,7 +115,7 @@ preventamobile.ui.editaLineaPedido = function () {
             linea = pedido.lineas[lineaId];
         }
 		
-		alert(linea);
+		//alert(linea);
 		
         linea.idarticulo = articuloId;
         linea.idproveedor = articulo.idproveedor;
@@ -233,7 +235,7 @@ preventamobile.ui.editaLineaPedido = function () {
 			}
         }
         
-		alert(peso);
+		//alert(peso);
         //if ($('#sliderUniVenta').val() == "on") {
         //    cantidad = cantidad * $('#articuloUnidadesPorBulto').val();
         //}
@@ -308,6 +310,7 @@ preventamobile.ui.editaLineaPedido = function () {
         inicializarLinea: inicializarLinea,
         borrarLinea: borrarLinea,
         recalcularLineaEnEdicion: recalcularLineaEnEdicion
+		
     };
 };
 
