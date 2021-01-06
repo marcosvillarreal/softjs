@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "hello.js": "^1.0.0",
     "hellojs": "^1.18.4",
     "quasar": "^1.5.3"
