@@ -23,7 +23,6 @@ preventamobile.ui.editaLineaPedido = function () {
 
         // veo si es una linea nueva
         if (!linea) {
-			alert('EditoLinea');
             linea = preventamobile.dal().factory().lineaPedido();
             linea.idarticulo = idarticulo;
             linea.codigoArticulo = articulo.numero;
@@ -113,7 +112,7 @@ preventamobile.ui.editaLineaPedido = function () {
             linea = pedido.lineas[lineaId];
         }
 		
-		alert(linea);
+		//alert(linea);
 		
         linea.idarticulo = articuloId;
         linea.idproveedor = articulo.idproveedor;
@@ -233,7 +232,7 @@ preventamobile.ui.editaLineaPedido = function () {
 			}
         }
         
-		alert(peso);
+		//alert(peso);
         //if ($('#sliderUniVenta').val() == "on") {
         //    cantidad = cantidad * $('#articuloUnidadesPorBulto').val();
         //}

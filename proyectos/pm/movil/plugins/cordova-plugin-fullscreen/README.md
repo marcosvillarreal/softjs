@@ -52,11 +52,11 @@ function errorFunction(error)
 
 function trace(value)
 {
-    console.log(value);
+	console.log(value);
 }
 
 // Is this plugin supported?
-AndroidFullScreen.isSupported(successFunction, errorFunction);
+AndroidFullScreen.isSupported();
 
 // Is immersive mode supported?
 AndroidFullScreen.isImmersiveModeSupported(successFunction, errorFunction);
@@ -82,9 +82,6 @@ AndroidFullScreen.showUnderSystemUI(successFunction, errorFunction);
 // Hide system UI and keep it hidden (Android 4.4+ only)
 AndroidFullScreen.immersiveMode(successFunction, errorFunction);
 
-// Custom full screen mode
-// See https://developer.android.com/reference/android/view/View.html#setSystemUiVisibility(int)
-AndroidFullScreen.setSystemUiVisibility(AndroidFullScreen.SYSTEM_UI_FLAG_FULLSCREEN | AndroidFullScreen.SYSTEM_UI_FLAG_LOW_PROFILE, successFunction, errorFunction);
 ```
 
 All methods will call the successFunction callback if the action was successful and the errorFunction if it wasn't (or isn't supported); if you're using the plugin in an app for a platform other than Android, all methods will fail.
@@ -95,10 +92,3 @@ Getting the immersive screen size
 ---------------------------------
 
 You can use the `immersiveWidth` and `immersiveHeight` methods to find out the dimensions of the screen with the system UI hidden, regardless of the current screen state.
-
-Make a donation
----------------
-
-If you find this project useful, why not buy us a coffee (or as many as you think it's worth)?
-
-[![Make a donation](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](http://bit.ly/2W0K8iE)

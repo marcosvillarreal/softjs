@@ -1,8 +1,7 @@
-call del C:\pm.build\*.* /Q
-md C:\pm.build
-
-copy C:\users\marco\documents\githuh\softjs\proyectos\movil\platforms\android\build\outputs\apk\release\android-release-unsigned.apk c:\pm.build\pm.apk
-call "C:\Program Files\Java\jdk-15.0.1\bin\jarsigner" -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore C:\users\documents\github\softjs\proyectos\pm\keystore\intap.keystore -storepass preventa11 -keypass preventa11 c:\pm.build\pm.apk intap
-call "C:\Program Files\Android\sdk\build-tools\30.0.3\zipalign" -v 4 c:\pm.build\pm.apk c:\pm.build\pm-final.apk
-
+call del C:\node13\movil\dist\*.* /Q
+REM call cordova build android --release
+call copy C:\node13\movil\platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk C:\node13\movil\dist\pm.apk
+call "C:\Program Files\Android\Android Studio\jre\bin\jarsigner" -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore intap.keystore -storepass preventa11 -keypass preventa11 C:\node13\movil\dist\pm.apk intap
+call "C:\Users\Gabriel\AppData\Local\Android\Sdk\build-tools\28.0.3\zipalign" -v 4 C:\node13\movil\dist\pm.apk C:\node13\movil\dist\pm-final.apk
+call del C:\node13\movil\dist\pm.apk
 pause
