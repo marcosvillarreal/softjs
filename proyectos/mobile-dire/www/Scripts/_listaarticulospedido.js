@@ -34,6 +34,7 @@ preventamobile.ui.listaArticulosPedido = function () {
         else {
             pedido = preventamobile.dal().obtenerPedido(pedidoId);
             html ="<h2>Total: "+pedido.total+"</h2>"
+			html = html + "<div id='divbonif' data-role='fieldcontain'><label for='total'>Bonificacion General: %</label><input type='text' value=' '" + " name='bonifporcepedido' id='bonifporcepedido' onchange='preventamobile.ui.listaArticulosPedido().recalcularBonificacionGral();' /></div>"
             html = html + "<div id='divpedido' data-role='fieldcontain' class='ui-hidden-accessible'><label id='xxcodigopedido'>" + "0" + "</label>" + "</div>";
             html = html + "<div class='ui-btn-text'><ol id='ullistartped' data-theme='a' data-role='listview' data-inset='true' data-autodividers='false' " +
             "data-filter='true' data-filter-placeholder='Ingrese valor a buscar'> ";
@@ -69,7 +70,7 @@ preventamobile.ui.listaArticulosPedido = function () {
 		
 		var lineasPedido,
             articulo,
-            html,pedido;
+            html,pedido,porcebonif;
         
         var pedidoId = preventamobile.ui.listaPedidos().obtenerIdPedidoSeleccionado();
         $('#ullistartped').empty();
@@ -78,16 +79,20 @@ preventamobile.ui.listaArticulosPedido = function () {
         
 		pedido = preventamobile.dal().obtenerPedido(pedidoId);
 		
-
+		porcebonif = ($('#bonifporcepedido').val());
+		//alert(porcebonif);
+		
 		$.each(lineasPedido, function (index, value) {
-			articulo = preventamobile.dal().obtenerArticulo(value.idarticulo);
-			$('#articuloTipoBonif').val('2');
-			$('#bonif1').val($('#bonifpedido').val());
-			preventamobile.ui.editaLineaPedido().recalcularLineaEnEdicion();
+			//articulo = preventamobile.dal().obtenerArticulo(value.idarticulo);
+			preventamobile.ui.editaLineaPedido().modificarBonifLinea(value,porcebonif,pedidoId);
 			
+			//alert(value.bonif1);
+			//preventamobile.dal().eliminarPedidoLinea(pedidoId,value.lineaId);
+			preventamobile.dal().guardarPedidoLinea(pedidoId, value);
 		});
 		
-        pedido.total = preventamobile.dal().calcularLineaTotal(value);
+		//preventamobile.dal().guardarPedido(pedido);
+        pedido.total = preventamobile.dal().calcularTotal(pedido);
 		
 	};
 	

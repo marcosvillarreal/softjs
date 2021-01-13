@@ -34,6 +34,7 @@
     <script type="text/javascript" src="Scripts/_editalineavariedades.js"></script>
     <script type="text/javascript" src="Scripts/_parametros.js"></script>
     <script type="text/javascript" src="Scripts/_gridcargarapidaarticulo.js"></script>
+	<script type="text/javascript" src="Scripts/_imprimirpedido.js"></script>
     <!--#endregion-->
     <!--#region Templates-->
     <!-- #region Templates Clientes -->
@@ -238,6 +239,7 @@
                 <li><a href='#' data-icon='delete' onclick='preventamobile.ui.listaPedidos().borrarPedido("{{:indice}}");'>Borrar</a></li>
                 {{/if}}
                 <li><a href='#' data-icon='check' onclick='preventamobile.ui.listaPedidos().aplicarPedido(1);'>Guardar</a></li>
+				<li><a href='#' data-icon='print' onclick='preventamobile.ui.listaPedidos().aplicarPedido(4)'>Generar</a></li>
                 <li><a href='#' data-icon='grid' onclick='preventamobile.ui.listaPedidos().aplicarPedido(0);'>Artículos</a></li>
                 <!--<li><a href='#' data-icon='grid'   onclick='preventamobile.ui.listaPedidos().aplicarPedido(2);' >Carga Rápida</a></li> -->
             </ul>
@@ -272,7 +274,7 @@
         </div>
         <div data-role='fieldcontain'><label for='date2'>Fecha Entrega:</label><input type='date' name='date2' id='date2' value='{{:~toDate(fechaEntrega)}}' /></div>
         <div data-role='fieldcontain'><label for='total'>Total:</label><input type="text" readonly="readonly" value='$ {{:total}}' name='total' id='total' /></div>
-		<div data-role='fieldcontain'><label for='total'>Bonificacion General:</label><input type="text" value='$ {{:bonifpedido}}' name='bonifpedido' id='bonifpedido' onchange="preventamobile.ui.listaArticulosPedido().recalcularBonificacionGral();" /></div>
+		<div data-role='fieldcontain'><label for='total'>Bonificacion General:</label><input type="text" readonly="readonly" value='$ {{:bonifpedido}}' name='bonifpedido' id='bonifpedido' onchange="preventamobile.ui.listaArticulosPedido().recalcularBonificacionGral();" /></div>
 		<div data-role='fieldcontain'><label for='total'>Total Percibido:</label><input type="text" readonly="readonly" value='$ {{:perceiibb}}' name='perceiibb' id='perceiibb' /></div>
 		
 		<legend>PAGOS RECIBIDOS</legend>
@@ -628,6 +630,20 @@
             </div>
         </div>
         <div data-theme="a" data-role="content" id="listaArticulosPedidoContent">
+        </div>
+    </div>
+	 <!-- Pagina Mostrar Pedido antes de imprimir -->
+    <div data-theme="a" data-role="page" id="imprimirPedidoPage" data-title="Pedido Generar">
+        <div data-theme="a" data-role="header" id="headerimprimirPedido">
+            <div data-role='navbar'>
+                <ul id='imppednav'>
+                    <li><a href='#homePage' data-icon='home' data-iconpos='notext'>Inicio</a></li>
+                    <li><a href='#editaPedidosPage' data-icon='back'>Atrás</a></li>
+                    <li><a href='#' data-icon='plus' >Imprimir</a></li>
+                </ul>
+            </div>
+        </div>
+        <div data-theme="a" data-role="content" id="imprimirPedidoContent">
         </div>
     </div>
     <!-- Pagina Lista Pedidos -->

@@ -61,6 +61,7 @@ preventamobile.dal = function () {
         guardarNoVenta,
 
         calcularTotal,
+		generarListPedido,
         establecerTienePedido,
         syncPedidos,
         syncPedidosConServidor,
@@ -832,7 +833,9 @@ preventamobile.dal = function () {
     //#endregion
 
     //#region Pedidos
+	
 
+	
     function marcarClientesComoSincronizados(pedidos) {
         $.each(pedidos, function (index, value) {
             marcarClienteParaSincronizar(value.codigoCliente, false);
@@ -1148,6 +1151,9 @@ preventamobile.dal = function () {
                 }
 
             }
+			
+			pedido.bonifpedido = importeBonif1;
+			
 			console.log('pedido.totalNeto ' + pedido.totalNeto);
 			console.log('perce: ' + pedido.porcePerce);
 			//Almacenamos el total de la percepcion
@@ -1506,6 +1512,8 @@ preventamobile.dal = function () {
 				neto: 0,
 				estopebonif: '1',
 				porceMerma: 0,
+				boniftope:0
+
             };
         };
 
@@ -1656,7 +1664,8 @@ preventamobile.dal = function () {
         esPedidoRentable: esPedidoRentable,
         detallePedidoNoRentable: detallePedidoNoRentable,
         calcularTotal: calcularTotal,
-
+		generarListPedido:generarListPedido,
+		
         guardarPedidoLinea: guardarPedidoLinea,
         eliminarPedidoLinea: eliminarPedidoLinea,
         listarPedidoLineas: listarPedidoLineas,

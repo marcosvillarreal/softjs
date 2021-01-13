@@ -124,7 +124,7 @@ preventamobile.ui.editaLineaPedido = function () {
         linea.costo = articulo.costo;
 		linea.neto= articulo.neto;
 		linea.porcemerma = articulo.porcemerma;
-		
+		linea.boniftope = articulo.bonif1;
         // obtener valores de controles y actualizar info de la linea
         var uniVenta;
         var signo;
@@ -199,6 +199,7 @@ preventamobile.ui.editaLineaPedido = function () {
 		
 			
 		//0=Nada,1=Se valida tope,2=se autocompleta
+		//alert($('#bonif1').val() );
 		if ($('#articuloTipoBonif').val() == '1'){
 			if (bonif1 > $('#articuloMaxBonif').val()) {
 				alert('Bonificacion digitada, supera la establecida.');
@@ -267,7 +268,30 @@ preventamobile.ui.editaLineaPedido = function () {
 		}
 		
     };
-
+	
+	 var modificarBonifLinea = function (linea,bonifgral) {
+		//Usamos la funcion para recalcular la linea del pedido
+		//El cambio de bonificacion general
+		
+        var bonif1 = linea.bonif1 ? parseInt(linea.bonif1, 10) : 0;
+		
+		//La bonificacion general, debe cargarse, pero validar que no supere el maximo.
+		//alert(bonifgral);		
+		if (bonifgral > linea.boniftope) {
+			
+			bonif1 = linea.boniftope ? parseInt(linea.boniftope, 10) : 0;
+		}else{
+			bonif1 = bonifgral;
+		}
+		linea.bonif1 = bonif1;
+		//alert(linea.bonif1);
+		
+		
+		
+		
+		
+    };
+	
     var lineaNueva = function () {
         $.mobile.changePage('#altaLineaPedidoPage');
 
@@ -309,7 +333,8 @@ preventamobile.ui.editaLineaPedido = function () {
         enviarAConfirmacionGuardarLinea: enviarAConfirmacionGuardarLinea,
         inicializarLinea: inicializarLinea,
         borrarLinea: borrarLinea,
-        recalcularLineaEnEdicion: recalcularLineaEnEdicion
+        recalcularLineaEnEdicion: recalcularLineaEnEdicion,
+		modificarBonifLinea: modificarBonifLinea
 		
     };
 };
