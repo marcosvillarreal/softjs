@@ -348,6 +348,9 @@ preventamobile.ui.listaPedidos = function () {
                 }
 
                 break;
+			case 4:
+				 $.mobile.changePage('#imprimirPedidoPage');
+				break;
         };
     };
 
