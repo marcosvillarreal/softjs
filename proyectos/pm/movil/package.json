@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "private": true,
     "dependencies": {
-        "cordova-android": "^8.1.0",
         "cordova-ios": "4.2.0",
         "cordova-plugin-appminimize": "https://github.com/tomloprod/cordova-plugin-appminimize.git",
         "cordova-plugin-dialogs": "1.3.0",
@@ -27,6 +26,7 @@
         }
     },
     "devDependencies": {
+        "cordova-android": "^9.0.0",
         "qunitjs": "^2.4.0"
     }
 }
