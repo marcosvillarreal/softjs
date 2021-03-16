@@ -43,9 +43,12 @@ preventamobile.ui.editaLineaPedido = function () {
 			
 
         } else {
+			//alert('recupero');
             linea = pedido.lineas[lineaId];
+			alert(linea.bonif1);
         }
 
+		
         var model = { linea: linea, articulo: articulo, decimales: decimales };
         $("#headerEditaLineaPedido").html($.templates("#headerEditaLineaPedidoTmpl").render(linea)).trigger('create');
         $("#editaLineaPedidoContent").html($.templates("#editaLineaPedidoContentTmpl").render(model)).trigger('create');
@@ -286,7 +289,7 @@ preventamobile.ui.editaLineaPedido = function () {
 		linea.bonif1 = bonif1;
 		//alert(linea.bonif1);
 		
-		
+	return linea;
 		
 		
 		

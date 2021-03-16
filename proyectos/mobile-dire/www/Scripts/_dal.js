@@ -1086,6 +1086,8 @@ preventamobile.dal = function () {
             pedido.costoProveedor = {};
 			pedido.totalNeto = 0;
 			
+			var porcePerce = pedido.porcePerce ? parseFloat(pedido.porcePerce,10) :0;
+			
 			var SubPerce;
 			
 			SubPerce = 0;
@@ -1102,6 +1104,7 @@ preventamobile.dal = function () {
                     var bonif1 = linea.bonif1 ? parseInt(linea.bonif1, 10) : 0;
                     var bonif2 = linea.bonif2 ? parseInt(linea.bonif2, 10) : 0;
                     var peso = linea.peso ? parseFloat(linea.peso) : 1;
+					
 					var kilos = 1;
                     if (peso == 0) { peso = 1 };
                     var sikilos = linea.sikilos;
@@ -1155,9 +1158,9 @@ preventamobile.dal = function () {
 			pedido.bonifpedido = importeBonif1;
 			
 			console.log('pedido.totalNeto ' + pedido.totalNeto);
-			console.log('perce: ' + pedido.porcePerce);
+			console.log('perce: ' + parseFloat(porcePerce));
 			//Almacenamos el total de la percepcion
-			pedido.perceiibb = ((pedido.totalNeto * pedido.porcePerce) / 100).toFixed(3);
+			pedido.perceiibb = ((pedido.totalNeto * porcePerce) / 100).toFixed(3);
 			pedido.total += parseFloat(pedido.perceiibb);
 			
             $.each(pedido.costoProveedor,
@@ -1479,7 +1482,8 @@ preventamobile.dal = function () {
 				totalNeto: "",
 				perceiibb: "",
 				porcePerce: porcePerceCliente,
-				bonifpedido: ""
+				bonifpedido: "",
+				impreso: 0
             };
         };
 

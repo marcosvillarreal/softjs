@@ -84,7 +84,7 @@ preventamobile.ui.listaArticulosPedido = function () {
 		
 		$.each(lineasPedido, function (index, value) {
 			//articulo = preventamobile.dal().obtenerArticulo(value.idarticulo);
-			preventamobile.ui.editaLineaPedido().modificarBonifLinea(value,porcebonif,pedidoId);
+			value = preventamobile.ui.editaLineaPedido().modificarBonifLinea(value,porcebonif,pedidoId);
 			
 			//alert(value.bonif1);
 			//preventamobile.dal().eliminarPedidoLinea(pedidoId,value.lineaId);

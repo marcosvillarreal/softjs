@@ -79,6 +79,8 @@ $(document).on("pageinit", "#homePage", function () {
     $(document).on('pageshow', "#altaLineaPedidoPage", preventamobile.ui.altaLineaPedido().render);
 
     $(document).on("click", "#buscarButton", preventamobile.ui.altaLineaPedido().selectorBusqueda);
+	
+	$(document).on('pageshow', "#imprimirPedidoPage", preventamobile.ui.imprimirPedido().render);
 
     //$(document).on("blur", "#artbus", preventamobile.ui.altaLineaPedido().buscarPorCodigo);
 

@@ -34,16 +34,84 @@ preventamobile.ui.imprimirPedido = function () {
         else {
 			alert('armando');
             pedido = preventamobile.dal().obtenerPedido(pedidoId);
-            html ="<h2>Total: "+pedido.total+"</h2>"
-			html = html + "<div id='divpedido' data-role='fieldcontain' class='ui-hidden-accessible'><label id='xxcodigopedido'>" + "0" + "</label>" + "</div>";
             
+			pedido = preventamobile.dal().calcularTotal(pedido);
+			
+			var html
+			html = ""
+			
+			/*
+			html = html + "<div id='divpedido' data-role='fieldcontain' class='ui-hidden-accessible'><label id='xxcodigopedido'>" + "0" + "</label>" + "</div>";
+
             $.each(lineasPedido, function (index, value) {
                 articulo = preventamobile.dal().obtenerArticulo(value.idarticulo);
                 var totalLinea = preventamobile.dal().calcularLineaTotal(value);
                 html = html + "<li style='white-space:normal;' data-theme='a' ><a style='white-space:normal;'  href='#'  >" + articulo.numero + " " + articulo.nombre + "<span style='font-size:150%;' class='ui-li-count'>" + "<b>" + value.cantidad + "</b> = " +totalLinea+ "</span>" + "</a></li>";
             });
             html = html + "</ol></div>";
-
+			*/
+			html = html + "<table id='table_cabeza' class='display'><font></font>"
+			html = html + "		<thead><font></font> "
+			html = html + "			<tr><font></font>"
+			html = html + "				<th>Cliente</th><font></font>"
+			html = html + "				<th>"+ pedido.codigoCliente +"</th><font></font>"
+			html = html + "			</tr><font></font>"
+			html = html + "		</thead><font></font>"
+			html = html + "</table><font></font>"
+			
+			html = html + "<table id='table_cuerpo' class='display'><font></font>"
+			html = html + "		<thead><font></font> "
+			html = html + "			<tr><font></font>"
+			html = html + "				<th>Articulo</th><font></font>"
+			html = html + "				<th>Cantidad</th><font></font>"
+			html = html + "				<th>Kilos</th><font></font>"
+			html = html + "				<th>P.Unitario</th><font></font>"
+			html = html + "				<th>Total</th><font></font>"
+			html = html + "			</tr><font></font>"
+			html = html + "		</thead><font></font>"
+			html = html + "		<tbody><font></font>"
+			
+			$.each(lineasPedido, function (index, value) {
+                articulo = preventamobile.dal().obtenerArticulo(value.idarticulo);
+                var totalLinea = preventamobile.dal().calcularLineaTotal(value);
+               // html = html + "<li style='white-space:normal;' data-theme='a' ><a style='white-space:normal;'  href='#'  >" + articulo.numero + " " + articulo.nombre + "<span style='font-size:150%;' class='ui-li-count'>" + "<b>" + value.cantidad + "</b> = " +totalLinea+ "</span>" + "</a></li>";
+				html = html + "			<tr><font></font>"
+				html = html + "				<td>" + articulo.numero + " " + articulo.nombre + "</td><font></font>"
+				html = html + "				<td>" + value.cantidad + "</td><font></font>"
+				html = html + "				<td>" + value.kilos + "</td><font></font>"
+				html = html + "				<td>" + value.precio + "</td><font></font>"
+				html = html + "				<td>" + totalLinea + "</td><font></font>"
+				html = html + "			</tr><font></font>"
+            });
+			
+			html = html + "		</tbody><font></font>"
+			html = html + "</table><font></font>"
+			
+			html = html + "<table id='table_pie' class='display'><font></font>"
+			html = html + "		<tbody><font></font> "
+			html = html + "			<tr><font></font>"
+			html = html + "				<td>SubTotal</th><font></font>"
+			html = html + "				<td>"+ pedido.totalNeto +"</th><font></font>"
+			html = html + "			</tr><font></font>"
+			
+			html = html + "			<tr><font></font>"
+			html = html + "				<td>IVA</th><font></font>"
+			html = html + "				<td>"+ (pedido.total - pedido.totalNeto - pedido.perceiibb - pedido.bonifpedido) +"</th><font></font>"
+			html = html + "			</tr><font></font>"
+			
+			html = html + "			<tr><font></font>"
+			html = html + "				<td>Bonifiaciones</th><font></font>"
+			html = html + "				<td> -"+ pedido.bonifpedido +"</th><font></font>"
+			html = html + "			</tr><font></font>"
+			html = html + "			<tr><font></font>"
+			html = html + "				<td>Percepcion</th><font></font>"			
+			html = html + "				<td> "+ pedido.perceiibb +"</th><font></font>"
+			html = html + "			</tr><font></font>"
+			html = html + "		</tbody><font></font>"
+			html = html + "</table><font></font>"
+			
+			html = html + "<h2>Total: "+pedido.total+"</h2>"
+			
             $("#imprimirPedidoContent").html(html).trigger('create');
         };
 	};
