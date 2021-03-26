@@ -1,0 +1,11 @@
+{
+  "android": {
+    "release": {
+      "keystore": "..\\keystore\\intap.keystore",
+      "storePassword": "preventa11",
+      "alias": "intap",
+      "password": "preventa11",
+      "keystoreType": ""
+    }
+  }
+}
