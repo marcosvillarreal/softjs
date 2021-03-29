@@ -45,7 +45,7 @@ preventamobile.ui.editaLineaPedido = function () {
         } else {
 			//alert('recupero');
             linea = pedido.lineas[lineaId];
-			alert(linea.bonif1);
+			//alert(linea.bonif1);
         }
 
 		

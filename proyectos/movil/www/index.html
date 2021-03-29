@@ -239,8 +239,10 @@
                 <li><a href='#' data-icon='delete' onclick='preventamobile.ui.listaPedidos().borrarPedido("{{:indice}}");'>Borrar</a></li>
                 {{/if}}
                 <li><a href='#' data-icon='check' onclick='preventamobile.ui.listaPedidos().aplicarPedido(1);'>Guardar</a></li>
+				{{if impreso == 0}}
 				<li><a href='#' data-icon='print' onclick='preventamobile.ui.listaPedidos().aplicarPedido(4)'>Generar</a></li>
                 <li><a href='#' data-icon='grid' onclick='preventamobile.ui.listaPedidos().aplicarPedido(0);'>Artículos</a></li>
+				{{/if}}
                 <!--<li><a href='#' data-icon='grid'   onclick='preventamobile.ui.listaPedidos().aplicarPedido(2);' >Carga Rápida</a></li> -->
             </ul>
         </div>
@@ -278,9 +280,9 @@
 		<div data-role='fieldcontain'><label for='total'>Total Percibido:</label><input type="text" readonly="readonly" value='$ {{:perceiibb}}' name='perceiibb' id='perceiibb' /></div>
 		
 		<legend>PAGOS RECIBIDOS</legend>
-		<div data-role='fieldcontain'><label for='pagoEfectivo'>Efectivo:</label><input type="text" value='$ {{:pagoEfectivo}}' name='pagoEfectivo' id='pagoEfectivo' /></div>
-		<div data-role='fieldcontain'><label for='pagoCheque'>Cheque:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoCheque' id='pagoCheque' /></div>
-		<div data-role='fieldcontain'><label for='pagoTransferencia'>Transferencia:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoTransferencia' id='pagoTransferencia' /></div>
+		<div data-role='fieldcontain'><label for='pagoEfectivo'>Efectivo:</label><input type="text" value='$ {{:pagoEfectivo}}' name='pagoEfectivo' id='pagoEfectivo' {{if impreso == 1}} readonly="readonly" {{/if}}/></div>
+		<div data-role='fieldcontain'><label for='pagoCheque'>Cheque:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoCheque' id='pagoCheque' {{if impreso == 1}} readonly="readonly" {{/if}} /></div>
+		<div data-role='fieldcontain'><label for='pagoTransferencia'>Transferencia:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoTransferencia' id='pagoTransferencia' {{if impreso == 1}} readonly="readonly" {{/if}} /></div>
 		
     </script>
     <script id="headerEditaLineaPedidoTmpl" type="text/x-jsrender">
@@ -639,7 +641,6 @@
                 <ul id='imppednav'>
                     <li><a href='#homePage' data-icon='home' data-iconpos='notext'>Inicio</a></li>
                     <li><a href='#editaPedidosPage' data-icon='back'>Atrás</a></li>
-                    <li><a href='#' data-icon='plus' onclick='preventamobile.ui.listaPedidos().imprimirPedido()' >Imprimir</a></li>
                 </ul>
             </div>
         </div>

@@ -1119,12 +1119,12 @@ preventamobile.dal = function () {
 					}
                     var subTotal = cantidad * precio * kilos;
                     var subTotalCosto = cantidad * costo * kilos;
-                    var importeBonif1 = (subTotal * bonif1) / 100;
-                    var importeBonif2 = ((subTotal - importeBonif1) * bonif2) / 100;
+                    var importeBonif1 = ((subTotal * bonif1) / 100).toFixed(2);
+                    var importeBonif2 = (((subTotal - importeBonif1) * bonif2) / 100).toFixed(2);
 					// Totales del neto
 					var subTotalNeto = cantidad * neto * kilos;
-					var netoBonif1	 = (subTotalNeto * bonif1) / 100;
-					var netoBonif2	 = ((subTotalNeto - netoBonif1) * bonif2) / 100;
+					var netoBonif1	 = ((subTotalNeto * bonif1) / 100).toFixed(2);
+					var netoBonif2	 = (((subTotalNeto - netoBonif1) * bonif2) / 100).toFixed(2);
 					
                     var costoProveedor;
                     if (!pedido.costoProveedor[linea.idproveedor]) {
