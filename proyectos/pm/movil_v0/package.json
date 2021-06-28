@@ -31,7 +31,7 @@
         }
     },
     "devDependencies": {
-        "cordova-android": "^3.7.2",
+        "cordova-android": "^6.0.0",
         "cordova-plugin-appminimize": "^1.0.1",
         "qunitjs": "^2.4.0"
     }
