@@ -23,7 +23,7 @@ preventamobile.ui.editaLineaPedido = function () {
 
         // veo si es una linea nueva
         if (!linea) {
-			alert('EditoLinea');
+			//alert('EditoLinea');
             linea = preventamobile.dal().factory().lineaPedido();
             linea.idarticulo = idarticulo;
             linea.codigoArticulo = articulo.numero;
@@ -126,8 +126,10 @@ preventamobile.ui.editaLineaPedido = function () {
         linea.precio = articulo.preventa1;
         linea.costo = articulo.costo;
 		linea.neto= articulo.neto;
-		linea.porcemerma = articulo.porcemerma;
+		linea.porceMerma = articulo.porcemerma;
 		linea.boniftope = articulo.bonif1;
+		linea.estopebonif = articulo.tipobonif;
+		
         // obtener valores de controles y actualizar info de la linea
         var uniVenta;
         var signo;
@@ -138,7 +140,7 @@ preventamobile.ui.editaLineaPedido = function () {
         if (edicion) {
             if ($('#editaLineaSliderCambioVenta').val() == "on") { signo = -1; } else { signo = 1; };
             linea.cantidad = Math.abs($('#editaLineaCantidad').val()) * signo;
-            linea.bonif1 = $('#editaLineaBonif1').val();
+            linea.bonif1 =  Math.abs($('#editaLineaBonif1').val());
             if ($('#editaLineaSliderUniVenta').val() == "on") { uniVenta = "1"; } else { uniVenta = "0"; };
             linea.univenta = uniVenta;
             linea.unibulto = $('#editaLineaUnibulto').val();
@@ -148,13 +150,26 @@ preventamobile.ui.editaLineaPedido = function () {
         } else {
             if ($('#sliderVenta').val() == "on") { signo = -1; } else { signo = 1; };
             linea.cantidad = Math.abs($('#cantidad').val()) * signo;
-            linea.bonif1 = $('#bonif1').val();
+            linea.bonif1 = Math.abs($('#bonif1').val());
             if ($('#sliderUniVenta').val() == "on") { uniVenta = "1"; } else { uniVenta = "0"; };
             linea.univenta = uniVenta;
             linea.unibulto = $('#articuloUnidadesPorBulto').val();
 			linea.kilos		= Math.abs($('#kilos').val()) * signo;
         }
         
+		//0=Nada,1=Se valida tope,2=se autocompleta
+		console.log('Bonif ', linea.bonif1 );
+		if (linea.estopebonif == '1'){
+			var maxbonif = linea.boniftope;
+			if ( linea.bonif1 > maxbonif) {
+				alert('Bonificacion digitada, supera la establecida.');
+				console.log('Bonifiacion Max ',maxbonif);
+				$('#bonif1').val('');
+				return false
+			}else{
+			}
+		}
+		
         if (linea.cantidad == 0) {
             alert('Debe indicar una cantidad!');
             return false;
@@ -170,7 +185,7 @@ preventamobile.ui.editaLineaPedido = function () {
 			
 			//Validamos que los kilos esten en el valor estimado
 			var pesoEstimado = peso * cantidad;
-			var porceMerma = linea.porcemerma;
+			var porceMerma = linea.porceMerma;
 			if ((pesoEstimado * (1 - porceMerma /100) <= kilos ) && (kilos <= pesoEstimado * (1 + porceMerma /100)) ){
 			}else{
 				alert('Los kilos son inferiores / superios al estimado de ' + pesoEstimado * (1 - porceMerma / 100)+' '+ pesoEstimado * (1 + porceMerma / 100));
@@ -193,7 +208,7 @@ preventamobile.ui.editaLineaPedido = function () {
         if ($('#sliderVenta').val() == "on") { signo = -1; } else { signo = 1; };
 
         var cantidad = Math.abs($('#cantidad').val()) * signo;
-        var bonif1 = $('#bonif1').val();
+        var bonif1 = Math.abs($('#bonif1').val());
         var precio = $('#articuloPrecioUnitario').val();
 		var neto	= $('#articuloNetoUnitario').val();
 		var kilos	= Math.abs($('#kilos').val())*signo;
@@ -202,24 +217,36 @@ preventamobile.ui.editaLineaPedido = function () {
 		
 			
 		//0=Nada,1=Se valida tope,2=se autocompleta
-		//alert($('#bonif1').val() );
+		console.log('Bonif ',bonif1 );
 		if ($('#articuloTipoBonif').val() == '1'){
-			if (bonif1 > $('#articuloMaxBonif').val()) {
+			var maxbonif = Math.abs($('#articuloMaxBonif').val());
+			if (bonif1 > maxbonif) {
 				alert('Bonificacion digitada, supera la establecida.');
+				console.log('Bonifiacion Max ',maxbonif);
 				$('#bonif1').val('');
 				return false
 			}else{
 				//alert('bonif1' + bonif1);
 				//alert('#articuloMaxBonif ' + $('#articuloMaxBonif').val());
-				
 			}
+		}else{
+			$('#bonif1').val(bonif1);
 		}
+		
 		//Si no se vende por kilos, usamos calculamos venta si existe en bultos
 		if ($('#articuloSiKilos').val() == "N") {
 			if ($('#sliderUniVenta').val() == "on") {
 			    cantidad = cantidad * $('#articuloUnidadesPorBulto').val();
 			}
-			peso = 1;
+			//peso = 1;
+
+            if (isNaN(peso) == true) { peso = 1 }
+            else {                
+                peso = Math.round(peso * 100) / 100
+                if (peso == 0) { peso = 1 };
+            }
+			//console.log('Peso ',peso)
+		
 		}else{ 			
 			//Validamos que los kilos esten en el valor estimado
 			var pesoEstimado = peso * cantidad;
@@ -272,22 +299,29 @@ preventamobile.ui.editaLineaPedido = function () {
 		
     };
 	
-	 var modificarBonifLinea = function (linea,bonifgral) {
+	 var modificarBonifLinea = function (linea,bonifgral,pedidoId) {
 		//Usamos la funcion para recalcular la linea del pedido
 		//El cambio de bonificacion general
 		
-        var bonif1 = linea.bonif1 ? parseInt(linea.bonif1, 10) : 0;
+        var bonif1 = linea.bonif1 ? parseFloat(linea.bonif1, 10) : 0;
 		
 		//La bonificacion general, debe cargarse, pero validar que no supere el maximo.
 		//alert(bonifgral);		
+		//console.log('bonifgral ' + bonifgral);
+		//console.log('boniftope ' + linea.boniftope);
 		if (bonifgral > linea.boniftope) {
 			
-			bonif1 = linea.boniftope ? parseInt(linea.boniftope, 10) : 0;
+			bonif1 = linea.boniftope ? parseFloat(linea.boniftope, 10) : 0;
 		}else{
 			bonif1 = bonifgral;
 		}
-		linea.bonif1 = bonif1;
+		//console.log('Articulo ' + linea.idarticulo)
+		//console.log('bonif '+bonif1);
+		linea.bonif1 = parseFloat(bonif1);
+		
+		//console.log(linea.bonif1);
 		//alert(linea.bonif1);
+		 preventamobile.dal().guardarPedidoLinea(pedidoId, linea);
 		
 	return linea;
 		

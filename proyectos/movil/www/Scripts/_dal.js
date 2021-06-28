@@ -974,6 +974,7 @@ preventamobile.dal = function () {
         } else {
             var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
 			var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
+			console.log('Perce IIBB ',porcePerceCliente);
             pedido = preventamobile.dal().factory().pedido(codigoCliente, id, porcePerceCliente);
         }
 
@@ -1050,8 +1051,8 @@ preventamobile.dal = function () {
             var univenta = linea.univenta ? parseInt(linea.univenta, 10) : 0;
             var unibulto = linea.unibulto ? parseInt(linea.unibulto, 10) : 0;
             var precio = linea.precio ? parseFloat(linea.precio) : 0;
-            var bonif1 = linea.bonif1 ? parseInt(linea.bonif1, 10) : 0;
-            var bonif2 = linea.bonif2 ? parseInt(linea.bonif2, 10) : 0;
+            var bonif1 = linea.bonif1 ? parseFloat(linea.bonif1, 10) : 0;
+            var bonif2 = linea.bonif2 ? parseFloat(linea.bonif2, 10) : 0;
             var peso = linea.peso ? parseFloat(linea.peso) : 1;
 			var kilos = 0;
             if (peso == 0) { peso = 1 };
@@ -1060,17 +1061,21 @@ preventamobile.dal = function () {
 				if (univenta) {
 					cantidad = cantidad * unibulto;
 				};
-				kilos = 1;
+				kilos = peso;
 			}else{
 				kilos = linea.kilos ;
-				
+				cantidad = 1;
 			}
             
             var subTotal = cantidad * precio * kilos;
+			//console.log('SubTotal Linea',subTotal);
             var importeBonif1 = (subTotal * bonif1) / 100;
+			//console.log('Total Bonif',importeBonif1);
             var importeBonif2 = ((subTotal - importeBonif1) * bonif2) / 100;
             totalLinea = (subTotal - importeBonif1 - importeBonif2);
+			//console.log('Total Linea',totalLinea);
             totalLinea = parseInt((totalLinea + 0.005) * 100) / 100;
+			//totalLinea = parseFloat(totalLinea).toFixed(2);
 			
 					
         }
@@ -1085,12 +1090,22 @@ preventamobile.dal = function () {
             pedido.total = 0;
             pedido.costoProveedor = {};
 			pedido.totalNeto = 0;
+			pedido.bonifpedido = '';
+			
+			
 			
 			var porcePerce = pedido.porcePerce ? parseFloat(pedido.porcePerce,10) :0;
 			
-			var SubPerce;
+			if (pedido.remito != 0){
+				porcePerce = 0;	
+			}
 			
-			SubPerce = 0;
+			
+			var SubPerce,SubBonif;
+			
+			SubPerce,SubBonif = 0;
+			
+			//console.log('----------Calcular Total ------------')
             for (var lineaId in pedido.lineas) {
                 var linea = pedido.lineas[lineaId];
                 if (linea && linea.precio) {
@@ -1101,8 +1116,8 @@ preventamobile.dal = function () {
                     var precio = linea.precio ? parseFloat(linea.precio) : 0;
 					var neto = linea.neto ? parseFloat(linea.neto) : 0;
                     var costo = linea.costo ? parseFloat(linea.costo) : 0;
-                    var bonif1 = linea.bonif1 ? parseInt(linea.bonif1, 10) : 0;
-                    var bonif2 = linea.bonif2 ? parseInt(linea.bonif2, 10) : 0;
+                    var bonif1 = linea.bonif1 ? parseFloat(linea.bonif1, 10) : 0;
+                    var bonif2 = linea.bonif2 ? parseFloat(linea.bonif2, 10) : 0;
                     var peso = linea.peso ? parseFloat(linea.peso) : 1;
 					
 					var kilos = 1;
@@ -1112,19 +1127,25 @@ preventamobile.dal = function () {
 						if (univenta) {
 							cantidad = cantidad * unibulto;
 						};
+						kilos = peso;
 					}else{
 						kilos = linea.kilos ;
 						cantidad = 1;
 						
 					}
                     var subTotal = cantidad * precio * kilos;
+					//console.log('Subtotal ' + subTotal)
                     var subTotalCosto = cantidad * costo * kilos;
                     var importeBonif1 = ((subTotal * bonif1) / 100).toFixed(2);
+					//console.log('Total Bonif '+ importeBonif1)
                     var importeBonif2 = (((subTotal - importeBonif1) * bonif2) / 100).toFixed(2);
 					// Totales del neto
 					var subTotalNeto = cantidad * neto * kilos;
 					var netoBonif1	 = ((subTotalNeto * bonif1) / 100).toFixed(2);
 					var netoBonif2	 = (((subTotalNeto - netoBonif1) * bonif2) / 100).toFixed(2);
+					
+					SubBonif = (parseFloat(SubBonif) + parseFloat(importeBonif1));
+					//console.log('Total Bonif '+ SubBonif);
 					
                     var costoProveedor;
                     if (!pedido.costoProveedor[linea.idproveedor]) {
@@ -1144,6 +1165,7 @@ preventamobile.dal = function () {
 					
                     pedido.total += (subTotal - importeBonif1 - importeBonif2);
                     pedido.total = parseInt((pedido.total + 0.005) * 100) / 100;
+					console.log('Total Pedido ' + pedido.total)
 					//Total neto
 					pedido.totalNeto += (subTotalNeto - netoBonif1 - netoBonif2);
 					pedido.totalNeto = parseInt((pedido.totalNeto + 0.005) *100) / 100;
@@ -1151,17 +1173,22 @@ preventamobile.dal = function () {
                     pedido.costoProveedor[linea.idproveedor] = costoProveedor;
 					
 					
+					
                 }
 
             }
+			//Bonificaciones
+			pedido.bonifpedido = SubBonif;
+			pedido.bonifpedido = parseFloat(pedido.bonifpedido).toFixed(2);
 			
-			pedido.bonifpedido = importeBonif1;
+					
+			//pedido.bonifpedido = importeBonif1;
 			
-			console.log('pedido.totalNeto ' + pedido.totalNeto);
-			console.log('perce: ' + parseFloat(porcePerce));
+			//console.log('pedido.totalNeto ' + pedido.totalNeto);
+			//console.log('perce: ' + parseFloat(porcePerce));
 			//Almacenamos el total de la percepcion
 			pedido.perceiibb = ((pedido.totalNeto * porcePerce) / 100).toFixed(3);
-			pedido.total += parseFloat(pedido.perceiibb);
+			pedido.total += parseInt(pedido.perceiibb);
 			
             $.each(pedido.costoProveedor,
                 function (index, value) {
@@ -1452,7 +1479,9 @@ preventamobile.dal = function () {
             lineaVariedad;
 
         pedido = function (codigoCliente, pedidoId ,porcePerceCliente) {
-
+			
+			console.log('Perce IIBB ',porcePerceCliente);
+			
             var f = new Date();
             var dia = moment(f).format('DD/MM/YYYY');
             var hora = preventamobile.util().strZ(f.getHours()) + ":" + preventamobile.util().strZ(f.getMinutes()) + ":" + preventamobile.util().strZ(f.getSeconds());

@@ -43,7 +43,7 @@ preventamobile.ui.listaArticulosPedido = function () {
                 articulo = preventamobile.dal().obtenerArticulo(value.idarticulo);
                 var totalLinea = preventamobile.dal().calcularLineaTotal(value);
                 html = html + "<li style='white-space:normal;' data-theme='a' ><a style='white-space:normal;'  href='#' onclick='preventamobile.ui.listaArticulosPedido().lineaSeleccionada(" +
-              '"' + value.idarticulo + '"' + ',"' + value.lineaId + '"' + ");' >" + articulo.numero + " " + articulo.nombre + "<span style='font-size:150%;' class='ui-li-count'>" + "<b>" + value.cantidad + "</b> = " +totalLinea+ "</span>" + "</a></li>";
+              '"' + value.idarticulo + '"' + ',"' + value.lineaId + '"' + ");' >" + articulo.numero + " " + articulo.nombre + " (" + value.bonif1 + "%)<span style='font-size:150%;' class='ui-li-count'>" + "<b>" + value.cantidad + "</b> = " +totalLinea+ "</span>" + "</a></li>";
             });
             html = html + "</ol></div>";
 
@@ -77,7 +77,7 @@ preventamobile.ui.listaArticulosPedido = function () {
         lineasPedido = preventamobile.dal().listarPedidoLineas(pedidoId);
         
         
-		pedido = preventamobile.dal().obtenerPedido(pedidoId);
+		//pedido = preventamobile.dal().obtenerPedido(pedidoId);
 		
 		porcebonif = ($('#bonifporcepedido').val());
 		//alert(porcebonif);
@@ -88,10 +88,12 @@ preventamobile.ui.listaArticulosPedido = function () {
 			
 			//alert(value.bonif1);
 			//preventamobile.dal().eliminarPedidoLinea(pedidoId,value.lineaId);
-			preventamobile.dal().guardarPedidoLinea(pedidoId, value);
+			//preventamobile.dal().guardarPedidoLinea(pedidoId, value);
 		});
 		
 		//preventamobile.dal().guardarPedido(pedido);
+		pedido = preventamobile.dal().obtenerPedido(pedidoId);
+		//console.log('BonifGral - CalcularTotal');
         pedido.total = preventamobile.dal().calcularTotal(pedido);
 		
 	};

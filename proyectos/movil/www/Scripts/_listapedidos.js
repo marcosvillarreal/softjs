@@ -115,8 +115,9 @@ preventamobile.ui.listaPedidos = function () {
 	
 	obtenerPerceClienteSeleccionado = function (id) {
         var cliente = preventamobile.dal().obtenerCliente(id);
-        if (cliente && cliente.porceperce) {
-            return cliente.porceperce;
+		console.log('Cliente perce iibb ',cliente.porperce);
+        if (cliente && cliente.porperce) {
+            return cliente.porperce;
         }
         return '';
     }
@@ -383,7 +384,7 @@ preventamobile.ui.listaPedidos = function () {
     imprimirPedido = function () {
 		var pedidoId = $('#pedidoId').text();
         var pedido = preventamobile.dal().obtenerPedido(pedidoId);
-		alert(pedidoId)
+		//alert(pedidoId)
 
     };
 
