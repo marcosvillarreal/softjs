@@ -239,13 +239,15 @@ preventamobile.ui.editaLineaPedido = function () {
 			    cantidad = cantidad * $('#articuloUnidadesPorBulto').val();
 			}
 			//peso = 1;
-
+			
+			
             if (isNaN(peso) == true) { peso = 1 }
             else {                
                 peso = Math.round(peso * 100) / 100
                 if (peso == 0) { peso = 1 };
             }
-			//console.log('Peso ',peso)
+			
+			console.log('Peso ',peso);
 		
 		}else{ 			
 			//Validamos que los kilos esten en el valor estimado

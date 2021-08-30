@@ -256,8 +256,8 @@
             <label for='radio-choice-1'>Normal</label>
             <input type='radio' name='radio-choice-1' id='radio-choice-2' value='2' {{if tipoDePedido == 2}} checked="checked" {{/if}} data-type='horizontal' data-inline='true' />
             <label for='radio-choice-2'>Diferido</label>			
-			<input type='radio' name='radio-choice-1' id='radio-choice-3' value='3' {{if tipoDePedido == 3}} checked="checked" {{/if}} data-type='horizontal' data-inline='true' />
-            <label for='radio-choice-3'>Credito</label>
+			<input type='radio' name='radio-choice-1' id='radio-choice-5' value='5' {{if tipoDePedido == 5}} checked="checked" {{/if}} data-type='horizontal' data-inline='true' />
+            <label for='radio-choice-5'>Credito</label>
 			{{else}}
 				{{if tipoDePedido == 1}}
 				<label>Normal</label>
@@ -265,7 +265,7 @@
 				{{if tipoDePedido == 2}}
 				<label>Diferido</label>
 				{{/if}}
-				{{if tipoDePedido == 3}}
+				{{if tipoDePedido == 5}}
 				<label>Credito</label>
 				{{/if}}
 			{{/if}}
@@ -282,13 +282,13 @@
 				<input type='radio' name='radio-remito' id='radio-remito-3' value='2' {{if remito == 2}} checked="checked" {{/if}} data-type='horizontal' data-inline='true' />
 				<label for='radio-remito-3'>Cons. Final</label>
 			{{else}}
-				{{if remito == 1}}
+				{{if remito == 0}}
 				<label>Normal</label>
 				{{/if}}
-				{{if remito == 2}}
+				{{if remito == 1}}
 				<label>Remito</label>
 				{{/if}}
-				{{if remito == 3}}
+				{{if remito == 2}}
 				<label>Cons. Final</label>
 				{{/if}}
 			{{/if}}
@@ -461,7 +461,7 @@
                     </a>
                 </li>
             </ul>
-            <p id="geolocation">Versión 6.1.0.6</p>
+            <p id="geolocation">Versión 6.1.0.20</p>
         </div>
     </div>
     <!--#endregion-->

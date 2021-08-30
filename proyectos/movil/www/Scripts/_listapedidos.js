@@ -243,7 +243,10 @@ preventamobile.ui.listaPedidos = function () {
         establecerIdPedidoSeleccionado(codigo);
         $.mobile.changePage('#editaPedidosPage');
     };
-
+	function replaceAll(texto,original,nuevo){
+		var ntexto=texto.split(original).join(nuevo);
+		return ntexto; 		
+    };
     /// Este metodo para pedidos nuevos genera un nuevo pedido desde la factory, ya que hasta que no es guardado por primera vez
     ///     no se encuentra realmente en el localStorage
     aplicarPedido = function (redirigir) {
@@ -252,17 +255,24 @@ preventamobile.ui.listaPedidos = function () {
         // redirigir>2, no redirige
         // redirigir=1, esta aplicando desde la pagina de detalle
         // redirigir=0, guardo el pedido automaticamente cuando paso a articulos
-
+        
         var pedidoId = $('#pedidoId').text();
         var pedido = preventamobile.dal().obtenerPedido(pedidoId);
         var tipoDePedido, tP;
+		//alert(JSON.stringify(pedido));
+		
+		console.log('Estado impreso',pedido.impreso);
+		if (pedido.impreso == 0){
+			tP = $('input[name="radio-choice-1"]:checked').val();
 
-        tP = $('input[name="radio-choice-1"]:checked').val();
-
-        tipoDePedido = tP;
-
-        var remito = $('input[name="radio-remito"]:checked').val();
-
+			tipoDePedido = tP;
+			console.log(tipoDePedido);
+			var remito = $('input[name="radio-remito"]:checked').val();
+			console.log(remito);
+		}else{
+			tipoDePedido = pedido.tipoDePedido;
+			remito = pedido.remito;
+		}
         var vales;
         if ($('#sliderVales').val() == "on") {
             vales = "1";
@@ -278,15 +288,16 @@ preventamobile.ui.listaPedidos = function () {
         //        }
 
         var observaciones = $('#textObserva').val();
-        // Utiliza momentjs para formatear la fecha que se va a guardar en el objeto con formato dd/mm/yyyy
+        // Utiliza momentjs para formatear la fecha que se va a guardar en el objeto con formato dd/mm/yyyy		
         var fechaEntrega = moment($('#date2').val()).format("DD/MM/YYYY");
-		
 		// Valores pagados
-		var pagoEfectivo = $('#pagoEfectivo').val().replaceAll('$','');
+		//var pagoEfectivo = $('#pagoEfectivo').val().replaceAll('$','');
+		var pagoEfectivo = replaceAll( $('#pagoEfectivo').val() , '$','');		
 		//pagoEfectivo = pagoEfectivo.replaceAll('$','');
-		var pagoCheque = $('#pagoCheque').val().replaceAll('$','');
-		var pagoTransferencia = $('#pagoTransferencia').val().replaceAll('$','');
-		
+		var pagoCheque = replaceAll( $('#pagoCheque').val(),'$','');
+		//var pagoCheque = $('#pagoCheque').val().replaceAll('$','');		
+		//var pagoTransferencia = $('#pagoTransferencia').val().replaceAll('$','');
+		var pagoTransferencia = replaceAll( $('#pagoTransferencia').val() ,'$','');		
         pedido.tipoDePedido = tipoDePedido;
         pedido.vales = vales;
         pedido.remito = remito;
@@ -296,7 +307,8 @@ preventamobile.ui.listaPedidos = function () {
 		pedido.pagoEfectivo = pagoEfectivo.trim();
 		pedido.pagoCheque	= pagoCheque.trim();
 		pedido.pagoTransferencia = pagoTransferencia.trim();
-
+		
+		//alert(JSON.stringify(pedido));
         preventamobile.dal().guardarPedido(pedido);
 
         // Cambio el tema x el de venta

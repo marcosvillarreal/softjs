@@ -35,13 +35,13 @@ preventamobile.ui.imprimirPedido = function () {
         //else {
 			
             pedido = preventamobile.dal().obtenerPedido(pedidoId);
-            //alert(pedido.impreso);
+            //alert(JSON.stringify(pedido));
 			pedido = preventamobile.dal().calcularTotal(pedido);
 			/*if (pedido.impreso == 1){
 				alert('Pedido ya impreso');
 				//return 
 			}else{*/
-				pedido.impreso = 1;
+				
 				
 				var totalPedido;
 				totalPedido = pedido.total;
@@ -53,8 +53,13 @@ preventamobile.ui.imprimirPedido = function () {
 				pedido.chksum = totalPedido;
 				//console.log('chksum ' + pedido.chksum);
 				
+				if( pedido.impreso == 0){
+					pedido.impreso = 1;
+					preventamobile.dal().guardarPedido(pedido);
 				
-				pedidoId = preventamobile.dal().guardarPedido(pedido);
+					//alert(JSON.stringify(pedido));
+				
+				}
 			//}
 			
 			
@@ -90,9 +95,21 @@ preventamobile.ui.imprimirPedido = function () {
 			html = html + "</table><font></font>"
 			*/
 			html = html + "<h3> Fecha "+pedido.fecha
-			if (pedido.tipoDePedido == '3'){
-				html = html + " CREDITO"
+			
+			var _tipoDePedido = pedido.tipoDePedido
+			var _remito = pedido.remito
+			
+			if (_tipoDePedido == '5'){
+				html = html + " CREDITO "
 			}
+			if (_remito == '1'){
+				html = html + " ## "
+			}
+			if (_remito == '2'){
+				html = html + " CF "
+			}
+			
+			
 			html = html + "</h3>"
 			html = html + "<h3> Cliente "+pedido.codigoCliente + "</h3>"
 			html = html + "<h3>"+ cliente.nombre+"</h3>"
@@ -172,7 +189,7 @@ preventamobile.ui.imprimirPedido = function () {
 				html = html + "				<td> -"+ pedido.bonifpedido +"</th><font></font>"
 				html = html + "			</tr><font></font>"
 				
-				if (pedido.remito == '0'){
+				if (_remito == '0'){
 					html = html + "			<tr><font></font>"
 					html = html + "				<td>Percepcion</th><font></font>"			
 					html = html + "				<td> "+ pedido.perceiibb +"</th><font></font>"

@@ -1446,7 +1446,9 @@ preventamobile.dal = function () {
         return [{ "Id": "1", "Descripcion": "Normal", "Codigo": "1" },
         { "Id": "2", "Descripcion": "Diferido", "Codigo": "2" },
         { "Id": "3", "Descripcion": "Anterior", "Codigo": "3" },
-        { "Id": "4", "Descripcion": "No Encontrado", "Codigo": "4" }];
+        { "Id": "4", "Descripcion": "No Encontrado", "Codigo": "4" },
+		{ "Id": "5", "Descripcion": "Credito", "Codigo": "5" }
+		];
     };
 
     syncTipoPedido = function () {
@@ -1460,6 +1462,7 @@ preventamobile.dal = function () {
     };
 
     obtenerTipoPedido = function (codigo) {
+		console.log("Tipo de Pedido -" + codigo);
         var tipoDePedido = localStorage.getItem("TipoPedido - " + codigo);
         if (tipoDePedido) {
             return JSON.parse(tipoDePedido);
