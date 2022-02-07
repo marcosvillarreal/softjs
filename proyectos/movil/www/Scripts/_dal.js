@@ -25,7 +25,8 @@ preventamobile.dal = function () {
         eliminarClientes,
         marcarClienteParaSincronizar,
         obtenerDescripcionIva,
-
+		actualizarClientesEstados,
+		
         getUrlServer,
         setUrlServer,
 
@@ -363,7 +364,9 @@ preventamobile.dal = function () {
                             guardarClientesEnStorage(parsedResponse);
 
                             preventamobile.util().log("Fin syncFull");
-
+							
+							actualizarClientesEstados();
+							
                         } catch (exception) {
 
                             preventamobile.util().log("Error al obtener datos : " + exception);
@@ -413,11 +416,16 @@ preventamobile.dal = function () {
                         var data = JSON.parse(dataClientes);
 
                         if (data && data.clientes && data.fueraRuta) {
+							//alert('Entrando a actualiza');
                             guardarClientesEnStorage(data);
                         }
-
-                        preventamobile.util().log("Fin syncClientes");
-
+						
+						
+						
+                        preventamobile.util().log("Fin syncClientes......");
+						
+						//2022-01-12 Tratamos de volver a marcar s los clientes si hubo una sync de clientes antes de sync de pedidos
+						actualizarClientesEstados();
 
                     } catch (exception) {
 
@@ -480,7 +488,38 @@ preventamobile.dal = function () {
         return false;
     };
 	
-	
+	actualizarClientesEstados = function () {
+		
+		
+		
+		var empresa = getEmpresa();
+
+		var pedidos = listarPedidos();
+
+		preventamobile.util().log('Actualizando Clientes')
+		
+		if ((pedidos && pedidos.length && pedidos.length > 0)) {
+			$.each(pedidos, function (index, value) {
+				
+				//El servidor no marca el pedido en la app como sync
+				/*
+				preventamobile.util().log(value.pedidoId)
+				
+				var sincronizar = true ; 
+				if (value.pedidoID != ''){ 
+					sincronizar = false;
+				}
+				marcarClienteParaSincronizar(value.codigoCliente,sincronizar);
+				*/
+				establecerTienePedido(value.codigoCliente, true);
+			
+
+			});
+		}
+		
+		
+	};			
+		
     obtenerCuentaCorriente = function (cliente) {
 
         if (!cliente  || !cliente.cuentaCorriente) {
@@ -1515,7 +1554,8 @@ preventamobile.dal = function () {
 				perceiibb: "",
 				porcePerce: porcePerceCliente,
 				bonifpedido: "",
-				impreso: 0
+				impreso: 0,
+				siBonificar: true
             };
         };
 
@@ -1660,7 +1700,8 @@ preventamobile.dal = function () {
         guardarCuentaCorrienteEnStorage: guardarCuentaCorrienteEnStorage,
         removerClienteFueraRutaEnStorage: removerClienteFueraRutaEnStorage,
         marcarClienteParaSincronizar: marcarClienteParaSincronizar,
-
+		actualizarClientesEstados: actualizarClientesEstados,
+		
         getUrlServer: getUrlServer,
         setUrlServer: setUrlServer,
 

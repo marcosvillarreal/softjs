@@ -138,6 +138,7 @@ preventamobile.ui.sync = function () {
             preventamobile.util().showDialog(mensaje, function () { $.mobile.changePage("#homePage"); });
         } else {
             preventamobile.util().showDialog("<h1>Error al hacer el sync</h1>" + error);
+			$("#homePageVendedor").text("NO SE PUDO CARGAR EL VENDEDOR");
         }
 
     };

@@ -26,11 +26,13 @@
       "cordova-plugin-whitelist": {},
       "cordova-plugin-ionic-webview": {},
       "cordova-pdf-generator": {},
-      "phonegap-plugin-old-http-support-android": {}
+      "phonegap-plugin-old-http-support-android": {},
+      "cordova-plugin-file": {}
     }
   },
   "devDependencies": {
-    "qunitjs": "^2.4.0",
-    "phonegap-plugin-old-http-support-android": "1.0"
+    "cordova-plugin-file": "^6.0.2",
+    "phonegap-plugin-old-http-support-android": "1.0",
+    "qunitjs": "^2.4.0"
   }
 }

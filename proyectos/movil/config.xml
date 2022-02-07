@@ -37,4 +37,6 @@
     <plugin name="cordova-plugin-fullscreen" spec="1.1.0" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
 	<plugin name="phonegap-plugin-old-http-support-android" spec="1.0" />
+	<preference name="AndroidPersistentFileLocation" value="Compatibility" />
+	<preference name="AndroidExtraFilesystems" value="files,cache, sdcard, cache-external, files-external" />
 </widget>
