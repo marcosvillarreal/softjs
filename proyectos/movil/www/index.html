@@ -56,6 +56,45 @@
         <div id="cuentaCorrienteCliente"></div>
         <div id="pedidoAnteriorCliente"></div>
     </script>
+	<script id="clienteNuevoHeaderTmpl" type="text/x-jsrender">
+        <div data-role='navbar'>
+            <ul>
+                <li><a href='#homePage' data-icon='home' data-iconpos='notext'>Inicio</a></li>
+                <li><a href='#clientesPage' data-icon='back' onclick="preventamobile.dal().borrarNuevoCliente();">Atrás</a></li>
+				<li><a href='' data-icon='saveFile' onclick='preventamobile.ui.cliente().almacenarClienteNuevo(cliente)'>Guardar</a></li>
+            </ul>
+        </div>
+    </script>
+	<script id="clienteNuevoTmpl" type="text/x-jsrender">
+		<div data-role='fieldcontain'>
+			<label for='nombre'>Razón Social::</label>
+			<input type="text" value='{{:nombre}}' name='nombre' id='nombre'/>
+		</div>
+		<div data-role='fieldcontain'>
+			<label for='direccion'>Direcciónes::</label>
+			<input type="text" value='{{:direccion}}' name='direccion' id='direccion'/>
+		</div>
+		<div data-role='fieldcontain'>
+			<label for='telefono'>Telefono::</label>
+			<input type="text" value='{{:telefono}}' name='telefono' id='telefono'/>
+		</div>
+		<div data-role='fieldcontain'>
+			<label for='cuit'>CUIT::</label>
+			<input type="text" value='{{:cuit}}' name='cuit' id='cuit'/>
+		</div>
+		<!--
+		{{if categorias && categorias.length>0}}
+		<div>
+			<ul data-role="listview">
+				{{for categorias}}
+				<li>{{:nombre}}</li>
+				{{/for}}
+			</ul>
+		</div>
+		{{/if}}   
+		-->	
+    </script>
+	
     <script id="pedidoAnteriorTmpl" type="text/x-jsrender">
         <br />
         <div class="ui-corner-all custom-corners">
@@ -143,6 +182,8 @@
             {{/for}}
         </ul>
     </script>
+
+	
     <!-- #endregion -->
     <!-- #region Templates Precios -->
     <script id="precioListaTmpl2" type="text/x-jsrender">
@@ -461,7 +502,7 @@
                     </a>
                 </li>
             </ul>
-            <p id="geolocation">Versión 6.1.0.22</p>
+            <p id="geolocation">Versión 6.1.0.27</p>
         </div>
     </div>
     <!--#endregion-->
@@ -713,7 +754,9 @@
         <div data-theme="a" data-role="header">
             <h1>Ruta</h1>
             <a href="#homePage" data-icon="home">Inicio</a>
+			<a href="#clienteNuevoPage" data-icon="add" id="altaClienteButton">Nuevo</a>
             <a href="#clientesFueraRutaPage" data-icon="add">Fuera de Ruta</a>
+			
         </div>
         <div data-theme="a" data-role="content" id="clientesContent">
         </div>
@@ -723,10 +766,19 @@
         <div data-theme="a" data-role="header">
             <h1>Seleccionar Cliente Fuera de Ruta</h1>
             <a href="#homePage" data-icon="home">Inicio</a>
+			<a href="#clientesPage" data-icon="back">Atras</a>
         </div>
         <div data-theme="a" data-role="content" id="clientesFueraRutaContent">
         </div>
     </div>
+	<!-- Pagina Cliente Nuevo -->
+    <div data-theme="a" data-role="page" id="clienteNuevoPage" data-title="Datos Cliente Nuevo">
+        <div data-theme="a" data-role="header" id="headerClienteNuevoDetalle">
+        </div>
+        <div data-theme="a" data-role="content" id="detalleclienteNuevoContent">
+        </div>
+    </div>
+	
     <!--#endregion-->
     <!--#region Articulos -->
     <!-- Pagina Precios Detalle -->
@@ -922,6 +974,16 @@
                     </p>
                 </a></li>
                 -->
+				<li style='white-space: normal'>
+                    <a href="#" style='white-space: normal' onclick="preventamobile.ui.sync().tipoSync(4);">
+                        <img src="Content/images/download.png" style="height: 128px; width: 128px"
+                             alt="info" />
+                        <h3>Sync Pedidos Uno a Uno</h3>
+                        <p>
+                            Descarga en el servidor los pedidos uno a uno
+                        </p>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

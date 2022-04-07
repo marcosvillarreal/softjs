@@ -68,9 +68,12 @@ preventamobile.ui.altaLineaPedido = function () {
     }
 
     buscar = function (texto) {
-
+		var pedidoId = preventamobile.ui.listaPedidos().obtenerIdPedidoSeleccionado();
+		var pedido = preventamobile.dal().obtenerPedido(pedidoId);
+		
         var sugList = $("#resultados");
         var suniventa = "";
+		var precioL = 0;
         if (texto.length < 1) {
             sugList.html("");
             sugList.listview("refresh");
@@ -82,10 +85,45 @@ preventamobile.ui.altaLineaPedido = function () {
                     preventamobile.ui.altaLineaPedido().articuloSeleccionado(lista[0].id);
                 }
                 else {
+					//alert(lista.toString());
                     $.each(lista, function (index, value) {
                         suniventa = value.univenta == "1" ? "x Bulto" : "";
+						precioL = value.preventa1;
+						//console.log(value);
+						//console.log("ListaPrecio_Buscar",pedido.listaPrecio);
+						//console.log("Precio ",precioL)
+						if (pedido.listaPrecio == "2"){
+							precioL = value.preventa2;
+						};
+						if (pedido.listaPrecio == "3"){
+							precioL = value.preventa3;
+						};
+						if (pedido.listaPrecio == "4"){
+							precioL = value.preventa4;
+						};
+						if (pedido.listaPrecio == "5"){
+							precioL = value.preventa5;
+						};
+						if (pedido.listaPrecio == "6"){
+							precioL = value.preventa6;
+						};
+						/*
+						switch (pedido.listaPrecio) {
+							case "2":
+								alert(value.preventa2);
+								precioL = value.preventa2;
+							case "3":
+								precioL = value.preventa3;
+							case "4":
+								precioL = value.preventa4;
+							case "5":
+								precioL = value.preventa5;
+							case "6":
+								precioL = value.preventa6;
+						};*/	
+						console.log("Precio ",precioL)
                         html = html + "<li style='white-space:normal' >" + "<a id='liarti" + value.numero.trim() + "'" + " style='white-space:normal' href='#' onclick='preventamobile.ui.altaLineaPedido().articuloSeleccionado(" +
-                    '"' + value.id + '"' + ");' >" + value.numero + ' - ' + value.nombre + ' $' + value.preventa1 + " " + suniventa + "</a></li>";
+                    '"' + value.id + '"' + ");' >" + value.numero + ' - ' + value.nombre + ' $' + precioL + " " + suniventa + "</a></li>";
                     });
                 }
             }
@@ -96,9 +134,12 @@ preventamobile.ui.altaLineaPedido = function () {
     };
 
     buscarPorCodigo = function (texto) {
-
+		var pedidoId = preventamobile.ui.listaPedidos().obtenerIdPedidoSeleccionado();
+		var pedido = preventamobile.dal().obtenerPedido(pedidoId);
+		
         var sugList = $("#resultados");
         var suniventa = "";
+		var precioL = 0;
         if (texto.length < 1) {
             sugList.html("");
             sugList.listview("refresh");
@@ -113,8 +154,40 @@ preventamobile.ui.altaLineaPedido = function () {
                 else {
                     $.each(lista, function (index, value) {
                         suniventa = value.univenta == "1" ? "x Bulto" : "";
+						precioL = value.preventa1;
+						
+						//console.log("ListaPrecio_Buscar",pedido.listaPrecio);
+						/*
+						switch (pedido.listaPrecio) {
+							case "2":
+								precioL = value.preventa2;
+							case "3":
+								precioL = value.preventa3;
+							case "4":
+								precioL = value.preventa4;
+							case "5":
+								precioL = value.preventa5;
+							case "6":
+								precioL = value.preventa6;
+						};	
+						*/
+						if (pedido.listaPrecio == "2"){
+							precioL = value.preventa2;
+						};
+						if (pedido.listaPrecio == "3"){
+							precioL = value.preventa3;
+						};
+						if (pedido.listaPrecio == "4"){
+							precioL = value.preventa4;
+						};
+						if (pedido.listaPrecio == "5"){
+							precioL = value.preventa5;
+						};
+						if (pedido.listaPrecio == "6"){
+							precioL = value.preventa6;
+						};
                         html = html + "<li style='white-space:normal' >" + "<a id='liarti" + value.numero.trim() + "'" + " style='white-space:normal' href='#' onclick='preventamobile.ui.altaLineaPedido().articuloSeleccionado(" +
-                    '"' + value.id + '"' + ");' >" + value.numero + ' - ' + value.nombre + ' $' + value.preventa1 + " " + suniventa + "</a></li>";
+                    '"' + value.id + '"' + ");' >" + value.numero + ' - ' + value.nombre + ' $' + precioL + " " + suniventa + "</a></li>";
                     });
                 }
             }

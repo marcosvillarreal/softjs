@@ -15,6 +15,7 @@ preventamobile.dal = function () {
         syncClientes,
         guardarClientesEnStorage,
         guardarClienteEnStorage,
+		guardarClienteNuevoEnStorage,
         guardarCuentaCorrienteEnStorage,
         removerClienteFueraRutaEnStorage,
         clientesLista,
@@ -23,9 +24,13 @@ preventamobile.dal = function () {
         obtenerCuentaCorriente,
         obtenerClienteFueraRuta,
         eliminarClientes,
+		eliminarNuevosClientes,
         marcarClienteParaSincronizar,
         obtenerDescripcionIva,
 		actualizarClientesEstados,
+		borrarNuevoCliente,
+		
+		categoriasLista,
 		
         getUrlServer,
         setUrlServer,
@@ -59,6 +64,7 @@ preventamobile.dal = function () {
         establecerNoVenta,
         listarNoVenta,
         listarCuentaCorriente,
+		listarClientesNuevos,
         guardarNoVenta,
 
         calcularTotal,
@@ -258,7 +264,7 @@ preventamobile.dal = function () {
     sync = function (options) {
 
         preventamobile.parametros.indicadorProgreso = options.progreso;
-        var tipoSync = ["Clientes/Precios", "Pedidos", "Total"];
+        var tipoSync = ["Clientes/Precios", "Pedidos", "Total", "Pedidos 1 a 1"];
         var op = localStorage.getItem("opcionSync"); // opciones de sincronizacion
 
         preventamobile.util().log("Inicio sync " + tipoSync[op - 1] + Date());
@@ -283,7 +289,9 @@ preventamobile.dal = function () {
                 syncFull(options.filtro.dia, options.filtro.username, options.filtro.clave);
             };
 
-
+			 if (op == 4) {
+                syncPedidosOneForOne();
+            };
             //syncSecciones();
             //syncArticulos();
             //syncClientes(options.filtro.dia);
@@ -330,21 +338,24 @@ preventamobile.dal = function () {
                             preventamobile.util().log("Finalizada llamada ajax");
                             var parsedResponse = JSON.parse(response);
 							
+							
 							preventamobile.util().log("Iniciando guardarArticulosEnStorage");
+							alert((parsedResponse.articulos))
                             var articulos = JSON.hunpack(JSON.parse(parsedResponse.articulos));
-							//alert(JSON.parse(parsedResponse.articulos))
+							
                             if (articulos && articulos.length > 0) {
                                 // preventamobile.util().log("Iniciando guardarArticulosEnStorage");
                                 guardarArticulosEnStorage(articulos);
                             }
 							
-                            preventamobile.util().log("Iniciando guardarSeccionesEnStorage");
+                           preventamobile.util().log("Iniciando guardarSeccionesEnStorage");
 							//alert(JSON.parse(parsedResponse.secciones))
 							var secciones = JSON.hunpack(JSON.parse(parsedResponse.secciones));                            
 							if (secciones && secciones.length > 0) {
                                 // preventamobile.util().log("Iniciando guardarSeccionesEnStorage");
                                 guardarSeccionesEnStorage(secciones);
                             } 
+							
 							preventamobile.util().log("Iniciando guardarProveedoresEnStorage");
                             if (parsedResponse.proveedores !== ''){
                                 var proveedores = JSON.hunpack(JSON.parse(parsedResponse.proveedores));
@@ -360,6 +371,8 @@ preventamobile.dal = function () {
 
                             // preventamobile.ui.precios().render(true);
                             $("#divprecios").html("");
+							
+														
                             preventamobile.util().log("Iniciando guardarClientesEnStorage");
                             guardarClientesEnStorage(parsedResponse);
 
@@ -453,7 +466,7 @@ preventamobile.dal = function () {
 
         preventamobile.util().log("Inicio guardarClientesEnStorage");
 
-        var clientes,
+        var clientes,categorias,
             fueraRuta;
 
         if (data.clientes)
@@ -461,7 +474,11 @@ preventamobile.dal = function () {
 
         if (data.fueraRuta)
             fueraRuta = JSON.hunpack(JSON.parse(data.fueraRuta));
-
+		
+		if (data.categorias){
+            categorias = JSON.hunpack(JSON.parse(data.categorias));
+			alert(JSON.parse(data.categorias))
+		}	
         if (clientes && clientes.length > 0) {
             guardarLista("Cliente", clientes);
             for (var index = 0; index < clientes.length; index++) {
@@ -471,7 +488,10 @@ preventamobile.dal = function () {
         if (fueraRuta && fueraRuta.length > 0) {
             guardarLista("FueraRuta", fueraRuta);
         }
-        preventamobile.util().log("Fin guardarClientesEnStorage");
+		if (categorias && categorias.length > 0){
+			guardarLista("Categoria",categorias);
+		}
+		preventamobile.util().log("Fin guardarClientesEnStorage");
     };
 
     obtenerCliente = function (codigo) {
@@ -546,7 +566,7 @@ preventamobile.dal = function () {
     };
 
     obtenerDescripcionIva = function (numero) {
-        var iva = ['R.Inscripto', 'R.No Inscripto', 'Cons. Final', 'Exento', 'R:Monotributo', 'R.I. Ley 19640', 'Extranjero'];
+        var iva = ['R.Inscripto', 'R.No Inscripto', 'Cons. Final', 'Exento', 'R.Monotributo', 'R.I. Ley 19640', 'Extranjero'];
         return iva[numero - 1];
     }
 
@@ -574,6 +594,10 @@ preventamobile.dal = function () {
     guardarClienteEnStorage = function (cliente) {
         localStorage.setItem("Cliente - " + cliente.numero.trim(), preventamobile.util().serializar(cliente));
     };
+	
+	guardarClienteNuevoEnStorage = function (cliente) {
+        localStorage.setItem("NuevoCliente - " + cliente.numero.trim(), preventamobile.util().serializar(cliente)); 
+    };
     
     guardarCuentaCorrienteEnStorage = function (codigoCliente, cuentaCorriente) {
         localStorage.setItem("CuentaCorriente - " + codigoCliente.trim(), preventamobile.util().serializar(cuentaCorriente));
@@ -595,7 +619,13 @@ preventamobile.dal = function () {
         sort(clientesFueraRuta, 'nombre', 1);
         return clientesFueraRuta;
     };
+	
+	categoriasLista = function () {
+        var categorias = obtenerLista("Categoria");
+        sort(categorias, 'numero', 1);
+        return categorias;
 
+    };
     //#endregion
 
     //#region Articulos
@@ -938,22 +968,106 @@ preventamobile.dal = function () {
 
 
 
-    syncPedidos = function () {
+    syncPedidosOneForOne = function () {
+
+        var message = '';
+		var messageErrorPedido = '';
+		
+        preventamobile.util().log("Inicio syncPedidos");
+		
+		var ClientesLista = clientesLista();
+		
+		//alert(ClientesLista[0].numero);
+		var hayPedido = false;
+		
+		for (var i = 0; i < ClientesLista.length; i++) {
+						
+				var pedidos = listarPedidos(ClientesLista[i].numero);
+				
+				if ((pedidos && pedidos.length && pedidos.length > 0)) {
+					hayPedido = true;
+					console.log('SyncPedido Cliente ' + ClientesLista[i].numero);
+					var model = {
+						data: preventamobile.util().serializar(preventamobile.util().comprimir(pedidos)),
+						login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo())
+					};
+
+					var ok = syncPedidosConServidor(
+						model,
+						marcarClientesComoSincronizados(pedidos),
+						false,
+						'Pedido del ' + ClientesLista[i].numero +'  ',true)
+					
+					if (ok == false) {
+						messageErrorPedido = messageErrorPedido + 'Error Cliente  ' + ClientesLista[i].numero + '   '
+						
+					}
+					//preventamobile.util().log('syncPedidos OK - Pedidos ' + ClientesLista[i].numero);
+					
+
+				} 
+				
+				message = message + "Fin syncPedidosOneForOne";
+				
+			};			
+		
+		
+		//console.log(hayPedido);	
+			
+        var noventa = listarNoVenta();
+        var cuentaCorriente = listarCuentaCorriente();
+		
+		
+        if ( (noventa && noventa.length && noventa.length > 0) || (cuentaCorriente && cuentaCorriente.length && cuentaCorriente.length > 0)) {
+			
+			 var model = {
+				noventa: preventamobile.util().serializar(noventa),
+                cuentaCorriente: preventamobile.util().serializar(cuentaCorriente),
+                login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo())
+            };
+			 syncPedidosConServidor(
+                model,
+                marcarClientesComoSincronizados(pedidos));
+				
+			preventamobile.util().log('syncPedidos OK - Cobros/No Ventas');
+			
+            message = "Fin syncPedidosOneForOne";
+
+        } else {
+			if (hayPedido == false) {
+				message = "No hay informacion para sincronizar";
+			}else{
+				message = "Se sincronozaron pedidos";
+			}
+        }
+        
+        preventamobile.util().log(message + '  ' + messageErrorPedido);
+        
+		if (messageErrorPedido.length > 0){
+			alert(messageErrorPedido);
+		}
+        return message;
+
+    };
+	
+	syncPedidos = function () {
 
         var message = '';
         preventamobile.util().log("Inicio syncPedidos");
-
+		
         var pedidos = listarPedidos();
         var noventa = listarNoVenta();
         var cuentaCorriente = listarCuentaCorriente();
+		var clientesNuevos = listarClientesNuevos();
 
-        if ((pedidos && pedidos.length && pedidos.length > 0) || (noventa && noventa.length && noventa.length > 0) || (cuentaCorriente && cuentaCorriente.length && cuentaCorriente.length > 0)) {
+        if ((pedidos && pedidos.length && pedidos.length > 0) || (noventa && noventa.length && noventa.length > 0) || (cuentaCorriente && cuentaCorriente.length && cuentaCorriente.length > 0) || (clientesNuevos && clientesNuevos.length && clientesNuevos.length > 0)) {
 
             var model = {
                 data: preventamobile.util().serializar(preventamobile.util().comprimir(pedidos)),
                 noventa: preventamobile.util().serializar(noventa),
                 cuentaCorriente: preventamobile.util().serializar(cuentaCorriente),
-                login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo())
+                login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo()),
+				clientesNuevos: preventamobile.util().serializar(clientesNuevos)
             };
 
             syncPedidosConServidor(
@@ -972,8 +1086,9 @@ preventamobile.dal = function () {
 
     };
 
-    syncPedidosConServidor = function (model, sucessCallback, errorCallback) {
-
+    syncPedidosConServidor = function (model, sucessCallback, errorCallback, message, errorContinue) {
+		var ok = true;
+		
         $.ajax({
             url: preventamobile.configuration().getUrlBase() + "pedidos",
             type: 'POST',
@@ -991,16 +1106,30 @@ preventamobile.dal = function () {
                         sucessCallback();
                     }
                 }
-
+			
             }
+			
+			
         }).error(function (data) {
-            var errorMessage = "No se pudo completar la operación: " + data.status + " - " + data.statusText;
+			
+			var errorMessage =  "No se pudo completar la operación: " + data.status + " - " + data.statusText;
+			if (message){
+				errorMessage = message.trim()+ '   ' + errorMessage ;
+			}
+			
+            
             if (errorCallback) {
                 errorCallback(errorMessage);
             } else {
-                throw new Error(errorMessage);
+				if (errorContinue == false){
+					  throw new Error(errorMessage);
+				}else{
+					ok =  false;
+				}
+            
             }
         });
+		return ok
         // }, .5);
     };
 
@@ -1015,6 +1144,7 @@ preventamobile.dal = function () {
 			var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
 			console.log('Perce IIBB ',porcePerceCliente);
             pedido = preventamobile.dal().factory().pedido(codigoCliente, id, porcePerceCliente);
+			alert(pedido);
         }
 
         return pedido;
@@ -1240,7 +1370,21 @@ preventamobile.dal = function () {
         }
 
     };
-
+	
+	borrarNuevoCliente = function(){
+		var codigoNuevo = localStorage.getItem("UltimoCodigo");
+		if (codigoNuevo == null){
+			codigoNuevo = 1
+		}
+		//codigoNuevo = 'A'+codigoNuevo;
+		
+		var clientaAAgregar = preventamobile.dal().obtenerCliente(codigoNuevo);
+		
+		localStorage.removeItem("NuevoCliente - " + codigoNuevo);
+		localStorage.removeItem("Cliente - " + codigoNuevo);
+		
+		
+	};
     eliminarPedido = function (pedidoId) {
         localStorage.removeItem("Pedido - " + pedidoId);
     };
@@ -1248,10 +1392,17 @@ preventamobile.dal = function () {
     eliminarPedidos = function () {
         eliminarLista("Pedido");
     };
+	
+	eliminarNuevosClientes = function () {
+        eliminarLista("NuevoCliente");
+    };
+
 
     borrarPedidos = function () {
 
         eliminarPedidos();
+		
+		eliminarNuevosClientes();
 
         var clientes = preventamobile.dal().clientesLista();
 
@@ -1344,6 +1495,39 @@ preventamobile.dal = function () {
                                 listaIndex++;
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        return lista;
+    };
+	
+	listarClientesNuevos = function () {
+
+        var lista = [];
+
+        // Ciclar las keys de localStorage y devolver las que comienzan con Cliente
+        if (localStorage && localStorage.length > 0) {
+            var listaIndex = 0;
+			var j= 0;
+            for (var index = 0; index < localStorage.length; index++) {
+                var key = localStorage.key(index);
+                var value = localStorage[key];
+                if (value !== 'undefined') {
+					
+                    if (key.substr(0, 12) === 'NuevoCliente') {
+						//console.log(key.substr(0, 12));
+                        var clienteNuevo = JSON.parse(value);
+						
+                        if (clienteNuevo) {
+							//console.log(clienteNuevo);
+                            //for (var j = 0; j < clienteNuevo.length; j++) {
+                                lista[listaIndex] = clienteNuevo;
+                                listaIndex++;
+                            //}
+                        }
+						//console.log(listaIndex-1);
                     }
                 }
             }
@@ -1522,7 +1706,7 @@ preventamobile.dal = function () {
 
         pedido = function (codigoCliente, pedidoId ,porcePerceCliente) {
 			
-			console.log('Perce IIBB ',porcePerceCliente);
+			//console.log('Perce IIBB ',porcePerceCliente);
 			
             var f = new Date();
             var dia = moment(f).format('DD/MM/YYYY');
@@ -1555,7 +1739,9 @@ preventamobile.dal = function () {
 				porcePerce: porcePerceCliente,
 				bonifpedido: "",
 				impreso: 0,
-				siBonificar: true
+				siBonificar: true,
+				version: "6.1.0.27",
+				listaPrecio: "1"
             };
         };
 
@@ -1601,12 +1787,62 @@ preventamobile.dal = function () {
                 lineaVariedadId: preventamobile.util().generateUUID(),    // es el id de la base de datos
             };
         };
-
+		
+		cliente = function(){
+			
+			var codigo = preventamobile.util().generateUUID();
+			codigo = codigo.replace("-", "")
+			codigo = codigo.substring(0,9);
+			
+			var f = new Date();
+            dia = (f.getFullYear() + "-" + (f.getMonth() + 1) + "-" +f.getDate() );
+            var hora = preventamobile.util().strZ(f.getHours()) + ":" + preventamobile.util().strZ(f.getMinutes()) + ":" + preventamobile.util().strZ(f.getSeconds());
+            var fecha = dia + "T" + hora;
+			
+			return {
+				id:'0',
+				idlista:'1',
+				bonif1:0,
+				bonif2:0,
+				bonif3:0,
+				bonif4:0,
+				cp:'',
+				cuentaCorriente: [],
+				cuit:'00-0000000-00',
+				diasvisita:'',
+				direccion:'',
+				estado:'',
+				fechaalta:fecha,
+				fulcpr:fecha,
+				fulpag:fecha,
+				idcategoria:'1',
+				idempresa:'',
+				idpago:'',
+				idprovincia:'',
+				idvendedor:'',
+				idzona:'',
+				localidad:'',
+				nombre:'',
+				numero:codigo,
+				observaciones:'',
+				ordenvisita:'1',
+				porperce:0,
+				saldo:'',
+				saldoauto:0,
+				situacioniva:'',
+				situacionivaDescripcion:'',
+				telefono:'',
+				totalCuentaCorriente:'',
+				totalCuentaCorrientePendiente:'',
+				totalCuentaCorrienteSeleccionado:''
+			};
+		};
         return {
             pedido: pedido,
             lineaPedido: lineaPedido,
             lineaPedidoDesdeCargaRapida: lineaPedidoDesdeCargaRapida,
-            lineaVariedad: lineaVariedad
+            lineaVariedad: lineaVariedad,
+			cliente: cliente
         };
     };
 
@@ -1694,13 +1930,17 @@ preventamobile.dal = function () {
         clientesLista: clientesLista,
         clientesFueraRutaLista: clientesFueraRutaLista,
         obtenerCliente: obtenerCliente,
+		eliminarNuevosClientes: eliminarNuevosClientes,
         obtenerCuentaCorriente: obtenerCuentaCorriente,
         obtenerClienteFueraRuta: obtenerClienteFueraRuta,
         guardarClienteEnStorage: guardarClienteEnStorage,
+		guardarClienteNuevoEnStorage: guardarClienteNuevoEnStorage,
         guardarCuentaCorrienteEnStorage: guardarCuentaCorrienteEnStorage,
         removerClienteFueraRutaEnStorage: removerClienteFueraRutaEnStorage,
         marcarClienteParaSincronizar: marcarClienteParaSincronizar,
 		actualizarClientesEstados: actualizarClientesEstados,
+		categoriasLista: categoriasLista,
+		borrarNuevoCliente: borrarNuevoCliente,
 		
         getUrlServer: getUrlServer,
         setUrlServer: setUrlServer,
@@ -1765,7 +2005,8 @@ preventamobile.dal = function () {
         syncTrackingConServidor: syncTrackingConServidor,
 
         obtenerTipoPedido: obtenerTipoPedido,
-
+		obtenerDescripcionIva: obtenerDescripcionIva,
+		
         getLoginInfo: getLoginInfo,
         setLoginInfo: setLoginInfo,
         calcularLineaTotal: calcularLineaTotal,
@@ -1774,7 +2015,7 @@ preventamobile.dal = function () {
         limpiarLog: limpiarLog,
         serverInfo: serverInfo,
         serverVersion: serverVersion,
-
+		controlarUsuarioValido: controlarUsuarioValido,
         sort: sort,
         clearData: clearData,
         factory: factory

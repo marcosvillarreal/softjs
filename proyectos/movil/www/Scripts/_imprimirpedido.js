@@ -29,6 +29,21 @@ preventamobile.ui.imprimirPedido = function () {
         $('#ullistartped').empty();
         lineasPedido = preventamobile.dal().listarPedidoLineas(pedidoId);
         
+		var errorKilos = false;
+		if (lineasPedido.length != 0) {
+			$.each(lineasPedido, function (index, value) {
+				console.log(value.sikilos , ' K=' , value.kilos)
+				if ((value.sikilos == "S") && (value.kilos == 0)) {
+					//alert('Hay productos pesables sin kilos cargados');
+					errorKilos = true;
+				}
+			});
+		};
+		if (errorKilos){
+			alert('Hay productos pesables sin kilos cargados');
+			return 
+		};
+		
         // Si no hay articulos en el pedido lo mando directo a NUEVO
         //if (lineasPedido.length == 0) {
         //    //No mostramos nada
@@ -53,7 +68,7 @@ preventamobile.ui.imprimirPedido = function () {
 				//console.log('totalPedido ' + totalPedido)
 								
 				//console.log('chksum ' + totalPedido);
-				pedido.chksum = totalPedido;
+				pedido.chksum = '99' //totalPedido;
 				//console.log('chksum ' + pedido.chksum);
 				
 				if( pedido.impreso == 0){

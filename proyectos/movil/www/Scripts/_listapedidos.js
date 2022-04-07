@@ -30,7 +30,8 @@ preventamobile.ui.listaPedidos = function () {
         obtenerObservacionesClienteSeleccionado,
         renderPedidoRentablePage,
         pedidoRentablePage,
-		obtenerPerceClienteSeleccionado;
+		obtenerPerceClienteSeleccionado,
+		obtenerListaPrecioClienteSeleccionado;
 
 
 
@@ -115,7 +116,15 @@ preventamobile.ui.listaPedidos = function () {
     };
 
     //#region Info sobre cliente activo
-
+	obtenerListaPrecioClienteSeleccionado = function (id) {
+        var cliente = preventamobile.dal().obtenerCliente(id);
+		//console.log('Cliente lista precio ',cliente.Idlista);
+        if (cliente && cliente.Idlista) {
+            return cliente.Idlista;
+        }
+        return 1;
+	}
+	
     obtenerObservacionesClienteSeleccionado = function (id) {
         var cliente = preventamobile.dal().obtenerCliente(id);
         if (cliente && cliente.observaciones) {
@@ -126,7 +135,7 @@ preventamobile.ui.listaPedidos = function () {
 	
 	obtenerPerceClienteSeleccionado = function (id) {
         var cliente = preventamobile.dal().obtenerCliente(id);
-		console.log('Cliente perce iibb ',cliente.porperce);
+		//console.log('Cliente perce iibb ',cliente.porperce);
         if (cliente && cliente.porperce) {
             return cliente.porperce;
         }
@@ -300,8 +309,9 @@ preventamobile.ui.listaPedidos = function () {
 		
 		var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
 		var obser_cliente = obtenerObservacionesClienteSeleccionado(codigoCliente);
+		var lista_cliente = obtenerListaPrecioClienteSeleccionado(codigoCliente);
 		
-			
+		pedido.siBonificar = true;	
 		if (obser_cliente.search("[BONIF_OFF]") != -1){
 			pedido.siBonificar = false;
 		}
@@ -326,6 +336,7 @@ preventamobile.ui.listaPedidos = function () {
 		pedido.pagoEfectivo = pagoEfectivo.trim();
 		pedido.pagoCheque	= pagoCheque.trim();
 		pedido.pagoTransferencia = pagoTransferencia.trim();
+		pedido.listaPrecio = lista_cliente;
 		
 		//alert(JSON.stringify(pedido));
         preventamobile.dal().guardarPedido(pedido);
@@ -355,7 +366,8 @@ preventamobile.ui.listaPedidos = function () {
             case 3:
 			
 				//console.log(pedido.codigoCliente);
-            
+				preventamobile.dal().controlarUsuarioValido();
+				
 				var r = confirm("Desea sincronizar el pedido?");
                 if (r == true) {
                     var lista = [];
@@ -443,7 +455,8 @@ preventamobile.ui.listaPedidos = function () {
         limpiarLineaSeleccionada: limpiarLineaSeleccionada,
         renderPedidoRentablePage: renderPedidoRentablePage,
         pedidoRentablePage: pedidoRentablePage,
-		obtenerPerceClienteSeleccionado: obtenerPerceClienteSeleccionado
+		obtenerPerceClienteSeleccionado: obtenerPerceClienteSeleccionado,
+		obtenerListaPrecioClienteSeleccionado: obtenerListaPrecioClienteSeleccionado
     };
 };
 

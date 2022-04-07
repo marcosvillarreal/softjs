@@ -11,7 +11,10 @@ preventamobile.ui.cliente = function () {
         linkDestino,
         detallesCliente,
         agregarCliente,
-        afectar;
+        afectar,
+		
+		renderClienteNuevo,
+		almacenarClienteNuevo;
 
     var cargarCuentaCorriente;
 
@@ -191,6 +194,106 @@ preventamobile.ui.cliente = function () {
             $.mobile.changePage('#listaPedidosPage');
         }
     };
+	
+	//Funciones de nuevo Cliente
+	
+	renderClienteNuevo = function () {
+        var codigo = ''
+        //var cliente = preventamobile.dal().obtenerCodigoCliente(codigo);
+		var cliente = preventamobile.dal().factory().cliente();
+		var categorias = preventamobile.dal().categoriasLista();
+		
+		console.log(categorias);
+		/*var codigoNuevo = localStorage.getItem("UltimoCodigo");
+		//if (codigoNuevo == null){
+			codigoNuevo = 0
+		}
+		codigoNuevo++;
+		cliente.numero = 'A'+codigoNuevo;
+		*/
+		codigoNuevo = cliente.numero
+		localStorage.setItem("UltimoCodigo",codigoNuevo);
+        localStorage.setItem("Cliente - " + cliente.numero.trim(), preventamobile.util().serializar(cliente)); 
+		
+        //if (cliente) {
+			
+            var htmlHeader = $.templates("#clienteNuevoHeaderTmpl").render();
+            $("#headerClienteNuevoDetalle").html(htmlHeader).trigger('create');
+			
+            var htmlDetalleCliente = $.templates("#clienteNuevoTmpl").render(cliente);
+			
+			var htmlLista = "<div id=divcategoria> <fieldset data-role='controlgroup' data-type='horizontal'>"
+			
+			//htmlLista = "<ul data-theme='a' data-role='listview' data-inset='true' data-autodividers='false' " +
+            //"data-filter='true' data-filter-placeholder='Ingrese letras a buscar'> ";
+			$.each(categorias, function (index, value) {
+				//htmlLista = htmlLista + "<li><a href='#' ><h3>" + value.nombre.toUpperCase() + "*" + "</h3></a></li>";
+				
+				htmlLista = htmlLista + "<input type='radio' name='radio-choice-10' id='radio-choice-"+value.numero+"' value='"+value.numero+"' {{if idcategoria == '" + value.numero + "'}} " + 'checked="checked"'+ " {{/if}} data-type='horizontal' data-inline='true' />" + 
+				 "<label for='radio-choice-"+value.numero+"'>"+value.nombre+"</label>"
+			
+			});
+			htmlLista = htmlLista + " </fieldset></div>";
+			
+			htmlLista = htmlLista + "<div id=divsituacioniva> <fieldset data-role='controlgroup' data-type='horizontal'>"
+			
+			htmlLista = htmlLista + "<input type='radio' name='radio-choice-11' id='radio-choice-1' value='1' {{if cliente.situacioniva == '1'}} checked='checked' {{/if}} data-type='horizontal' data-inline='true' />"
+            htmlLista = htmlLista + "<label for='radio-choice-1'>R.Inscripto</label>"
+            htmlLista = htmlLista + "<input type='radio' name='radio-choice-11' id='radio-choice-2' value='5' {{if cliente.situacioniva == '5'}} checked='checked' {{/if}} data-type='horizontal' data-inline='true' />"
+            htmlLista = htmlLista + "<label for='radio-choice-2'>R.Monotributo</label>"			
+			htmlLista = htmlLista + "<input type='radio' name='radio-choice-11' id='radio-choice-3' value='3' {{if cliente.situacioniva == '3'}} checked='checked' {{/if}} data-type='horizontal' data-inline='true' />"
+            htmlLista = htmlLista + "<label for='radio-choice-3'>C.Final</label>"
+			
+			
+			htmlLista = htmlLista + " </fieldset></div>";
+			
+			
+			//console.log(htmlLista);
+			
+		
+			htmlDetalleCliente = htmlDetalleCliente + htmlLista
+            $("#detalleclienteNuevoContent").html(htmlDetalleCliente).trigger('create');
+
+           
+           
+
+        //} else {
+        //    alert("No se encontro cliente");
+        //}
+        //return false;
+    };
+	
+	almacenarClienteNuevo = function( cliente ){
+		var codigoNuevo = localStorage.getItem("UltimoCodigo");
+		if (codigoNuevo == null){
+			codigoNuevo = 1
+		}
+		//codigoNuevo = 'A'+codigoNuevo;
+		
+		var clientaAAgregar = preventamobile.dal().obtenerCliente(codigoNuevo);
+		clientaAAgregar.nombre = $('#nombre').val();
+		clientaAAgregar.direccion = $('#direccion').val();
+		clientaAAgregar.telefono = $('#telefono').val();
+		clientaAAgregar.cuit = $('#cuit').val();
+		clientaAAgregar.cuit = $('#cuit').val();
+		console.log('categoria ',clientaAAgregar.idcategoria)
+		clientaAAgregar.idcategoria = $('input[name="radio-choice-10"]:checked').val();
+		console.log('categoria ',clientaAAgregar.idcategoria)
+		clientaAAgregar.situacioniva = $('input[name="radio-choice-11"]:checked').val();
+		
+		clientaAAgregar.situacionivaDescripcion = preventamobile.dal().obtenerDescripcionIva(clientaAAgregar.situacioniva);
+		
+        preventamobile.dal().guardarClienteEnStorage(clientaAAgregar);
+		preventamobile.dal().guardarClienteNuevoEnStorage(clientaAAgregar);
+        preventamobile.ui.listaPedidos().establecerIdClienteSeleccionado(codigoNuevo);
+        var clientes = preventamobile.dal().clientesLista();
+        $("#clientesContent").html($.templates("#clienteListaTmpl").render({ clientes: clientes })).trigger('create');
+
+        preventamobile.ui.listaPedidos().pedidoNuevo();
+	};
+	
+
+	
     return {
         render: render,
         renderFueraRuta: renderFueraRuta,
@@ -199,7 +302,10 @@ preventamobile.ui.cliente = function () {
         linkDestino: linkDestino,
         detallesCliente: detallesCliente,
         agregarCliente: agregarCliente,
-        afectar: afectar
+        afectar: afectar,
+		
+		renderClienteNuevo: renderClienteNuevo,
+		almacenarClienteNuevo: almacenarClienteNuevo
     };
 };
 

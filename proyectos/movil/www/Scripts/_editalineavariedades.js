@@ -52,7 +52,25 @@ preventamobile.ui.editaLineaVariedades = function () {
         }
 
         var html, controlhtml;
-
+		var precioL;
+		
+		precioL = articulo.preventa1;
+		if (pedido.listaPrecio == "2"){
+			precioL = articulo.preventa2;
+		};
+		if (pedido.listaPrecio == "3"){
+			precioL = articulo.preventa3;
+		};
+		if (pedido.listaPrecio == "4"){
+			precioL = articulo.preventa4;
+		};
+		if (pedido.listaPrecio == "5"){
+			precioL = articulo.preventa5;
+		};
+		if (pedido.listaPrecio == "6"){
+			precioL = articulo.preventa6;
+		};
+						
         html = "<div data-role='navbar'><ul>" +
             "<li><a href='#homePage' data-icon='home' data-iconpos='notext'>Inicio</a></li>" +
             "<li><a href='#listaArticulosPedidoPage' data-icon='back' >Atrás</a></li>" +
@@ -64,7 +82,7 @@ preventamobile.ui.editaLineaVariedades = function () {
 
         controlhtml = "<div data-role='fieldcontain' class='ui-hidden-accessible'><label id='lineaIdpedido'>" + pedidoId + "</label>" + "</div>";
         html = html + controlhtml;
-        controlhtml = "<div data-role='fieldcontain'><label>Artículo:" + articulo.numero + " - " + articulo.nombre + " &nbsp;&nbsp;$"+ articulo.preventa1 + "</label>" + "</div>";
+        controlhtml = "<div data-role='fieldcontain'><label>Artículo:" + articulo.numero + " - " + articulo.nombre + " &nbsp;&nbsp;$"+ precioL + "</label>" + "</div>";
         html = html + controlhtml;
 
         // propagar las variedades
@@ -149,7 +167,8 @@ preventamobile.ui.editaLineaVariedades = function () {
         var articulo = preventamobile.dal().obtenerArticulo(articuloId);
 
         var pedidoId = preventamobile.ui.listaPedidos().obtenerIdPedidoSeleccionado();
-
+		var pedido = preventamobile.dal().obtenerPedido(pedidoId);
+		
         var lineaId = preventamobile.ui.listaPedidos().obtenerIdLineaSeleccionada();
         var linea = preventamobile.dal().obtenerPedidoLinea(pedidoId, lineaId);
 
@@ -168,14 +187,30 @@ preventamobile.ui.editaLineaVariedades = function () {
 
         // guardo las propiedades de la linea para todos los sabores
         var caja, cantVar;
-        var uniVenta;
+        var uniVenta,precioL;
         var signo = 1;
         linea.bonif1 = $('#bonifVar1').val();
         if ($('#sliderUniventaVar').val() == "on") { uniVenta = "1"; } else { uniVenta = "0"; };
         if ($('#sliderVenta').val() == "on") { signo = -1; } else { signo=1; };
         linea.univenta = uniVenta;
-        linea.unibulto = $('#unibulto').val();
-        linea.precio = articulo.preventa1;
+        linea.unibulto = $('#unibulto').val();        
+		precioL = articulo.preventa1;			
+		if (pedido.listaPrecio == "2"){
+			precioL = articulo.preventa2;
+		};
+		if (pedido.listaPrecio == "3"){
+			precioL = articulo.preventa3;
+		};
+		if (pedido.listaPrecio == "4"){
+			precioL = articulo.preventa4;
+		};
+		if (pedido.listaPrecio == "5"){
+			precioL = articulo.preventa5;
+		};
+		if (pedido.listaPrecio == "6"){
+			precioL = articulo.preventa6;
+		};
+		linea.precio = precioL;				
         linea.costo = articulo.costo;
         linea.idproveedor = articulo.idproveedor;
 

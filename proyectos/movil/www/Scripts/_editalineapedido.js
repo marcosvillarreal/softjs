@@ -65,11 +65,37 @@ preventamobile.ui.editaLineaPedido = function () {
 		 
         // Cargar datos de detalle segun options {articulo}
         $('#articulo').val(options.articulo.numero + ' - ' + options.articulo.nombre);
-        $('#articuloPrecioUnitario').val(options.articulo.preventa1);
+		
+		 $('#articuloPrecioUnitario').val(options.articulo.preventa1);
+		 $('#articuloNetoUnitario').val(options.articulo.neto);
+		 console.log("ListaPrecio ",pedido.listaPrecio)
+		if (pedido.listaPrecio == "2"){
+				$('#articuloPrecioUnitario').val(options.articulo.preventa2);
+				$('#articuloNetoUnitario').val(options.articulo.neto2);
+		};
+		if (pedido.listaPrecio == "3"){
+				$('#articuloPrecioUnitario').val(options.articulo.preventa3);
+				$('#articuloNetoUnitario').val(options.articulo.neto3);	
+		};
+		if (pedido.listaPrecio == "4"){
+				$('#articuloPrecioUnitario').val(options.articulo.preventa4);
+				$('#articuloNetoUnitario').val(options.articulo.neto4);
+		};
+		if (pedido.listaPrecio == "5"){
+				$('#articuloPrecioUnitario').val(options.articulo.preventa5);
+				$('#articuloNetoUnitario').val(options.articulo.neto5);	
+		};
+		if (pedido.listaPrecio == "6"){
+				$('#articuloPrecioUnitario').val(options.articulo.preventa6);
+				$('#articuloNetoUnitario').val(options.articulo.neto6);	
+		};	
+       
+	   
+		
         $('#articuloUnidadesPorBulto').val(options.articulo.unibulto);
         $('#articuloSiKilos').val(options.articulo.sikilos);
         $('#articuloPeso').val(options.articulo.peso);
-		$('#articuloNetoUnitario').val(options.articulo.neto);
+		
 		$('#articuloTipoBonif').val(options.articulo.tipobonif);
 		$('#articuloPorceMerma').val(options.articulo.porcemerma);
 		$('#articuloMaxBonif').val(options.articulo.bonif1);
@@ -134,9 +160,50 @@ preventamobile.ui.editaLineaPedido = function () {
         linea.idarticulo = articuloId;
         linea.idproveedor = articulo.idproveedor;
         linea.codigoArticulo = articulo.numero;
+		
         linea.precio = articulo.preventa1;
-        linea.costo = articulo.costo;
 		linea.neto= articulo.neto;
+		/*
+		switch (pedido.listaPrecio) {
+            case "2":
+				linea.precio = articulo.preventa2;
+				linea.neto= articulo.neto2;
+			case "3":
+				linea.precio = articulo.preventa3;
+				linea.neto= articulo.neto3;
+			case "4":
+				linea.precio = articulo.preventa4;
+				linea.neto= articulo.neto4;
+			case "5":
+				linea.precio = articulo.preventa5;
+				linea.neto= articulo.neto5;
+			case "6":
+				linea.precio = articulo.preventa6;
+				linea.neto= articulo.neto6;
+		};*/
+		
+		if (pedido.listaPrecio == "2"){
+			linea.precio = articulo.preventa2;
+			linea.neto= articulo.neto2;
+		};
+		if (pedido.listaPrecio == "3"){
+			linea.precio = articulo.preventa3;
+			linea.neto= articulo.neto3;
+		};
+		if (pedido.listaPrecio == "4"){
+			linea.precio = articulo.preventa4;
+			linea.neto= articulo.neto4;
+		};
+		if (pedido.listaPrecio == "5"){
+			linea.precio = articulo.preventa5;
+			linea.neto= articulo.neto5;
+		};
+		if (pedido.listaPrecio == "6"){
+			linea.precio = articulo.preventa6;
+			linea.neto= articulo.neto6;
+		};
+						
+        linea.costo = articulo.costo;		
 		linea.porceMerma = articulo.porcemerma;
 		linea.boniftope = articulo.bonif1;
 		linea.estopebonif = articulo.tipobonif;
@@ -169,7 +236,7 @@ preventamobile.ui.editaLineaPedido = function () {
         }
         
 		//0=Nada,1=Se valida tope,2=se autocompleta
-		console.log('Bonif ', linea.bonif1 );
+		//console.log('Bonif ', linea.bonif1 );
 		if (linea.estopebonif == '1'){
 			var maxbonif = linea.boniftope;
 			if ( linea.bonif1 > maxbonif) {

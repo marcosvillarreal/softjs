@@ -13,7 +13,7 @@ preventamobile.configuration = function () {
 
     //#region Configuration
     // urlServerOptions = ["http://10.0.0.149:8084/preventamobile/"];
-     urlServerOptions = ["http://preventa.cloudapp.net:8890/","http://preventa.cloudapp.net:8889/","http://gmsoftware.ddns.net:8084/preventamobile/"];
+     urlServerOptions = ["http://preventa.cloudapp.net:8890/","http://preventa.cloudapp.net:8889/","http://gmsoftware.ddns.net:8084/preventamobile/","http://preventa.cloudapp.net:8891/"];
 	
 	// urlServerOptions = [];
 	

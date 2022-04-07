@@ -13,11 +13,11 @@ module.exports = {
 
     const config = {
       user: 'sa',
-      //password: 'cf3485',
-      //server: 'marcos', // You can use 'localhost\\instance' to connect to named instance
-      server: 'gestionweb-test.ddns.net',
-	  password: 'Cf',
-      database: 'kleja',
+      password: 'cf3485',
+      server: 'miguel', // You can use 'localhost\\instance' to connect to named instance
+      //server: 'gestionweb-test.ddns.net',
+	  //password: 'Cf',
+      database: 'urquiza',
       port: 1171,
       options: {
         encrypt: false // Use this if you're on Windows Azure

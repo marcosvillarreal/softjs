@@ -80,6 +80,8 @@ $(document).on("pageinit", "#homePage", function () {
 
     $(document).on("click", "#buscarButton", preventamobile.ui.altaLineaPedido().selectorBusqueda);
 	
+	$(document).on("click", "#altaClienteButton", preventamobile.ui.cliente().renderClienteNuevo);
+	
 	$(document).on('pageshow', "#imprimirPedidoPage", preventamobile.ui.imprimirPedido().render);
 
     //$(document).on("blur", "#artbus", preventamobile.ui.altaLineaPedido().buscarPorCodigo);

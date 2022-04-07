@@ -28,7 +28,7 @@ preventamobile.ui.sync = function () {
         sList.empty();
         var divdia = $("#divDia");        
         var op = localStorage.getItem("opcionSync");
-        var tipoSync = ["Clientes/Precios", "Pedidos", "Total"];
+        var tipoSync = ["Clientes/Precios", "Pedidos", "Total", "Pedidos 1 x 1"];
         $('#syncPage').attr("data-title", "Sync " + tipoSync[op - 1]);
 
         try {
@@ -120,7 +120,8 @@ preventamobile.ui.sync = function () {
         preventamobile.configuration().setUrlBase(urlServidor);
         var username = $("#usernameTextBox").val();
         var clave = $("#claveTextBox").val();
-
+		
+		//Alamaceno el vendedor para armar los codigos independientes
         var menudia = $("#diaSelect");
         var dia = menudia[0].value;
         $("#syncP").text("");
@@ -129,7 +130,7 @@ preventamobile.ui.sync = function () {
         var error = preventamobile.dal().sync({ progreso: "#syncP", filtro: filtro });
 
         var op = localStorage.getItem("opcionSync");
-        var tipoSync = ["Clientes/Precios", "Pedidos", "Total"];
+        var tipoSync = ["Clientes/Precios", "Pedidos", "Total", "Pedidos 1 a 1"];
         var mensaje = "<h1>Sync "+ tipoSync[op - 1] + " finalizado</h1>";
         preventamobile.util().log("Fin TOTAL SINCRONIZACION");        
 
