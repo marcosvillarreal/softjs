@@ -53,13 +53,15 @@
         <div data-role='fieldcontain'>Dirección: {{:direccion}} - {{:localidad}}</div>
         <div data-role='fieldcontain'>Teléfono: {{:telefono}}</div>
         <div data-role='fieldcontain'>Cuit: {{:cuit}} - {{:situacionivaDescripcion}}</div>
+		<div data-role='fieldcontain'>Lista de precio: {{:Idlista}}</div>
+		<div data-role='fieldcontain'>Vendedor: {{:vendedor}}</div>
         <div id="cuentaCorrienteCliente"></div>
         <div id="pedidoAnteriorCliente"></div>
     </script>
 	<script id="clienteNuevoHeaderTmpl" type="text/x-jsrender">
         <div data-role='navbar'>
             <ul>
-                <li><a href='#homePage' data-icon='home' data-iconpos='notext'>Inicio</a></li>
+                <li><a href='#homePage' data-icon='home' data-iconpos='notext' onclick="preventamobile.dal().borrarNuevoCliente();">Inicio</a></li>
                 <li><a href='#clientesPage' data-icon='back' onclick="preventamobile.dal().borrarNuevoCliente();">Atrás</a></li>
 				<li><a href='' data-icon='saveFile' onclick='preventamobile.ui.cliente().almacenarClienteNuevo(cliente)'>Guardar</a></li>
             </ul>
@@ -81,6 +83,10 @@
 		<div data-role='fieldcontain'>
 			<label for='cuit'>CUIT::</label>
 			<input type="text" value='{{:cuit}}' name='cuit' id='cuit'/>
+		</div>
+		<div data-role='fieldcontain'>
+			<label for='cuit'>Datos Extra::</label>
+			<input type="text" value='{{:observaciones}}' name='observaciones' id='observaciones'/>
 		</div>
 		<!--
 		{{if categorias && categorias.length>0}}
@@ -173,16 +179,66 @@
         </div>
         <br />
     </script>
-    <script id="clienteFueraRutaListaTmpl" type="text/x-jsrender">
-        <ul data-theme='a' data-role='listview' data-inset='true' data-autodividers='false' data-filter='true' data-filter-placeholder='Ingrese letras a buscar'>
+	
+	<!--
+		<ul data-theme='a' data-role='listview' data-inset='true' data-autodividers='false' data-filter='true' data-filter-placeholder='Ingrese letras a buscar'>
             {{for clientes}}
             <li data-theme='{{if noVenta || tienePedido}}e{{else}}a{{/if}}'>
-                <a href='#' onclick='preventamobile.ui.cliente().agregarCliente("{{:numero}}");'>({{:numero.trim()}}) {{:nombre}}</a>
+                <a href='#' onclick='preventamobile.ui.cliente().agregarCliente("{{:numero}}");'>({{:numero.trim()}}) {{:nombre}} V{{:idvendedor}}</a>
+            </li>
+            {{/for}}
+        </ul>
+				
+		
+		<input type="text" id="buscaroFueraRuta" onkeyup="preventamobile.ui.cliente().buscarLista('listaFueraRutaTmp')" placeholder="Search for names.." title="Type in a name">
+
+		<ul id="listaFueraRutaTmp">
+			{{for clientes}}
+			<li data-theme='{{if noVenta || tienePedido}}e{{else}}a{{/if}}'>
+                <a href='#' onclick='preventamobile.ui.cliente().agregarCliente("{{:numero}}");'>({{:numero.trim()}}) {{:nombre}} V{{:idvendedor}}</a>
+            </li>
+			{{/for}}
+		</ul>
+		-->
+		
+    <script id="clienteFueraRutaListaTmpl" type="text/x-jsrender">		
+		<div data-role='collapsible-set'>
+            {{for vendedores}}
+            <div id='divdor2' data-role='collapsible' style='white-space:normal' data-filter='true' data-filter-placeholder='Ingrese letras a buscar..'>
+                 <h1 style='white-space:normal' onclick='preventamobile.ui.cliente().fueraRutaPorVendedor("{{:codigo}}");'>
+                    <!-- //TODO: aplicar el toProperCase() al nombre -->
+                    {{:nombre}} ({{:codigo}})
+                    <br />
+                </h1>
+				
+                <ul id='vendedor{{:codigo}}' data-theme='a' data-role='listview' data-inset='true' data-autodividers='false'>
+                    {{for fueraRutaVendedor}}
+                    <li style='white-space:normal'>
+                        <a class='lineapre' style='white-space:normal' href='#' onclick='preventamobile.ui.cliente().agregarCliente("{{:numero}}");'>
+                            {{:numero}} - {{:nombre}}
+                        </a>
+                    </li>
+                    {{/for}}
+                </ul>
+				
+            </div>
+            {{/for}}
+        </div>
+		
+    </script>
+	
+	<script id="fueraRutaVdorTmpl" type="text/x-jsrender">
+        <ul id='vendedor{{:id}}' data-theme='a' data-role='listview' data-inset='true' data-autodividers='false' data-filter='true' data-filter-placeholder='Ingrese letras a buscar...'>
+            {{for fueraRutaVendedor}}
+            <li style='white-space:normal'>
+                <a class='lineapre' style='white-space:normal' href='#' onclick='preventamobile.ui.cliente().agregarCliente("{{:numero}}");'>
+                    {{:numero}} - {{:nombre}}
+                </a>
             </li>
             {{/for}}
         </ul>
     </script>
-
+	
 	
     <!-- #endregion -->
     <!-- #region Templates Precios -->
@@ -212,7 +268,7 @@
     <script id="precioListaTmpl" type="text/x-jsrender">
         <div data-role='collapsible-set'>
             {{for secciones}}
-            <div id='divprecios' data-role='collapsible' style='white-space:normal' data-filter='true' data-filter-placeholder='Ingrese letras a buscar'>
+            <div id='divprecios' data-role='collapsible' style='white-space:normal' data-filter='true' data-filter-placeholder='Ingrese letras a buscar..'>
                 <h1 style='white-space:normal' onclick='preventamobile.ui.precios().articulosPorSeccion("{{:id}}");'>
                     <!-- //TODO: aplicar el toProperCase() al nombre -->
                     {{:nombre}} ({{:numero}})
@@ -233,7 +289,7 @@
         </div>
     </script>
     <script id="precioArticuloTmpl" type="text/x-jsrender">
-        <ul id='Ul2' data-theme='a' data-role='listview' data-inset='true' data-autodividers='false' data-filter='true' data-filter-placeholder='Ingrese letras a buscar'>
+        <ul id='Ul2' data-theme='a' data-role='listview' data-inset='true' data-autodividers='false' data-filter='true' data-filter-placeholder='Ingrese letras a buscar...'>
             {{for articulosSeccion}}
             <li style='white-space:normal'>
                 <a class='lineapre' style='white-space:normal' href='#' onclick='preventamobile.ui.precios().detallesprecios("{{:numero}}");'>
@@ -246,7 +302,12 @@
     </script>
     <script id="precioDetalleTmpl" type="text/x-jsrender">
         <div data-role='fieldcontain'>Articulo: {{:numero}} - {{:nombre}}</div>
-        <div data-role='fieldcontain'>Precio: {{:preventa1}}</div>
+        <div data-role='fieldcontain'>Precio 1: {{:preventa1}}</div>
+		<div data-role='fieldcontain'>Precio 2: {{:preventa2}}</div>
+		<div data-role='fieldcontain'>Precio 3: {{:preventa3}}</div>
+		<div data-role='fieldcontain'>Precio 4: {{:preventa4}}</div>
+		<div data-role='fieldcontain'>Precio 5: {{:preventa5}}</div>
+		<div data-role='fieldcontain'>Precio 6: {{:preventa6}}</div>
         <div data-role='fieldcontain'>Costo: {{:costo}}</div>
         <div data-role='fieldcontain'>Bultos x: {{:unibulto}}</div>
         <div data-role='fieldcontain'>
@@ -502,7 +563,7 @@
                     </a>
                 </li>
             </ul>
-            <p id="geolocation">Versión 6.1.0.27</p>
+            <p id="geolocation">Versión 6.1.0.32</p>
         </div>
     </div>
     <!--#endregion-->
@@ -591,13 +652,21 @@
         <div data-theme="a" data-role="content" id="confirmaAltaLineaPedidoContent">
             <div>
                 <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='articulo' id='articulo' value='' style="font-size: medium;" />
-                <input type="hidden" id="articuloUnidadesPorBulto" />
+                <!--<input type="hidden" id="articuloUnidadesPorBulto" />-->
                 <input type="hidden" id="articuloSiKilos" />
 				<input type="hidden" id="articuloTipoBonif" />
 				<input type="hidden" id="articuloPorceMerma" />
 				<input type="hidden" id="articuloMaxBonif" />
             </div>
-
+			
+			<div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <label>Unidades x Bulto</label>					
+                </div>
+                <div class="ui-block-b">
+                  <input type="text" id="articuloUnidadesPorBulto" disabled='disabled' readonly='readonly' />
+                </div>
+            </div>
             <div class="ui-grid-a">
                 <div class="ui-block-a">
                     <label>Peso en kilos</label>
@@ -606,14 +675,14 @@
                     <input type="text" id="articuloPeso" disabled='disabled' readonly='readonly' />
                 </div>
             </div>
-
+			
             <div class="ui-grid-a">
                 <div class="ui-block-a">
                     <label>Cantidad</label>
                     <input type='number' data-theme='b' step="0.1" name='cantidad' id='cantidad' value='' style="font-size: x-large;" onchange="preventamobile.ui.editaLineaPedido().recalcularLineaEnEdicion();" />
                 </div>
                 <div class="ui-block-b">
-                    <select name='sliderUniventa' id='sliderUniVenta' data-role='slider' onchange="preventamobile.ui.editaLineaPedido().recalcularLineaEnEdicion();">
+                     <select name='sliderUniventa' id='sliderUniVenta' data-role='slider' onchange="preventamobile.ui.editaLineaPedido().recalcularLineaEnEdicion();">
                         <option value='off'>Unidades</option>
                         <option value='on'>Bultos</option>
                     </select>
@@ -644,6 +713,7 @@
                 <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='articuloPrecioBonificado' id='articuloPrecioBonificado' value='' style="font-size: x-large;" />
             </div>
 			<!-- Totales en Neto  -->
+			<!--
 			<div>
                 <label>Total Neto</label>
                 <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='totalNetoLinea' id='totalNetoLinea' value='' style="font-size: x-large;" />
@@ -656,6 +726,7 @@
                 <label>Precio Neto Bonificado</label>
                 <input type='text' disabled='disabled' readonly='readonly' data-theme='b' name='articuloNetoBonificado' id='articuloNetoBonificado' value='' style="font-size: x-large;" />
             </div>
+			-->
 			
         </div>
     </div>
@@ -754,9 +825,9 @@
         <div data-theme="a" data-role="header">
             <h1>Ruta</h1>
             <a href="#homePage" data-icon="home">Inicio</a>
-			<a href="#clienteNuevoPage" data-icon="add" id="altaClienteButton">Nuevo</a>
-            <a href="#clientesFueraRutaPage" data-icon="add">Fuera de Ruta</a>
-			
+			<a href="#clientesFueraRutaPage" data-icon="add">Fuera de Ruta</a>
+			<a href="#clienteNuevoPage" data-icon="add" id="altaClienteButton">Nuevo Cliente</a>
+          			
         </div>
         <div data-theme="a" data-role="content" id="clientesContent">
         </div>
@@ -820,7 +891,7 @@
             <div data-role='navbar'>
                 <ul>
                     <li><a href="#homePage" data-icon="home">Inicio</a></li>
-                    <li><a href="#homePage" data-icon="delete" onclick="preventamobile.dal().clearData();">Limpiar</a></li>
+                    <li><a href="#homePage" data-icon="delete" onclick="preventamobile.dal().clearData();">Limpiar Memoria</a></li>
                 </ul>
             </div>
         </div>
@@ -918,6 +989,16 @@
                         </p>
                     </a>
                 </li>
+				<li style='white-space: normal'>
+                    <a href="#updateAppPage" style='white-space: normal'>
+                        <img src="Content/images/download.png" style="height: 128px; width: 128px"
+                             alt="actualizar" />
+                        <h3>Descargar</h3>
+                        <p>
+                            Descargamos nueva version de la App
+                        </p>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -934,6 +1015,19 @@
             <a data-role='button' href="#homePage" data-inline='true' data-icon='home'>Inicio</a>
             <a data-role='button' href="#opcionesPage" data-inline='true' data-icon='back'>Atrás</a>
             <a data-role='button' href="#" onclick="preventamobile.dal().borrarPedidos();" id="btnborrar" data-inline='true' data-icon='delete'>Borrar Pedidos</a>
+        </div>
+    </div>
+	<!-- Pagina Descargar App -->
+    <div data-theme="a" data-role="page" id="updateAppPage" data-title="Descargar App">
+        <div data-theme="a" data-role="header" id="Div3">
+            <h1>Descargar App</h1>
+            <a href="#homePage" data-icon="home">Inicio</a>
+        </div>
+        <div data-theme="a" data-role="content" id="Div4">
+            <p>
+                Descargamos la ultima version de la app PreventaMobile
+            </p>
+            <a data-role='button' href="https://acortar.link/eq6Dh" onclick="" id="btndownload" data-inline='true' data-icon='delete'>Descargar</a>
         </div>
     </div>
     <!-- Pagina Opciones Sincronizacion -->

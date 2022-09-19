@@ -49,6 +49,7 @@ preventamobile.ui.precios = function () {
 
     articulosPorSeccion = function (idseccion) {
         var sec = $('#seccion' + idseccion)
+		//console.log(sec.html().trim());
         if (sec.html().trim().length <= 0) {
             articulosSeccion = preventamobile.dal().articulosSeccionLista(idseccion);
             var html = $.templates("#precioArticuloTmpl").render({ articulosSeccion: articulosSeccion });          

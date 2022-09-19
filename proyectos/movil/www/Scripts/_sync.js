@@ -27,6 +27,7 @@ preventamobile.ui.sync = function () {
         var sList = $("#ulSync");
         sList.empty();
         var divdia = $("#divDia");        
+		var todaSemana = preventamobile.dal().getGuiaSemana();
         var op = localStorage.getItem("opcionSync");
         var tipoSync = ["Clientes/Precios", "Pedidos", "Total", "Pedidos 1 x 1"];
         $('#syncPage').attr("data-title", "Sync " + tipoSync[op - 1]);
@@ -46,6 +47,7 @@ preventamobile.ui.sync = function () {
             var menudia = $("#diaSelect");
             var d = new Date();
             var n = d.getDay();
+			if (todaSemana == 'N') {n = 1};
             menudia[0].selectedIndex = n;            
             menudia.selectmenu("refresh");
         } else {
@@ -93,9 +95,10 @@ preventamobile.ui.sync = function () {
     };
 
     renderServidor = function () {
-        var selectedServer = preventamobile.configuration().getUrlBase();
+        var selectedServer = preventamobile.configuration().getUrlBaseName();
         var html = "<label for='direccionServidorSelect'><h3>Servidor</h3></label><select id='direccionServidorSelect' name='direccionServidorSelect' data-theme='a' data-icon='arrow-d' data-native-menu='false'>";
-        var options = preventamobile.configuration().getUrlServerOptions();
+        //var options = preventamobile.configuration().getUrlServerOptions();
+		var options = preventamobile.configuration().getUrlServerNames();
         for (var i = 0; i < options.length; i++) {
             html = html + "<option value='" + options[i] + "'";
             if (options[i] == selectedServer)

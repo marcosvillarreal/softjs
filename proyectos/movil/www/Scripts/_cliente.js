@@ -12,6 +12,9 @@ preventamobile.ui.cliente = function () {
         detallesCliente,
         agregarCliente,
         afectar,
+		buscarLista,
+		
+		fueraRutaPorVendedor,
 		
 		renderClienteNuevo,
 		almacenarClienteNuevo;
@@ -46,7 +49,24 @@ preventamobile.ui.cliente = function () {
         }
         return false;
     };
-
+	
+	buscarLista = function ( objetoUL) {
+		var input, filter, ul, li, a, i, txtValue;
+		input = document.getElementById("objetoUL");
+		filter = input.value.toUpperCase();
+		ul = document.getElementById("objetoUL");
+		li = ul.getElementsByTagName("li");
+		for (i = 0; i < li.length; i++) {
+			a = li[i].getElementsByTagName("a")[0];
+			txtValue = a.textContent || a.innerText;
+			if (txtValue.toUpperCase().indexOf(filter) > -1) {
+				li[i].style.display = "";
+			} else {
+				li[i].style.display = "none";
+			}
+		}
+	}
+	
     cargarCuentaCorriente = function (cliente) {
         var htmlCuentaCorrienteCliente = $.templates("#cuentaCorrienteClienteTmpl").render({ cliente: cliente });
         $('#cuentaCorrienteCliente').html(htmlCuentaCorrienteCliente).trigger('create');
@@ -119,10 +139,45 @@ preventamobile.ui.cliente = function () {
     };
 
     renderFueraRuta = function () {
-        var clientes = preventamobile.dal().clientesFueraRutaLista();
-        $("#clientesFueraRutaContent").html($.templates("#clienteFueraRutaListaTmpl").render({ clientes: clientes })).trigger('create');
-    };
+		
+		
+		var vendedores = preventamobile.dal().vendedoresLista();
+        preventamobile.dal().sort(vendedores, 'codigo', 1);
+        if (vendedores && vendedores.length && vendedores.length>0)
+        {
+            //for (var i = 0; i < secciones.length; i++) {
+            //    secciones[i].articulosSeccion = preventamobile.dal().articulosSeccionLista(secciones[i].id);
+            //}
+			/*
+            var html = $.templates("#precioListaTmpl").render({ secciones: secciones });
+            if (noTrigger) {
+                $("#preciosContent").html(html);
+            } else {
+                $("#preciosContent").html(html).trigger('create');
+            }
+			*/
+			//var clientes = preventamobile.dal().clientesFueraRutaLista();
+			console.log(vendedores);
+			$("#clientesFueraRutaContent").html($.templates("#clienteFueraRutaListaTmpl").render({ vendedores: vendedores })).trigger('create');
+	
+        }
 
+		
+    };
+	
+	
+	fueraRutaPorVendedor = function (codigo) {
+		//console.log("index "+ id);
+        var vdor = $('#vendedor' + codigo)
+        if (vdor.html().trim().length <= 0) {
+            fueraRutaVendedor = preventamobile.dal().fueraRutaVendedorLista(codigo);
+			//console.log(fueraRutaVendedor);
+            var html = $.templates("#fueraRutaVdorTmpl").render({ fueraRutaVendedor: fueraRutaVendedor });          
+            vdor.html(html).trigger('create');
+        };
+
+    };
+	
     detallesCliente = function (codigo) {
         preventamobile.ui.listaPedidos().establecerIdClienteSeleccionado(codigo);
         $.mobile.changePage('#clientesDetallePage');
@@ -186,6 +241,20 @@ preventamobile.ui.cliente = function () {
 
     linkDestino = function () {
         var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
+		
+		var observaciones = preventamobile.ui.listaPedidos().obtenerObservacionesClienteSeleccionado(codigoCliente);
+		
+		if (observaciones) {
+			//alert(observaciones.search('PED_OFF'))
+			if (observaciones.search("PED_OFF") != -1){
+				var observa = preventamobile.dal().replaceAll(observaciones,"[PED_OFF]","");
+				preventamobile.util().alerta(observa, null, "Observaciones", "Continuar");
+				
+				return false;
+			}			
+			
+		}
+		
         var listaPedidos = preventamobile.dal().listarPedidos(codigoCliente);
         // Si no hay pedidos los mando directo a NUEVO
         if (listaPedidos.length == 0) {
@@ -198,32 +267,37 @@ preventamobile.ui.cliente = function () {
 	//Funciones de nuevo Cliente
 	
 	renderClienteNuevo = function () {
-        var codigo = ''
-        //var cliente = preventamobile.dal().obtenerCodigoCliente(codigo);
-		var cliente = preventamobile.dal().factory().cliente();
-		var categorias = preventamobile.dal().categoriasLista();
 		
-		console.log(categorias);
-		/*var codigoNuevo = localStorage.getItem("UltimoCodigo");
-		//if (codigoNuevo == null){
-			codigoNuevo = 0
-		}
-		codigoNuevo++;
-		cliente.numero = 'A'+codigoNuevo;
-		*/
-		codigoNuevo = cliente.numero
-		localStorage.setItem("UltimoCodigo",codigoNuevo);
-        localStorage.setItem("Cliente - " + cliente.numero.trim(), preventamobile.util().serializar(cliente)); 
 		
-        //if (cliente) {
+		var aceptaNuevoCliente = preventamobile.dal().getClienteNuevo();
+		
+        if (aceptaNuevoCliente == 'S') {	
+		
+			var codigo = ''
+			//var cliente = preventamobile.dal().obtenerCodigoCliente(codigo);
+			var cliente = preventamobile.dal().factory().cliente();
+			var categorias = preventamobile.dal().categoriasLista();
 			
+			console.log(categorias);
+			/*var codigoNuevo = localStorage.getItem("UltimoCodigo");
+			//if (codigoNuevo == null){
+				codigoNuevo = 0
+			}
+			codigoNuevo++;
+			cliente.numero = 'A'+codigoNuevo;
+			*/
+			codigoNuevo = cliente.numero
+			localStorage.setItem("UltimoCodigo",codigoNuevo);
+			localStorage.setItem("Cliente - " + cliente.numero.trim(), preventamobile.util().serializar(cliente)); 
+		
+		 
             var htmlHeader = $.templates("#clienteNuevoHeaderTmpl").render();
             $("#headerClienteNuevoDetalle").html(htmlHeader).trigger('create');
 			
             var htmlDetalleCliente = $.templates("#clienteNuevoTmpl").render(cliente);
 			
 			var htmlLista = "<div id=divcategoria> <fieldset data-role='controlgroup' data-type='horizontal'>"
-			
+			htmlLista = htmlLista + "<legend>Categorias</legend>"
 			//htmlLista = "<ul data-theme='a' data-role='listview' data-inset='true' data-autodividers='false' " +
             //"data-filter='true' data-filter-placeholder='Ingrese letras a buscar'> ";
 			$.each(categorias, function (index, value) {
@@ -236,7 +310,7 @@ preventamobile.ui.cliente = function () {
 			htmlLista = htmlLista + " </fieldset></div>";
 			
 			htmlLista = htmlLista + "<div id=divsituacioniva> <fieldset data-role='controlgroup' data-type='horizontal'>"
-			
+			htmlLista = htmlLista + "<legend>Situación ante IVA</legend>"
 			htmlLista = htmlLista + "<input type='radio' name='radio-choice-11' id='radio-choice-1' value='1' {{if cliente.situacioniva == '1'}} checked='checked' {{/if}} data-type='horizontal' data-inline='true' />"
             htmlLista = htmlLista + "<label for='radio-choice-1'>R.Inscripto</label>"
             htmlLista = htmlLista + "<input type='radio' name='radio-choice-11' id='radio-choice-2' value='5' {{if cliente.situacioniva == '5'}} checked='checked' {{/if}} data-type='horizontal' data-inline='true' />"
@@ -257,10 +331,11 @@ preventamobile.ui.cliente = function () {
            
            
 
-        //} else {
-        //    alert("No se encontro cliente");
-        //}
-        //return false;
+        } else {
+            alert("No se encuentra habilitada la función por el momento.");
+			return false;
+        }
+       
     };
 	
 	almacenarClienteNuevo = function( cliente ){
@@ -268,6 +343,7 @@ preventamobile.ui.cliente = function () {
 		if (codigoNuevo == null){
 			codigoNuevo = 1
 		}
+		console.log('Almacenar Nuevo Cliente ' + codigoNuevo);
 		//codigoNuevo = 'A'+codigoNuevo;
 		
 		var clientaAAgregar = preventamobile.dal().obtenerCliente(codigoNuevo);
@@ -275,15 +351,23 @@ preventamobile.ui.cliente = function () {
 		clientaAAgregar.direccion = $('#direccion').val();
 		clientaAAgregar.telefono = $('#telefono').val();
 		clientaAAgregar.cuit = $('#cuit').val();
-		clientaAAgregar.cuit = $('#cuit').val();
-		console.log('categoria ',clientaAAgregar.idcategoria)
+		
+		//console.log('categoria ',clientaAAgregar.idcategoria)
 		clientaAAgregar.idcategoria = $('input[name="radio-choice-10"]:checked').val();
 		console.log('categoria ',clientaAAgregar.idcategoria)
+		var categoria = preventamobile.dal().obtenerCategoria(clientaAAgregar.idcategoria);
+		
+		clientaAAgregar.Idlista =  categoria.listaprecio;
+		if (clientaAAgregar.Idlista.length == 0) {clientaAAgregar.Idlista = "1"};
+		
 		clientaAAgregar.situacioniva = $('input[name="radio-choice-11"]:checked').val();
 		
 		clientaAAgregar.situacionivaDescripcion = preventamobile.dal().obtenerDescripcionIva(clientaAAgregar.situacioniva);
 		
+		
         preventamobile.dal().guardarClienteEnStorage(clientaAAgregar);
+		//Guardamos la observacion solo en ClientesNuevos. para que no muestre cartel
+		clientaAAgregar.observaciones = $('#observaciones').val();
 		preventamobile.dal().guardarClienteNuevoEnStorage(clientaAAgregar);
         preventamobile.ui.listaPedidos().establecerIdClienteSeleccionado(codigoNuevo);
         var clientes = preventamobile.dal().clientesLista();
@@ -303,6 +387,8 @@ preventamobile.ui.cliente = function () {
         detallesCliente: detallesCliente,
         agregarCliente: agregarCliente,
         afectar: afectar,
+		buscarLista: buscarLista,
+		fueraRutaPorVendedor:fueraRutaPorVendedor,
 		
 		renderClienteNuevo: renderClienteNuevo,
 		almacenarClienteNuevo: almacenarClienteNuevo

@@ -3,7 +3,7 @@
     document.addEventListener("deviceready",
         function () {
             AndroidFullScreen.immersiveMode();
-            preventamobile.util().activarTracking();
+            //preventamobile.util().activarTracking();
         },
         false);
 });

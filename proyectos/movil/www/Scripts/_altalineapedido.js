@@ -254,32 +254,39 @@ preventamobile.ui.altaLineaPedido = function () {
         if (articulo.variedades.length > 0) {
             $.mobile.changePage('#editaLineaVariedadesPage');
         } else {
-            preventamobile.ui.editaLineaPedido().enviarAConfirmacionGuardarLinea(
-                { articulo: articulo },
-                function () {
+			
+				
+				preventamobile.ui.editaLineaPedido().enviarAConfirmacionGuardarLinea(
+					{ articulo: articulo },
+					function () {
 
-                    window.console.log('success');
+						window.console.log('success');						
+						
+						if (preventamobile.ui.editaLineaPedido().recalcularLineaEnEdicion() ){
+							
+							//alert('Aqui GuardarLinea');
+							
+							preventamobile.ui.editaLineaPedido().guardarLinea();
+							preventamobile.ui.editaLineaPedido().inicializarLinea();
 
-                    preventamobile.ui.editaLineaPedido().guardarLinea();
-                    preventamobile.ui.editaLineaPedido().inicializarLinea();
+							var cantsel = $('#cantidad').val();
 
-                    var cantsel = $('#cantidad').val();
+							var sugList = $("#resultados");
+							var html = "";
+							html = html + "<li style='white-space:normal' >" + "<a style='white-space:normal' href='#' >" + articulo.numero + ' - ' + articulo.nombre + " - (" + cantsel + ")" + "</a></li>";
 
-                    var sugList = $("#resultados");
-                    var html = "";
-                    html = html + "<li style='white-space:normal' >" + "<a style='white-space:normal' href='#' >" + articulo.numero + ' - ' + articulo.nombre + " - (" + cantsel + ")" + "</a></li>";
+							sugList.html(html).trigger("refresh");
+							sugList.listview("refresh");
 
-                    sugList.html(html).trigger("refresh");
-                    sugList.listview("refresh");
-
-                    $.mobile.changePage("#altaLineaPedidoPage");
-
-                },
-                function () {
-                    preventamobile.ui.editaLineaPedido().inicializarLinea();
-                    $.mobile.changePage("#altaLineaPedidoPage");
-                }
-            );
+							$.mobile.changePage("#altaLineaPedidoPage");
+						}
+					},
+					function () {
+						preventamobile.ui.editaLineaPedido().inicializarLinea();
+						$.mobile.changePage("#altaLineaPedidoPage");
+					}
+				);
+			
         };
 
         //};

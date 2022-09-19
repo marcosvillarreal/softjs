@@ -122,12 +122,13 @@ preventamobile.ui.editaLineaPedido = function () {
         var sliderVal;
         if (options.articulo.univenta == '1') { sliderVal = 'on'; } else { sliderVal = 'off'; }
         $('#sliderUniVenta').val(sliderVal).slider("refresh");
-
+		
+		$('#totalLinea').val(0);
 
         $("#cantidad").focus();
 
         $("#confirmaAltaLineaPedidoOk").unbind().click(success);
-		$("#confirmaAltaLineaPedidoOk").hide();
+		//$("#confirmaAltaLineaPedidoOk").hide();
         $("#confirmaAltaLineaPedidoCancel").unbind().click(cancel);
 
     };
@@ -235,19 +236,23 @@ preventamobile.ui.editaLineaPedido = function () {
 			linea.kilos		= Math.abs($('#kilos').val()) * signo;
         }
         
-		//0=Nada,1=Se valida tope,2=se autocompleta
-		//console.log('Bonif ', linea.bonif1 );
-		if (linea.estopebonif == '1'){
-			var maxbonif = linea.boniftope;
-			if ( linea.bonif1 > maxbonif) {
-				alert('Bonificacion digitada, supera la establecida.');
-				console.log('Bonifiacion Max ',maxbonif);
-				$('#bonif1').val('');
-				return false
-			}else{
+		console.log('siBonificar ',pedido.siBonificar)
+		if (pedido.siBonificar){
+			//0=Nada,1=Se valida tope,2=se autocompleta
+			//console.log('Bonif ', linea.bonif1 );
+			if (linea.estopebonif == '1'){
+				var maxbonif = linea.boniftope;
+				if ( linea.bonif1 > maxbonif) {
+					alert('Bonificacion digitada, supera la establecida.');
+					console.log('Bonifiacion Max ',maxbonif);
+					$('#bonif1').val('');
+					return false
+				}else{
+				}
 			}
+		}else{
+			 linea.bonif1 = 0;
 		}
-		
         if (linea.cantidad == 0) {
             alert('Debe indicar una cantidad!');
             return false;
@@ -272,7 +277,7 @@ preventamobile.ui.editaLineaPedido = function () {
 				return false;
 			}			
         }
-		
+		//alert('GuardarLinea')
         preventamobile.dal().guardarPedidoLinea(pedidoId, linea);
         return true;
 
@@ -372,11 +377,14 @@ preventamobile.ui.editaLineaPedido = function () {
 		$('#articuloNetoBonificado').val(netoBonificado);
         $('#totalNetoLinea').val((cantidad * peso  * netoBonificado).toFixed(3));
 		
-		$('#confirmaAltaLineaPedidoOk').show();
-		if ($('#totalLinea').val() == 0){
-			$('#confirmaAltaLineaPedidoOk').hide();
+		//$('#confirmaAltaLineaPedidoOk').show();
+		if ($('#totalLinea').val() == 0 && (bonif1 != 100)){
+			//$('#confirmaAltaLineaPedidoOk').hide();
+			
+			return false;
 			
 		}
+		return true;
 		
     };
 	
@@ -388,16 +396,21 @@ preventamobile.ui.editaLineaPedido = function () {
 		
 		//La bonificacion general, debe cargarse, pero validar que no supere el maximo.
 		//alert(bonifgral);		
-		//console.log('bonifgral ' + bonifgral);
-		//console.log('boniftope ' + linea.boniftope);
-		if (bonifgral > linea.boniftope) {
-			
-			bonif1 = linea.boniftope ? parseFloat(linea.boniftope, 10) : 0;
-		}else{
-			bonif1 = bonifgral;
+		console.log('bonifgral ' + bonifgral);
+		console.log('boniftope ' + linea.boniftope);
+		console.log('estopebonif ' + linea.estopebonif);
+		//0=Nada,1=Se valida tope,2=se autocompleta
+		bonif1 = bonifgral;
+		if (linea.estopebonif == '1'){
+			if (bonifgral > linea.boniftope) {
+				
+				bonif1 = linea.boniftope ? parseFloat(linea.boniftope, 10) : 0;
+			}else{
+				//bonif1 = bonifgral;
+			}
 		}
-		//console.log('Articulo ' + linea.idarticulo)
-		//console.log('bonif '+bonif1);
+		console.log('Articulo ' + linea.idarticulo)
+		console.log('bonif '+bonif1);
 		linea.bonif1 = parseFloat(bonif1);
 		
 		//console.log(linea.bonif1);

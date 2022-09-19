@@ -8,6 +8,7 @@ preventamobile.dal = function () {
         serverInfo,
         serverVersion,
         sync,
+		getVersionApp,
 
         syncTracking,
         syncTrackingConServidor,
@@ -23,14 +24,21 @@ preventamobile.dal = function () {
         obtenerCliente,
         obtenerCuentaCorriente,
         obtenerClienteFueraRuta,
+		obtenerClienteNuevo,
         eliminarClientes,
 		eliminarNuevosClientes,
         marcarClienteParaSincronizar,
         obtenerDescripcionIva,
 		actualizarClientesEstados,
 		borrarNuevoCliente,
+		fueraRutaVendedorLista,
+		
+		guardarListaVendedor,
+		vendedoresLista,
+		obtenerVendedor,
 		
 		categoriasLista,
+		obtenerCategoria,
 		
         getUrlServer,
         setUrlServer,
@@ -39,6 +47,8 @@ preventamobile.dal = function () {
         getEmpresa,
         getDecimales,
         getTracking,
+		getClienteNuevo,
+		getGuiaSemana,
         setTitle,
 
         syncArticulos,
@@ -108,8 +118,9 @@ preventamobile.dal = function () {
         obtenerLog,
         limpiarLog,
 
-        controlarUsuarioValido;
-
+        controlarUsuarioValido,
+		
+		replaceAll;
     //#endregion
 
     //#region log
@@ -159,7 +170,13 @@ preventamobile.dal = function () {
         return "Empresa sin Sincronizar";
 
     }
+	
+	getVersionApp = function () {
 
+       return "6.1.0.43";
+
+    }
+	
     getDecimales = function () {
 
         var empresa = getEmpresa();
@@ -181,9 +198,32 @@ preventamobile.dal = function () {
         return 1;
 
     }
+	
+	getClienteNuevo = function () {
 
+        var empresa = getEmpresa();
+
+        if (empresa && empresa.clientenuevo)
+            return empresa.clientenuevo;
+
+        return 1;
+
+    }
+	
+	getGuiaSemana = function () {
+
+        var empresa = getEmpresa();
+
+        if (empresa && empresa.guiasemana)
+            return empresa.guiasemana;
+
+        return 1;
+
+    }
+	
     setTitle = function () {
         $("#apptitle").text(getNombreEmpresa());
+		$("#geolocation").text(getVersionApp());
     }
 
     getLoginInfo = function () {
@@ -340,7 +380,7 @@ preventamobile.dal = function () {
 							
 							
 							preventamobile.util().log("Iniciando guardarArticulosEnStorage");
-							alert((parsedResponse.articulos))
+							//alert((parsedResponse.articulos))
                             var articulos = JSON.hunpack(JSON.parse(parsedResponse.articulos));
 							
                             if (articulos && articulos.length > 0) {
@@ -459,7 +499,8 @@ preventamobile.dal = function () {
 
         eliminarLista("Cliente");
         eliminarLista("FueraRuta");
-
+		eliminarLista("Categoria");
+		eliminarLista("Vendedor");
     };
 
     guardarClientesEnStorage = function (data) {
@@ -467,7 +508,7 @@ preventamobile.dal = function () {
         preventamobile.util().log("Inicio guardarClientesEnStorage");
 
         var clientes,categorias,
-            fueraRuta;
+            fueraRuta, vendedores;
 
         if (data.clientes)
             clientes = JSON.hunpack(JSON.parse(data.clientes));
@@ -477,8 +518,14 @@ preventamobile.dal = function () {
 		
 		if (data.categorias){
             categorias = JSON.hunpack(JSON.parse(data.categorias));
-			alert(JSON.parse(data.categorias))
+			//alert(JSON.parse(data.categorias))
 		}	
+		
+		if (data.vendedores){
+            vendedores = JSON.hunpack(JSON.parse(data.vendedores));
+			//alert(JSON.parse(data.vendedores))
+		}
+		
         if (clientes && clientes.length > 0) {
             guardarLista("Cliente", clientes);
             for (var index = 0; index < clientes.length; index++) {
@@ -490,6 +537,9 @@ preventamobile.dal = function () {
         }
 		if (categorias && categorias.length > 0){
 			guardarLista("Categoria",categorias);
+		}
+		if (vendedores && vendedores.length > 0){
+			guardarListaVendedor("Vendedor",vendedores);
 		}
 		preventamobile.util().log("Fin guardarClientesEnStorage");
     };
@@ -506,6 +556,71 @@ preventamobile.dal = function () {
             return clienteObj;
         }
         return false;
+    };
+	
+	obtenerClienteNuevo = function (codigo) {
+        if (!codigo) {
+            return false;
+        }
+
+        var cliente = localStorage.getItem("NuevoCliente - " + codigo.trim());
+        if (cliente) {
+            var clienteObj = JSON.parse(cliente);
+            clienteObj.situacionivaDescripcion = obtenerDescripcionIva(clienteObj.situacioniva);
+            return clienteObj;
+        }
+        return false;
+    };
+	
+	obtenerCategoria = function (codigo) {
+        if (!codigo) {
+            return false;
+        }
+
+        var categoria = localStorage.getItem("Categoria - " + codigo.trim());
+        if (categoria) {
+            var categoriaObj = JSON.parse(categoria);
+            return categoriaObj;
+        }
+        return false;
+    };
+	
+	obtenerVendedor = function (codigo) {
+        if (!codigo) {
+            return false;
+        }
+
+        var vendedor = localStorage.getItem("Vendedor - " + codigo.trim());
+        if (vendedor) {
+            var vendedorObj = JSON.parse(vendedor);
+            return vendedorObj;
+        }
+        return false;
+    };
+	
+	vendedoresLista = function () {
+        return obtenerLista("Vendedor");
+    };
+	
+	fueraRutaVendedorLista = function (codigo) {
+
+        var lista = [];
+
+        // Ciclar las keys de localStorage y devolver las que comienzan con FueraRuta y pertenecen al vendedor
+        var listaIndex = 0;
+        var fueraRuta = obtenerLista("FueraRuta");
+        if (fueraRuta && fueraRuta.length > 0)
+            for (var index = 0; index < fueraRuta.length; index++) {
+				//console.log("idvendedor " +  codigo + " FueraRuta " + fueraRuta[index].idvendedor)
+				
+                if (codigo === fueraRuta[index].idvendedor) {
+                    lista[listaIndex] = fueraRuta[index];
+                    listaIndex++;
+                }
+            }
+        sort(lista, "vendedor", 1);
+        return lista;
+
     };
 	
 	actualizarClientesEstados = function () {
@@ -616,7 +731,9 @@ preventamobile.dal = function () {
 
     clientesFueraRutaLista = function () {
         var clientesFueraRuta = obtenerLista("FueraRuta");
-        sort(clientesFueraRuta, 'nombre', 1);
+		//console.log(clientesFueraRuta);
+        sort(clientesFueraRuta, 'numero', 1);
+		
         return clientesFueraRuta;
     };
 	
@@ -833,7 +950,8 @@ preventamobile.dal = function () {
     seccionesLista = function () {
         return obtenerLista("Seccion");
     };
-
+	
+	
     //#endregion
 
     //#region NoVenta
@@ -955,12 +1073,12 @@ preventamobile.dal = function () {
         var tracking = objTracking;
 
         if (tracking && tracking.length && tracking.length > 0) {
-
+			console.log(tracking);
             var model = {
                 data: preventamobile.util().serializar(preventamobile.util().comprimir(tracking)),
                 login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo())
             };
-
+			console.log('Enviando Tracking');
             syncTrackingConServidor(model);
 
         }
@@ -1016,14 +1134,15 @@ preventamobile.dal = function () {
 			
         var noventa = listarNoVenta();
         var cuentaCorriente = listarCuentaCorriente();
+		var clientesNuevos = listarClientesNuevos();
 		
-		
-        if ( (noventa && noventa.length && noventa.length > 0) || (cuentaCorriente && cuentaCorriente.length && cuentaCorriente.length > 0)) {
+        if ( (noventa && noventa.length && noventa.length > 0) || (cuentaCorriente && cuentaCorriente.length && cuentaCorriente.length > 0) || (clientesNuevos && clientesNuevos.length && clientesNuevos.length > 0)) {
 			
 			 var model = {
 				noventa: preventamobile.util().serializar(noventa),
                 cuentaCorriente: preventamobile.util().serializar(cuentaCorriente),
-                login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo())
+                login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo()),
+				clientesNuevos: preventamobile.util().serializar(clientesNuevos)
             };
 			 syncPedidosConServidor(
                 model,
@@ -1144,7 +1263,7 @@ preventamobile.dal = function () {
 			var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
 			console.log('Perce IIBB ',porcePerceCliente);
             pedido = preventamobile.dal().factory().pedido(codigoCliente, id, porcePerceCliente);
-			alert(pedido);
+			//alert(pedido);
         }
 
         return pedido;
@@ -1740,7 +1859,7 @@ preventamobile.dal = function () {
 				bonifpedido: "",
 				impreso: 0,
 				siBonificar: true,
-				version: "6.1.0.27",
+				version: getVersionApp(),
 				listaPrecio: "1"
             };
         };
@@ -1801,7 +1920,7 @@ preventamobile.dal = function () {
 			
 			return {
 				id:'0',
-				idlista:'1',
+				Idlista:'1',
 				bonif1:0,
 				bonif2:0,
 				bonif3:0,
@@ -1845,7 +1964,17 @@ preventamobile.dal = function () {
 			cliente: cliente
         };
     };
+	
+	vendedor = function () {
+            return {
+                id: '',
+                nombre: '',
+                idempresa: '',
+                codigo: '',
 
+            };
+        };
+		
     //#endregion
 
     //#region Util
@@ -1858,8 +1987,10 @@ preventamobile.dal = function () {
             var listaIndex = 0;
             for (var i = 0; i < localStorage.length; i++) {
                 var key = localStorage.key(i);
+			
                 if (key.substr(0, entidad.length) === entidad) {
                     var value = JSON.parse(localStorage[key]);
+						//console.log(value);
                     if (value) {
                         lista[listaIndex] = value;
                         listaIndex++;
@@ -1900,7 +2031,14 @@ preventamobile.dal = function () {
                 localStorage.setItem(entidad + " - " + lista[i].numero.trim(), preventamobile.util().serializar(lista[i]));
             }
     };
-
+	
+	guardarListaVendedor = function (entidad, lista) {
+        if (lista && lista.length > 0)
+            for (var i = 0; i < lista.length; i++) {
+                localStorage.setItem(entidad + " - " + lista[i].codigo.trim(), preventamobile.util().serializar(lista[i]));
+            }
+    };
+	
     sort = function (objArray, prop, direction) {
         if (arguments.length < 2) throw new Error("sortJsonArrayByProp requires 2 arguments");
         var direct = arguments.length > 2 ? direction : 1; //Default to ascending
@@ -1921,7 +2059,11 @@ preventamobile.dal = function () {
             });
         }
     };
-
+	
+	function replaceAll(texto,original,nuevo){
+		var ntexto=texto.split(original).join(nuevo);
+		return ntexto; 		
+    };
     //#endregion
 
     //#region Return
@@ -1939,8 +2081,12 @@ preventamobile.dal = function () {
         removerClienteFueraRutaEnStorage: removerClienteFueraRutaEnStorage,
         marcarClienteParaSincronizar: marcarClienteParaSincronizar,
 		actualizarClientesEstados: actualizarClientesEstados,
-		categoriasLista: categoriasLista,
 		borrarNuevoCliente: borrarNuevoCliente,
+		fueraRutaVendedorLista: fueraRutaVendedorLista,
+		obtenerClienteNuevo: obtenerClienteNuevo,
+		
+		categoriasLista: categoriasLista,
+		obtenerCategoria: obtenerCategoria,
 		
         getUrlServer: getUrlServer,
         setUrlServer: setUrlServer,
@@ -1949,6 +2095,8 @@ preventamobile.dal = function () {
         getEmpresa: getEmpresa,
         getDecimales: getDecimales,
         getTracking: getTracking,
+		getClienteNuevo: getClienteNuevo,
+		getGuiaSemana: getGuiaSemana,
         setTitle: setTitle,
 
         articulosLista: articulosLista,
@@ -2003,7 +2151,11 @@ preventamobile.dal = function () {
         syncSecciones: syncSecciones,
         syncTracking: syncTracking,
         syncTrackingConServidor: syncTrackingConServidor,
-
+		
+		guardarListaVendedor: guardarListaVendedor,
+		vendedoresLista: vendedoresLista,
+		obtenerVendedor: obtenerVendedor,
+		
         obtenerTipoPedido: obtenerTipoPedido,
 		obtenerDescripcionIva: obtenerDescripcionIva,
 		
@@ -2018,8 +2170,10 @@ preventamobile.dal = function () {
 		controlarUsuarioValido: controlarUsuarioValido,
         sort: sort,
         clearData: clearData,
-        factory: factory
-
+        factory: factory,
+		
+		getVersionApp: getVersionApp,
+		replaceAll: replaceAll
     };
 
     //#endregion

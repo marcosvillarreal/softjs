@@ -76,6 +76,7 @@ preventamobile.ui.listaArticulosPedido = function () {
 		var pedido = preventamobile.dal().obtenerPedido(pedidoId);
 		
 		if (pedido.siBonificar){
+			
 			$('#ullistartped').empty();
 			lineasPedido = preventamobile.dal().listarPedidoLineas(pedidoId);
 			
@@ -84,7 +85,7 @@ preventamobile.ui.listaArticulosPedido = function () {
 			
 			porcebonif = ($('#bonifporcepedido').val());
 			//alert(porcebonif);
-			
+			console.log('Modificando Bonif Gral ',porcebonif )
 			$.each(lineasPedido, function (index, value) {
 				//articulo = preventamobile.dal().obtenerArticulo(value.idarticulo);
 				value = preventamobile.ui.editaLineaPedido().modificarBonifLinea(value,porcebonif,pedidoId);

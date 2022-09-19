@@ -49,7 +49,8 @@ preventamobile.util = function () {
     activarTracking = function () {
 
         if (preventamobile.dal().getTracking() != 1) { return };
-
+		
+		console.log('Traking Habilitado - Entro');
         navigator.geolocation.getCurrentPosition(on_success);
         
        // var watchID = navigator.geolocation.watchPosition(on_success, on_error, watchOptions);
@@ -77,7 +78,7 @@ preventamobile.util = function () {
         });
       
         bgLocationServices.start();
-
+		console.log('Traking Habilitado');
     };
 
 

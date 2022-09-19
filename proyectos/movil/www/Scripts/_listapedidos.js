@@ -94,7 +94,7 @@ preventamobile.ui.listaPedidos = function () {
 		var observaciones = obtenerObservacionesClienteSeleccionado(codigoCliente);
 		
 		if (observaciones) {
-			var observa = replaceAll(observaciones,"[BONIF_OFF]","");
+			var observa = preventamobile.dal().replaceAll(observaciones,"[BONIF_OFF]","");
 			preventamobile.util().alerta(observa, null, "Observaciones", "Continuar");
 		}
 		
@@ -118,7 +118,7 @@ preventamobile.ui.listaPedidos = function () {
     //#region Info sobre cliente activo
 	obtenerListaPrecioClienteSeleccionado = function (id) {
         var cliente = preventamobile.dal().obtenerCliente(id);
-		//console.log('Cliente lista precio ',cliente.Idlista);
+		//alert('Cliente lista precio ',cliente.idlista);
         if (cliente && cliente.Idlista) {
             return cliente.Idlista;
         }
@@ -263,10 +263,7 @@ preventamobile.ui.listaPedidos = function () {
         establecerIdPedidoSeleccionado(codigo);
         $.mobile.changePage('#editaPedidosPage');
     };
-	function replaceAll(texto,original,nuevo){
-		var ntexto=texto.split(original).join(nuevo);
-		return ntexto; 		
-    };
+	
     /// Este metodo para pedidos nuevos genera un nuevo pedido desde la factory, ya que hasta que no es guardado por primera vez
     ///     no se encuentra realmente en el localStorage
     aplicarPedido = function (redirigir) {
@@ -312,7 +309,7 @@ preventamobile.ui.listaPedidos = function () {
 		var lista_cliente = obtenerListaPrecioClienteSeleccionado(codigoCliente);
 		
 		pedido.siBonificar = true;	
-		if (obser_cliente.search("[BONIF_OFF]") != -1){
+		if (obser_cliente.search("BONIF_OFF") != -1){
 			pedido.siBonificar = false;
 		}
 		
@@ -321,12 +318,12 @@ preventamobile.ui.listaPedidos = function () {
         var fechaEntrega = moment($('#date2').val()).format("DD/MM/YYYY");
 		// Valores pagados
 		//var pagoEfectivo = $('#pagoEfectivo').val().replaceAll('$','');
-		var pagoEfectivo = replaceAll( $('#pagoEfectivo').val() , '$','');		
+		var pagoEfectivo = preventamobile.dal().replaceAll( $('#pagoEfectivo').val() , '$','');		
 		//pagoEfectivo = pagoEfectivo.replaceAll('$','');
-		var pagoCheque = replaceAll( $('#pagoCheque').val(),'$','');
+		var pagoCheque = preventamobile.dal().replaceAll( $('#pagoCheque').val(),'$','');
 		//var pagoCheque = $('#pagoCheque').val().replaceAll('$','');		
 		//var pagoTransferencia = $('#pagoTransferencia').val().replaceAll('$','');
-		var pagoTransferencia = replaceAll( $('#pagoTransferencia').val() ,'$','');		
+		var pagoTransferencia = preventamobile.dal().replaceAll( $('#pagoTransferencia').val() ,'$','');		
         pedido.tipoDePedido = tipoDePedido;
         pedido.vales = vales;
         pedido.remito = remito;
@@ -374,15 +371,20 @@ preventamobile.ui.listaPedidos = function () {
                     lista[0] = pedido;
 					
 					var cliente = preventamobile.dal().obtenerCliente(pedido.codigoCliente);
+					var clienteNuevo = preventamobile.dal().obtenerClienteNuevo(pedido.codigoCliente);
 					
                     var noventa = [];
 					var cuentaCorriente = preventamobile.dal().obtenerCuentaCorriente(cliente);
+					if (cuentaCorriente == false){
+						 cuentaCorriente = [];
+					}
 					//console.log(cuentaCorriente);
 					//console.log(cliente);
                     var model = { 
 						data: preventamobile.util().serializar(preventamobile.util().comprimir(lista)), 
 						noventa: preventamobile.util().serializar(noventa), 
 						cuentaCorriente: preventamobile.util().serializar(cuentaCorriente),
+						clienteNuevo: preventamobile.util().serializar(clienteNuevo),
 						login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo()) 
 					};
                     preventamobile.dal().syncPedidosConServidor(model, informarPedidoSyncOk, informarPedidoSyncError);
@@ -456,7 +458,10 @@ preventamobile.ui.listaPedidos = function () {
         renderPedidoRentablePage: renderPedidoRentablePage,
         pedidoRentablePage: pedidoRentablePage,
 		obtenerPerceClienteSeleccionado: obtenerPerceClienteSeleccionado,
-		obtenerListaPrecioClienteSeleccionado: obtenerListaPrecioClienteSeleccionado
+		obtenerListaPrecioClienteSeleccionado: obtenerListaPrecioClienteSeleccionado,
+		obtenerObservacionesClienteSeleccionado: obtenerObservacionesClienteSeleccionado,
+		
+		
     };
 };
 
