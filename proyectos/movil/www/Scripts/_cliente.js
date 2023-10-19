@@ -81,6 +81,9 @@ preventamobile.ui.cliente = function () {
     renderinfoPedidosPage = function () {
 
         var a0 = 0; var a1 = 0; var a2 = 0; var a3 = 0; var a4 = 0;
+		var cantidadPedidos = 0;
+        var totalPedidos = 0;
+		
         var clientes = preventamobile.dal().clientesLista();
 
         $.each(clientes, function (index, value) {
@@ -93,19 +96,36 @@ preventamobile.ui.cliente = function () {
                 if (cliente.tienePedido) { ++a1 };
                 if (cliente.noVenta) { ++a2 };
                 if (!cliente.noVenta && !cliente.tienePedido) { ++a3 };
+				
+				 var listaPedidos = preventamobile.dal().listarPedidos(codigo);
+				 
+				 if ((listaPedidos && listaPedidos.length && listaPedidos.length > 0)) {
+					$.each(listaPedidos, function (index, value) {
+
+						if (value.total) {
+
+							totalPedidos = totalPedidos + value.total;
+							cantidadPedidos = cantidadPedidos + 1;
+
+						}
+
+					});
+				}
+						 
             };
 
         });
 
-        $('#A0').text(a0);
-        $('#A1').text(a1);
-        $('#A2').text(a2);
-        $('#A3').text(a3);
+        $('#A0').text((a0).toFixed(0));
+        $('#A1').text((a1).toFixed(0));
+        $('#A2').text((a2).toFixed(0));
+        $('#A3').text((a3).toFixed(0));
 
         // Calcular total de pedidos
 
         var empresa = preventamobile.dal().getEmpresa();
-
+		
+		/*
         var pedidos = preventamobile.dal().listarPedidos();
 
         var cantidadPedidos = 0;
@@ -123,11 +143,12 @@ preventamobile.ui.cliente = function () {
 
             });
         }
-
-        $('#A4').text(totalPedidos);
+		*/
+		
+        $('#A4').text((totalPedidos).toFixed(3));
 
         if (cantidadPedidos > 0)
-            $('#A5').text(totalPedidos / cantidadPedidos);
+            $('#A5').text((totalPedidos / cantidadPedidos).toFixed(3));
         else
             $('#A5').text(0);
 
@@ -345,35 +366,74 @@ preventamobile.ui.cliente = function () {
 		}
 		console.log('Almacenar Nuevo Cliente ' + codigoNuevo);
 		//codigoNuevo = 'A'+codigoNuevo;
+		var mensajeError = '';
 		
-		var clientaAAgregar = preventamobile.dal().obtenerCliente(codigoNuevo);
-		clientaAAgregar.nombre = $('#nombre').val();
-		clientaAAgregar.direccion = $('#direccion').val();
-		clientaAAgregar.telefono = $('#telefono').val();
-		clientaAAgregar.cuit = $('#cuit').val();
-		
-		//console.log('categoria ',clientaAAgregar.idcategoria)
-		clientaAAgregar.idcategoria = $('input[name="radio-choice-10"]:checked').val();
-		console.log('categoria ',clientaAAgregar.idcategoria)
-		var categoria = preventamobile.dal().obtenerCategoria(clientaAAgregar.idcategoria);
-		
-		clientaAAgregar.Idlista =  categoria.listaprecio;
-		if (clientaAAgregar.Idlista.length == 0) {clientaAAgregar.Idlista = "1"};
-		
-		clientaAAgregar.situacioniva = $('input[name="radio-choice-11"]:checked').val();
-		
-		clientaAAgregar.situacionivaDescripcion = preventamobile.dal().obtenerDescripcionIva(clientaAAgregar.situacioniva);
-		
-		
-        preventamobile.dal().guardarClienteEnStorage(clientaAAgregar);
-		//Guardamos la observacion solo en ClientesNuevos. para que no muestre cartel
-		clientaAAgregar.observaciones = $('#observaciones').val();
-		preventamobile.dal().guardarClienteNuevoEnStorage(clientaAAgregar);
-        preventamobile.ui.listaPedidos().establecerIdClienteSeleccionado(codigoNuevo);
-        var clientes = preventamobile.dal().clientesLista();
-        $("#clientesContent").html($.templates("#clienteListaTmpl").render({ clientes: clientes })).trigger('create');
+		if ($('#nombre').val() == ''){			
+			mensajeError = 'El Nombre y Apellido no pueden ser vacios \n';
+			//console.log(mensajeError);
+		}
+		if ($('#direccion').val() == ''){
+			mensajeError = mensajeError +  'La dirección no pueden ser vacia \n';
+			//console.log(mensajeError);
+		}
+		if ($('#telefono').val() == ''){
+			mensajeError = mensajeError + 'El telefono no pueden ser vacio \n';
+			//console.log(mensajeError);
+		}
+		if ($('#cuit').val() == ''){
+			mensajeError = mensajeError + 'El documento no pueden ser vacio \n';
+			//console.log(mensajeError);
+		}
+		if ($('#cuit').val() == '00-0000000-00'){
+			mensajeError = mensajeError + 'El documento no pueden ser vacio \n';
+			//console.log(mensajeError);
+		}
+		/*
+		if ($('input[name="radio-choice-10"]:checked').val() == 0){
+			mensajeError = mensajeError + 'Debe elegir una categoria \n';
+			//console.log(mensajeError);
+		}
+		if ($('input[name="radio-choice-11"]:checked').val() == 0){
+			mensajeError = mensajeError + 'Debe elegir una tipo IVA';
+			//console.log(mensajeError);
+		}
+		*/
 
-        preventamobile.ui.listaPedidos().pedidoNuevo();
+		if (mensajeError==''){
+			var clientaAAgregar = preventamobile.dal().obtenerCliente(codigoNuevo);
+			clientaAAgregar.nombre = $('#nombre').val();
+			clientaAAgregar.direccion = $('#direccion').val();
+			clientaAAgregar.telefono = $('#telefono').val();
+			clientaAAgregar.cuit = $('#cuit').val();
+			
+			//console.log('categoria ',clientaAAgregar.idcategoria)
+			clientaAAgregar.idcategoria = $('input[name="radio-choice-10"]:checked').val();
+			console.log('categoria ',clientaAAgregar.idcategoria)
+			var categoria = preventamobile.dal().obtenerCategoria(clientaAAgregar.idcategoria);
+			
+			clientaAAgregar.Idlista =  categoria.listaprecio;
+			if (clientaAAgregar.Idlista.length == 0) {clientaAAgregar.Idlista = "1"};
+			
+			clientaAAgregar.situacioniva = $('input[name="radio-choice-11"]:checked').val();
+			
+			clientaAAgregar.situacionivaDescripcion = preventamobile.dal().obtenerDescripcionIva(clientaAAgregar.situacioniva);
+			
+			
+			
+			preventamobile.dal().guardarClienteEnStorage(clientaAAgregar);
+			//Guardamos la observacion solo en ClientesNuevos. para que no muestre cartel
+			clientaAAgregar.observaciones = $('#observaciones').val();
+			preventamobile.dal().guardarClienteNuevoEnStorage(clientaAAgregar);
+			preventamobile.ui.listaPedidos().establecerIdClienteSeleccionado(codigoNuevo);
+			var clientes = preventamobile.dal().clientesLista();
+			$("#clientesContent").html($.templates("#clienteListaTmpl").render({ clientes: clientes })).trigger('create');
+
+			preventamobile.ui.listaPedidos().pedidoNuevo();
+		}else{
+			console.log(mensajeError)
+			alert(mensajeError)
+			return false
+		}
 	};
 	
 

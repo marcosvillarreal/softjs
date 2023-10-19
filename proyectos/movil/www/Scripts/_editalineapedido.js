@@ -151,7 +151,10 @@ preventamobile.ui.editaLineaPedido = function () {
             linea = preventamobile.dal().factory().lineaPedido();
             linea.peso = articulo.peso;
             linea.sikilos = articulo.sikilos;
-			
+			linea.alicuotaiva = 21;
+			if (articulo.idtablaiva == "3"){
+				linea.alicuotaiva = 10.5;
+			}
         } else {
             linea = pedido.lineas[lineaId];
         }
@@ -378,7 +381,7 @@ preventamobile.ui.editaLineaPedido = function () {
         $('#totalNetoLinea').val((cantidad * peso  * netoBonificado).toFixed(3));
 		
 		//$('#confirmaAltaLineaPedidoOk').show();
-		if ($('#totalLinea').val() == 0 && (bonif1 != 100)){
+		if ($('#totalLinea').val() == 0 && (bonif1 != 100) && (signo==1)){
 			//$('#confirmaAltaLineaPedidoOk').hide();
 			
 			return false;

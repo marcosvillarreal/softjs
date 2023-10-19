@@ -127,6 +127,9 @@ preventamobile.ui.imprimirPedido = function () {
 				html = html + " CF "
 			}
 			
+			if (pedido.vales == '1'){
+				html = html + " VALES "
+			}
 			
 			html = html + "</h3>"
 			html = html + "<h3> Cliente "+pedido.codigoCliente + "</h3>"

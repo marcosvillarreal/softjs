@@ -173,7 +173,7 @@ preventamobile.dal = function () {
 	
 	getVersionApp = function () {
 
-       return "6.1.0.43";
+       return "6.1.0.56";
 
     }
 	
@@ -1354,17 +1354,19 @@ preventamobile.dal = function () {
 				kilos = linea.kilos ;
 				cantidad = 1;
 			}
-            
-            var subTotal = cantidad * precio * kilos;
-			//console.log('SubTotal Linea',subTotal);
-            var importeBonif1 = (subTotal * bonif1) / 100;
-			//console.log('Total Bonif',importeBonif1);
-            var importeBonif2 = ((subTotal - importeBonif1) * bonif2) / 100;
-            totalLinea = (subTotal - importeBonif1 - importeBonif2);
-			//console.log('Total Linea',totalLinea);
-            totalLinea = parseInt((totalLinea + 0.005) * 100) / 100;
-			//totalLinea = parseFloat(totalLinea).toFixed(2);
-			
+			// los cambios son cantidades negativas y no suman
+            if ( cantidad >= 0){
+							
+				var subTotal = cantidad * precio * kilos;
+				//console.log('SubTotal Linea',subTotal);
+				var importeBonif1 = (subTotal * bonif1) / 100;
+				//console.log('Total Bonif',importeBonif1);
+				var importeBonif2 = ((subTotal - importeBonif1) * bonif2) / 100;
+				totalLinea = (subTotal - importeBonif1 - importeBonif2);
+				//console.log('Total Linea',totalLinea);
+				totalLinea = parseInt((totalLinea + 0.005) * 100) / 100;
+				//totalLinea = parseFloat(totalLinea).toFixed(2);
+			}
 					
         }
         return totalLinea;
@@ -1421,45 +1423,47 @@ preventamobile.dal = function () {
 						cantidad = 1;
 						
 					}
-                    var subTotal = cantidad * precio * kilos;
-					//console.log('Subtotal ' + subTotal)
-                    var subTotalCosto = cantidad * costo * kilos;
-                    var importeBonif1 = ((subTotal * bonif1) / 100).toFixed(2);
-					//console.log('Total Bonif '+ importeBonif1)
-                    var importeBonif2 = (((subTotal - importeBonif1) * bonif2) / 100).toFixed(2);
-					// Totales del neto
-					var subTotalNeto = cantidad * neto * kilos;
-					var netoBonif1	 = ((subTotalNeto * bonif1) / 100).toFixed(2);
-					var netoBonif2	 = (((subTotalNeto - netoBonif1) * bonif2) / 100).toFixed(2);
-					
-					SubBonif = (parseFloat(SubBonif) + parseFloat(importeBonif1));
-					//console.log('Total Bonif '+ SubBonif);
-					
-                    var costoProveedor;
-                    if (!pedido.costoProveedor[linea.idproveedor]) {
-                        var proveedor = obtenerProveedor(linea.idproveedor);
+					// los cambios son cantidades negativas y no suman
+					if ( cantidad >= 0){
+						var subTotal = cantidad * precio * kilos;
+						//console.log('Subtotal ' + subTotal)
+						var subTotalCosto = cantidad * costo * kilos;
+						var importeBonif1 = ((subTotal * bonif1) / 100).toFixed(2);
+						//console.log('Total Bonif '+ importeBonif1)
+						var importeBonif2 = (((subTotal - importeBonif1) * bonif2) / 100).toFixed(2);
+						// Totales del neto
+						var subTotalNeto = cantidad * neto * kilos;
+						var netoBonif1	 = ((subTotalNeto * bonif1) / 100).toFixed(2);
+						var netoBonif2	 = (((subTotalNeto - netoBonif1) * bonif2) / 100).toFixed(2);
+						
+						SubBonif = (parseFloat(SubBonif) + parseFloat(importeBonif1));
+						//console.log('Total Bonif '+ SubBonif);
+						
+						var costoProveedor;
+						if (!pedido.costoProveedor[linea.idproveedor]) {
+							var proveedor = obtenerProveedor(linea.idproveedor);
 
-                        if (!proveedor)
-                            costoProveedor = { costo: 0, total: 0, idproveedor: linea.idproveedor, nombre: "Sin datos " + linea.idproveedor, coeficienteRentabilidad: 0, esRentable: true };
-                        else
-                            costoProveedor = { costo: 0, total: 0, idproveedor: linea.idproveedor, nombre: proveedor.nombre, coeficienteRentabilidad: proveedor.coeficienterentabilidad, esRentable: true };
-                    } else {
-                        costoProveedor = pedido.costoProveedor[linea.idproveedor];
-                    }
+							if (!proveedor)
+								costoProveedor = { costo: 0, total: 0, idproveedor: linea.idproveedor, nombre: "Sin datos " + linea.idproveedor, coeficienteRentabilidad: 0, esRentable: true };
+							else
+								costoProveedor = { costo: 0, total: 0, idproveedor: linea.idproveedor, nombre: proveedor.nombre, coeficienteRentabilidad: proveedor.coeficienterentabilidad, esRentable: true };
+						} else {
+							costoProveedor = pedido.costoProveedor[linea.idproveedor];
+						}
 
-                    costoProveedor.costo += subTotalCosto;
-                    costoProveedor.total += subTotal;
-					
-					
-                    pedido.total += (subTotal - importeBonif1 - importeBonif2);
-                    pedido.total = parseInt((pedido.total + 0.005) * 100) / 100;
-					console.log('Total Pedido ' + pedido.total)
-					//Total neto
-					pedido.totalNeto += (subTotalNeto - netoBonif1 - netoBonif2);
-					pedido.totalNeto = parseInt((pedido.totalNeto + 0.005) *100) / 100;
-					
-                    pedido.costoProveedor[linea.idproveedor] = costoProveedor;
-					
+						costoProveedor.costo += subTotalCosto;
+						costoProveedor.total += subTotal;
+						
+						
+						pedido.total += (subTotal - importeBonif1 - importeBonif2);
+						pedido.total = parseInt((pedido.total + 0.005) * 100) / 100;
+						console.log('Total Pedido ' + pedido.total)
+						//Total neto
+						pedido.totalNeto += (subTotalNeto - netoBonif1 - netoBonif2);
+						pedido.totalNeto = parseInt((pedido.totalNeto + 0.005) *100) / 100;
+						
+						pedido.costoProveedor[linea.idproveedor] = costoProveedor;
+					}	
 					
 					
                 }
@@ -1860,7 +1864,10 @@ preventamobile.dal = function () {
 				impreso: 0,
 				siBonificar: true,
 				version: getVersionApp(),
-				listaPrecio: "1"
+				listaPrecio: "1",
+				perceIVA_3:"",
+				perceIVA_1:"",
+				perceIVA:""
             };
         };
 
@@ -1893,7 +1900,8 @@ preventamobile.dal = function () {
 				neto: 0,
 				estopebonif: '1',
 				porceMerma: 0,
-				boniftope:0
+				boniftope:0,
+				alicoutaiva:21
 
             };
         };
@@ -1953,7 +1961,8 @@ preventamobile.dal = function () {
 				telefono:'',
 				totalCuentaCorriente:'',
 				totalCuentaCorrientePendiente:'',
-				totalCuentaCorrienteSeleccionado:''
+				totalCuentaCorrienteSeleccionado:'',
+				percibeiva:0
 			};
 		};
         return {
