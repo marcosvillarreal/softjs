@@ -257,6 +257,7 @@ preventamobile.ui.listaPedidos = function () {
     pedidoNuevo = function () {
         establecerIdPedidoSeleccionado(0);
         $.mobile.changePage('#editaPedidosPage');
+		$("#radio-choice-dif").removeAttr('disabled');
     };
 
     pedidoSeleccionado = function (codigo) {
@@ -272,7 +273,10 @@ preventamobile.ui.listaPedidos = function () {
         // redirigir>2, no redirige
         // redirigir=1, esta aplicando desde la pagina de detalle
         // redirigir=0, guardo el pedido automaticamente cuando paso a articulos
-        
+		var showDif = preventamobile.dal().getEmpresaDiferido();
+		var showCred= preventamobile.dal().getEmpresaCredito();
+		
+		
         var pedidoId = $('#pedidoId').text();
         var pedido = preventamobile.dal().obtenerPedido(pedidoId);
         var tipoDePedido, tP;
@@ -281,7 +285,19 @@ preventamobile.ui.listaPedidos = function () {
 		console.log('Estado impreso',pedido.impreso);
 		if (pedido.impreso == 0){
 			tP = $('input[name="radio-choice-1"]:checked').val();
-
+			if (tP != 1)
+			{
+				console.log('showCred',showCred);
+				if(showCred == false && tP == 5){
+					alert('Se encuentra bloqueado los pedidos creditos')
+					return ;
+				};
+				console.log('showDif',showDif);
+				if(showDif == false && tP == 2){
+					alert('Se encuentra bloqueado los pedidos diferidos')
+					return ;
+				};
+			};
 			tipoDePedido = tP;
 			console.log(tipoDePedido);
 			var remito = $('input[name="radio-remito"]:checked').val();

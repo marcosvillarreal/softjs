@@ -50,7 +50,8 @@ preventamobile.dal = function () {
 		getClienteNuevo,
 		getGuiaSemana,
         setTitle,
-
+		getEmpresaDiferido,
+		getEmpresaCredito,
         syncArticulos,
         guardarArticulosEnStorage,
         articulosLista,
@@ -159,6 +160,36 @@ preventamobile.dal = function () {
         }
 
     }
+	
+	getEmpresaDiferido = function () {
+
+        var empresa = getEmpresa();
+
+        if (empresa && empresa.id)
+			
+			if (empresa.id == 5) //Distribuidora Sur
+			{
+				return false;
+			};
+			
+		return true;
+
+    } 
+	
+		getEmpresaCredito = function () {
+
+        var empresa = getEmpresa();
+
+        if (empresa && empresa.id)
+			
+			if (empresa.id == 5) //Distribuidora Sur
+			{
+				return false;
+			};
+			
+		return true;
+
+    } 
 
     getNombreEmpresa = function () {
 
@@ -173,7 +204,7 @@ preventamobile.dal = function () {
 	
 	getVersionApp = function () {
 
-       return "6.1.0.56";
+       return "6.1.0.57";
 
     }
 	
@@ -1834,7 +1865,8 @@ preventamobile.dal = function () {
             var f = new Date();
             var dia = moment(f).format('DD/MM/YYYY');
             var hora = preventamobile.util().strZ(f.getHours()) + ":" + preventamobile.util().strZ(f.getMinutes()) + ":" + preventamobile.util().strZ(f.getSeconds());
-
+			
+		
             if (!pedidoId && pedidoId == '')
                 pedidoId = preventamobile.util().generateUUID();
 
@@ -2182,6 +2214,8 @@ preventamobile.dal = function () {
         factory: factory,
 		
 		getVersionApp: getVersionApp,
+		getEmpresaDiferido: getEmpresaDiferido,
+		getEmpresaCredito: getEmpresaCredito,
 		replaceAll: replaceAll
     };
 
