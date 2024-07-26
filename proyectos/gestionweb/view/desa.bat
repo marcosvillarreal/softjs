@@ -1,2 +1,2 @@
-quasar dev
+quasar dev -m cordova -T android
 
