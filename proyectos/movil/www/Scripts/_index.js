@@ -83,6 +83,12 @@ $(document).on("pageinit", "#homePage", function () {
 	$(document).on("click", "#altaClienteButton", preventamobile.ui.cliente().renderClienteNuevo);
 	
 	$(document).on('pageshow', "#imprimirPedidoPage", preventamobile.ui.imprimirPedido().render);
+	
+	$(document).on('pageshow', "#imprimirReciboPage", preventamobile.ui.imprimirPedido().renderRecibo);
+	
+	$(document).on('pageshow', "#listaRecibosPage", preventamobile.ui.listaRecibos().render);
+	
+	$(document).on('pageshow', "#editaRecibosPage", preventamobile.ui.listaRecibos().renderRecibosDetalle);
 
     //$(document).on("blur", "#artbus", preventamobile.ui.altaLineaPedido().buscarPorCodigo);
 

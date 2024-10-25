@@ -14,6 +14,7 @@ on_success_pedido = function (position) {
 preventamobile.ui.imprimirPedido = function () {
 
     var render,
+		renderRecibo,
         lineaSeleccionada,
 		saveFile;
 	
@@ -227,6 +228,11 @@ preventamobile.ui.imprimirPedido = function () {
 			var nPagoCheque		= parseInt((pedido.pagoCheque));
 			var nPagoTransferencia = parseInt((pedido.pagoTransferencia));
 			
+			if (isNaN(nPagoEfectivo)) { nPagoEfectivo = 0 };
+			if (isNaN(nPagoCheque)) { nPagoCheque = 0 };
+			if (isNaN(nPagoTransferencia)) { nPagoTransferencia = 0 };
+		   
+		   /*
 			if(nPagoEfectivo + nPagoCheque + nPagoTransferencia > 0){
 				html = html + "<table id='table_pagos' class='display'><font></font>"
 				html = html + "		<thead><font></font> "
@@ -258,6 +264,8 @@ preventamobile.ui.imprimirPedido = function () {
 				html = html + "</table><font></font>"
 				html = html + "</br></br>"
 			}
+			*/
+			
 			html = html + "</br></br>"
 			html = html + "<br>..................</br>"
 			html = html + "<br>     Firma        </br>"
@@ -287,7 +295,129 @@ preventamobile.ui.imprimirPedido = function () {
 		//};
 			
 	};
+	
+	renderRecibo = function () {
 
+        var lineasPedido,
+            articulo,
+            html,recibo;
+        
+        var pedidoId = preventamobile.ui.listaPedidos().obtenerIdPedidoSeleccionado();
+        $('#ullistartped').empty();
+        //lineasPedido = preventamobile.dal().listarPedidoLineas(pedidoId);
+        
+		
+			
+        recibo = preventamobile.dal().obtenerPedido(pedidoId);
+           
+				
+				
+		var totalRecibo;
+		totalRecibo = 0;
+		var nPagoEfectivo	= parseInt((recibo.pagoEfectivo));
+		var nPagoCheque		= parseInt((recibo.pagoCheque));
+		var nPagoTransferencia = parseInt((recibo.pagoTransferencia));
+		
+		if (isNaN(nPagoEfectivo)) { nPagoEfectivo = 0 };
+		if (isNaN(nPagoCheque)) { nPagoCheque = 0 };
+		if (isNaN(nPagoTransferencia)) { nPagoTransferencia = 0 };
+		
+		totalRecibo = nPagoEfectivo + nPagoCheque + nPagoTransferencia
+	
+		
+		totalRecibo = totalRecibo.toString();
+		
+		recibo.chksum = '99'
+				
+		if( recibo.impreso == 0){
+			recibo.impreso = 1;
+			preventamobile.dal().guardarRecibo(recibo);
+		
+			//alert(JSON.stringify(pedido));
+		
+		}
+				
+		var codigoCliente = recibo.codigoCliente;
+		var cliente = preventamobile.dal().obtenerCliente(codigoCliente);
+			
+			
+		var html
+		html = ""
+		
+
+		html = html + "<h3> Fecha "+recibo.fecha
+		
+		html = html + "</h3>"
+		html = html + "<h3> Cliente "+recibo.codigoCliente + "</h3>"
+		html = html + "<h3>"+ cliente.nombre+"</h3>"
+			
+		html = html + "</br>"
+		
+		console.log(recibo);
+		
+		if(nPagoEfectivo + nPagoCheque + nPagoTransferencia > 0){
+			html = html + "<table id='table_pagos' class='display'><font></font>"
+			html = html + "		<thead><font></font> "
+			html = html + "			<tr><font></font>"
+			html = html + "				<th>Recibio del Cliente</th><font></font>"
+			html = html + "				<th>Total</th><font></font>"
+			html = html + "			</tr><font></font>"
+			html = html + "		</thead><font></font>"
+			html = html + "		<tbody><font></font>"
+			if(nPagoEfectivo > 0){
+				html = html + "			<tr><font></font>"				
+				html = html + "				<td> EFECTIVO</td><font></font>"				
+				html = html + "				<td>" + nPagoEfectivo + "</td><font></font>"
+				html = html + "			</tr><font></font>"
+			}
+			if(nPagoCheque > 0){
+				html = html + "			<tr><font></font>"				
+				html = html + "				<td> CHEQUE</td><font></font>"				
+				html = html + "				<td>" + nPagoCheque + "</td><font></font>"
+				html = html + "			</tr><font></font>"
+			}
+			if(nPagoTransferencia > 0){
+				html = html + "			<tr><font></font>"				
+				html = html + "				<td> TRANSF.</td><font></font>"				
+				html = html + "				<td>" + nPagoTransferencia + "</td><font></font>"
+				html = html + "			</tr><font></font>"
+			}
+			html = html + "		</tbody><font></font>"
+			html = html + "</table><font></font>"
+			html = html + "</br></br>"
+		}
+		html = html + "</br></br>"
+		html = html + "<br>..................</br>"
+		html = html + "<br>     Firma        </br>"
+		html = html + "</br></br>"
+		html = html + "<br>.</br>"
+		
+		console.log(html)
+		$("#imprimirReciboContent").html(html).trigger('create');
+		
+		let options = {documentSize: 'A4',  type: 'share' ,fileName: "recibo_cliente_"+recibo.codigoCliente}
+		
+		//alert(typeof cordova);
+		if (typeof cordova != 'undefined'){
+			pdf.fromData( html , options)
+				.then((stats)=> console.log('status', stats) )   
+				.catch((err)=>console.err(err))
+			/*
+			var directorio = "file:///storage/emulated/0";
+			var nombreArchivo = "CabePedido.txt";
+
+			window.resolveLocalFileSystemURL(directorio, function(dir) {
+				dir.getFile(nombreArchivo, {create:true}, function(fileEntry) {
+					// el archivo ha sido creado satisfactoriamente.
+					// Usa fileEntry para leer el contenido o borrar el archivo
+				});
+			});
+			*/
+		}
+		
+			
+	};
+	
     lineaSeleccionada = function (idArticulo, lineaId) {
         preventamobile.ui.listaPedidos().establecerIdLineaSeleccionada(lineaId);
         preventamobile.ui.listaPedidos().establecerIdArticuloSeleccionado(idArticulo);
@@ -342,6 +472,7 @@ preventamobile.ui.imprimirPedido = function () {
 	
     return {
         render: render,
+		renderRecibo: renderRecibo,
 		saveFile: saveFile
     };
     

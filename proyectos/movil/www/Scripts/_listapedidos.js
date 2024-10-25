@@ -7,6 +7,7 @@ preventamobile.ui.listaPedidos = function () {
     var render,
         aplicarPedido,
 		imprimirPedido,
+		imprimirPedidoRecibo,
         borrarPedido,
         pedidoNuevo,
         pedidoSeleccionado,
@@ -333,13 +334,10 @@ preventamobile.ui.listaPedidos = function () {
         // Utiliza momentjs para formatear la fecha que se va a guardar en el objeto con formato dd/mm/yyyy		
         var fechaEntrega = moment($('#date2').val()).format("DD/MM/YYYY");
 		// Valores pagados
-		//var pagoEfectivo = $('#pagoEfectivo').val().replaceAll('$','');
-		var pagoEfectivo = preventamobile.dal().replaceAll( $('#pagoEfectivo').val() , '$','');		
-		//pagoEfectivo = pagoEfectivo.replaceAll('$','');
-		var pagoCheque = preventamobile.dal().replaceAll( $('#pagoCheque').val(),'$','');
-		//var pagoCheque = $('#pagoCheque').val().replaceAll('$','');		
-		//var pagoTransferencia = $('#pagoTransferencia').val().replaceAll('$','');
-		var pagoTransferencia = preventamobile.dal().replaceAll( $('#pagoTransferencia').val() ,'$','');		
+		var pagoEfectivo = ''; //preventamobile.dal().replaceAll( $('#pagoEfectivo').val() , '$','');		
+		var pagoCheque = ''; //preventamobile.dal().replaceAll( $('#pagoCheque').val(),'$','');
+		var pagoTransferencia = ''; //preventamobile.dal().replaceAll( $('#pagoTransferencia').val() ,'$','');
+		
         pedido.tipoDePedido = tipoDePedido;
         pedido.vales = vales;
         pedido.remito = remito;
@@ -362,7 +360,20 @@ preventamobile.ui.listaPedidos = function () {
             .addClass('ui-btn-up-' + "b")
             .attr('data-theme', "b");
 
-
+		
+		
+		if(redirigir == 0){
+			if (obser_cliente) {
+				//alert(observaciones.search('PED_OFF'))
+				if (obser_cliente.search("PED_OFF") != -1){
+					var observa = preventamobile.dal().replaceAll(obser_cliente,"[PED_OFF]","");
+					preventamobile.util().alerta(observa, null, "Observaciones", "Continuar");
+					
+					return false;
+				}			
+				
+			}
+		}
         // guardo el codigo del pedido nuevamente por si era uno nuevo y no tenia numero
         establecerIdPedidoSeleccionado(pedido.pedidoId);
 
@@ -414,6 +425,9 @@ preventamobile.ui.listaPedidos = function () {
 			case 4:
 				 $.mobile.changePage('#imprimirPedidoPage');
 				break;
+			case 5:
+				 $.mobile.changePage('#imprimirReciboPage');
+				break;
         };
     };
 
@@ -448,13 +462,21 @@ preventamobile.ui.listaPedidos = function () {
 		//alert(pedidoId)
 
     };
+	
+	imprimirPedidoRecibo = function () {
+		var pedidoId = $('#pedidoId').text();
+        var pedido = preventamobile.dal().obtenerPedido(pedidoId);
+		//alert(pedidoId)
 
+    };
+	
     return {
         render: render,
         pedidoNuevo: pedidoNuevo,
         pedidoSeleccionado: pedidoSeleccionado,
         aplicarPedido: aplicarPedido,
 		imprimirPedido: imprimirPedido,
+		imprimirPedidoRecibo: imprimirPedidoRecibo,
         renderPedidosDetalle: renderPedidosDetalle,
         borrarPedido: borrarPedido,
         establecerIdPedidoSeleccionado: establecerIdPedidoSeleccionado,

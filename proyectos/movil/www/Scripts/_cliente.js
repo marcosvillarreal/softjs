@@ -260,30 +260,48 @@ preventamobile.ui.cliente = function () {
 
     };
 
-    linkDestino = function () {
+    linkDestino = function (opcion) {
+		
+		//redirigir = 0, pedido
+		//redirigir = 1, recibo
+		//var opcion = 0;
+		
+		if (isNaN(opcion)) {opcion=0} ;
+		
         var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
 		
 		var observaciones = preventamobile.ui.listaPedidos().obtenerObservacionesClienteSeleccionado(codigoCliente);
 		
-		if (observaciones) {
-			//alert(observaciones.search('PED_OFF'))
-			if (observaciones.search("PED_OFF") != -1){
-				var observa = preventamobile.dal().replaceAll(observaciones,"[PED_OFF]","");
-				preventamobile.util().alerta(observa, null, "Observaciones", "Continuar");
+		if (opcion == 0 ) {
+			if (observaciones) {
+				//alert(observaciones.search('PED_OFF'))
+				if (observaciones.search("PED_OFF") != -1){
+					var observa = preventamobile.dal().replaceAll(observaciones,"[PED_OFF]","");
+					preventamobile.util().alerta(observa, null, "Observaciones", "Continuar");
+					
+					//return true;
+				}			
 				
-				return false;
-			}			
+			}
 			
+			var listaPedidos = preventamobile.dal().listarPedidos(codigoCliente);
+			// Si no hay pedidos los mando directo a NUEVO
+			if (listaPedidos.length == 0) {
+				preventamobile.ui.listaPedidos().pedidoNuevo();
+			} else {
+				$.mobile.changePage('#listaPedidosPage');
+			}
+		}else{
+			var listaRecibos = preventamobile.dal().listarRecibos(codigoCliente);
+			// Si no hay recibo los mando directo a NUEVO
+			if (listaRecibos.length == 0) {
+				preventamobile.ui.listaRecibos().reciboNuevo();
+			} else {
+				$.mobile.changePage('#listaRecibosPage');
+			}
 		}
-		
-        var listaPedidos = preventamobile.dal().listarPedidos(codigoCliente);
-        // Si no hay pedidos los mando directo a NUEVO
-        if (listaPedidos.length == 0) {
-            preventamobile.ui.listaPedidos().pedidoNuevo();
-        } else {
-            $.mobile.changePage('#listaPedidosPage');
-        }
     };
+	
 	
 	//Funciones de nuevo Cliente
 	

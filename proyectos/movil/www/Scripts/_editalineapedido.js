@@ -264,6 +264,7 @@ preventamobile.ui.editaLineaPedido = function () {
 		//Si se vende por kilos, validamos que tiene que tener kilos cargados
 		if ($('#articuloSiKilos').val() == "N") {
 			linea.kilos = 0;
+			
 		}else{
 			cantidad = linea.cantidad ;
 			peso 	= articulo.peso;
@@ -271,7 +272,12 @@ preventamobile.ui.editaLineaPedido = function () {
 			
 			//Validamos que los kilos esten en el valor estimado
 			var pesoEstimado = peso * cantidad;
+			
 			var porceMerma = linea.porceMerma;
+			
+			console.log('Peso Estimado',pesoEstimado);
+			console.log('Merma',porceMerma);
+			
 			if ((pesoEstimado * (1 - porceMerma /100) <= kilos ) && (kilos <= pesoEstimado * (1 + porceMerma /100)) ){
 			}else{
 				alert('Los kilos son inferiores / superios al estimado de ' + pesoEstimado * (1 - porceMerma / 100)+' '+ pesoEstimado * (1 + porceMerma / 100));

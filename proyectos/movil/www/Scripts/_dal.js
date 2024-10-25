@@ -91,7 +91,13 @@ preventamobile.dal = function () {
         obtenerPedido,
         esPedidoRentable,
         detallePedidoNoRentable,
-
+		
+		listarRecibos,
+		guardarRecibo,
+		eliminarRecibo,
+		
+		listarPedidosAll,
+		
         guardarPedidoLinea,
         eliminarPedidoLinea,
         listarPedidoLineas,
@@ -204,7 +210,7 @@ preventamobile.dal = function () {
 	
 	getVersionApp = function () {
 
-       return "6.1.0.57";
+       return "6.1.0.58";
 
     }
 	
@@ -1151,14 +1157,37 @@ preventamobile.dal = function () {
 						messageErrorPedido = messageErrorPedido + 'Error Cliente  ' + ClientesLista[i].numero + '   '
 						
 					}
+				};	
+
+				
+				var recibos = listarRecibos(ClientesLista[i].numero);
+				
+				if ((recibos && recibos.length && recibos.length > 0)) {
+					hayPedido = true;
+					console.log('SyncPedido Recibos Cliente ' + ClientesLista[i].numero);
+					var model = {
+						data: preventamobile.util().serializar(preventamobile.util().comprimir(recibos)),
+						login: preventamobile.util().serializar(preventamobile.dal().getLoginInfo())
+					};
+
+					var ok = syncPedidosConServidor(
+						model,
+						marcarClientesComoSincronizados(recibos),
+						false,
+						'Recibo del ' + ClientesLista[i].numero +'  ',true)
+						
 					//preventamobile.util().log('syncPedidos OK - Pedidos ' + ClientesLista[i].numero);
 					
+					if (ok == false) {
+						messageErrorPedido = messageErrorPedido + 'Error Cliente  ' + ClientesLista[i].numero + '   '
+						
+					}
 
-				} 
+				} ;
 				
 				message = message + "Fin syncPedidosOneForOne";
 				
-			};			
+		};			
 		
 		
 		//console.log(hayPedido);	
@@ -1205,7 +1234,7 @@ preventamobile.dal = function () {
         var message = '';
         preventamobile.util().log("Inicio syncPedidos");
 		
-        var pedidos = listarPedidos();
+        var pedidos = listarPedidosAll();
         var noventa = listarNoVenta();
         var cuentaCorriente = listarCuentaCorriente();
 		var clientesNuevos = listarClientesNuevos();
@@ -1359,7 +1388,16 @@ preventamobile.dal = function () {
 
         return pedido.pedidoId;
     };
+	
+	guardarRecibo = function (recibo) {
 
+        localStorage.setItem("Pedido - " + recibo.pedidoId, preventamobile.util().serializar(recibo));
+        establecerTienePedido(recibo.codigoCliente, true);
+        marcarClienteParaSincronizar(recibo.codigoCliente, true);
+
+        return recibo.pedidoId;
+    };
+	
     guardarNoVenta = function () { };
 
     calcularLineaTotal = function (linea) {
@@ -1542,10 +1580,15 @@ preventamobile.dal = function () {
     eliminarPedido = function (pedidoId) {
         localStorage.removeItem("Pedido - " + pedidoId);
     };
-
+	
+	eliminarRecibo = function (pedidoId) {
+        localStorage.removeItem("Pedido - " + pedidoId);
+    };
+	
     eliminarPedidos = function () {
         eliminarLista("Pedido");
     };
+	
 	
 	eliminarNuevosClientes = function () {
         eliminarLista("NuevoCliente");
@@ -1586,7 +1629,7 @@ preventamobile.dal = function () {
                     if (key.substr(0, 6) === 'Pedido') {
                         var pedido = JSON.parse(value);
                         if (codigoCliente) {
-                            if (pedido && pedido.codigoCliente && pedido.codigoCliente.trim() === codigoCliente.trim()) {
+                            if (pedido && pedido.codigoCliente && pedido.codigoCliente.trim() === codigoCliente.trim() && !pedido.esRecibo) {
                                 lista[listaIndex] = pedido;
                                 listaIndex++;
                             }
@@ -1603,7 +1646,73 @@ preventamobile.dal = function () {
 
         return lista;
     };
+	
+	listarRecibos = function (codigoCliente, lineasParaSync) {
 
+        var lista = [];
+
+        // Ciclar las keys de localStorage y devolver las que comienzan con Pedido y pertenecen al cliente especificado
+        if (localStorage && localStorage.length > 0) {
+            var listaIndex = 0;
+            for (var index = 0; index < localStorage.length; index++) {
+                var key = localStorage.key(index);
+                var value = localStorage[key];
+                if (value !== 'undefined') {
+
+                    if (key.substr(0, 6) === 'Pedido') {
+                        var recibo = JSON.parse(value) ;
+                        if (codigoCliente) {
+                            if (recibo && recibo.codigoCliente && recibo.codigoCliente.trim() === codigoCliente.trim() && recibo.esRecibo ) {
+                                lista[listaIndex] = recibo;
+                                listaIndex++;
+                            }
+                        } else {
+                            lista[listaIndex] = recibo;
+                            listaIndex++;
+                        }
+                    }
+                }
+            }
+        }
+
+        sort(lista, 'codigoCliente', 1);
+
+        return lista;
+    };
+	
+	listarPedidosAll = function (codigoCliente, lineasParaSync) {
+
+        var lista = [];
+
+        // Ciclar las keys de localStorage y devolver las que comienzan con Pedido y pertenecen al cliente especificado
+        if (localStorage && localStorage.length > 0) {
+            var listaIndex = 0;
+            for (var index = 0; index < localStorage.length; index++) {
+                var key = localStorage.key(index);
+                var value = localStorage[key];
+                if (value !== 'undefined') {
+
+                    if (key.substr(0, 6) === 'Pedido') {
+                        var pedido = JSON.parse(value);
+                        if (codigoCliente) {
+                            if (pedido && pedido.codigoCliente && pedido.codigoCliente.trim() === codigoCliente.trim() ) {
+                                lista[listaIndex] = pedido;
+                                listaIndex++;
+                            }
+                        } else {
+                            lista[listaIndex] = pedido;
+                            listaIndex++;
+                        }
+                    }
+                }
+            }
+        }
+
+        sort(lista, 'codigoCliente', 1);
+
+        return lista;
+    };
+	
     listarNoVenta = function () {
 
         var lista = [];
@@ -1870,6 +1979,7 @@ preventamobile.dal = function () {
             if (!pedidoId && pedidoId == '')
                 pedidoId = preventamobile.util().generateUUID();
 
+			console.log('objeto pedido');
             return {
                 pedidoId: pedidoId, // es el id de la base de datos
                 codigoCliente: codigoCliente,
@@ -1899,7 +2009,8 @@ preventamobile.dal = function () {
 				listaPrecio: "1",
 				perceIVA_3:"",
 				perceIVA_1:"",
-				perceIVA:""
+				perceIVA:"",
+				esRecibo:false
             };
         };
 
@@ -2171,6 +2282,12 @@ preventamobile.dal = function () {
         detallePedidoNoRentable: detallePedidoNoRentable,
         calcularTotal: calcularTotal,
 		generarListPedido:generarListPedido,
+		
+		listarRecibos: listarRecibos,
+		guardarRecibo: guardarRecibo,
+		eliminarRecibo: eliminarRecibo,
+		
+		listarPedidosAll: listarPedidosAll,
 		
         guardarPedidoLinea: guardarPedidoLinea,
         eliminarPedidoLinea: eliminarPedidoLinea,

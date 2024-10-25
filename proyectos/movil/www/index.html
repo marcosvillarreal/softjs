@@ -35,6 +35,7 @@
     <script type="text/javascript" src="Scripts/_parametros.js"></script>
     <script type="text/javascript" src="Scripts/_gridcargarapidaarticulo.js"></script>
 	<script type="text/javascript" src="Scripts/_imprimirpedido.js"></script>
+	<script type="text/javascript" src="Scripts/_listarecibos.js"></script>
     <!--#endregion-->
     <!--#region Templates-->
     <!-- #region Templates Clientes -->
@@ -44,7 +45,8 @@
                 <li><a href='#homePage' data-icon='home' data-iconpos='notext'>Inicio</a></li>
                 <li><a href='#clientesPage' data-icon='back'>Atrás</a></li>
                 <li><a href='#noventaPage' data-icon='alert'>No Venta</a></li>
-                <li><a href='#' data-icon='grid' onclick='preventamobile.ui.cliente().linkDestino()'>Pedidos</a></li>
+                <li><a href='#' data-icon='grid' onclick='preventamobile.ui.cliente().linkDestino(0);'>Pedidos</a></li>
+				<li><a href='#' data-icon='grid' onclick='preventamobile.ui.cliente().linkDestino(1);'>Recibos</a></li>
             </ul>
         </div>
     </script>
@@ -330,6 +332,37 @@
         {{/if}}
     </script>
     <!-- #endregion -->
+	<!-- #region Templates Recibos -->
+    <script id="headerEditaRecibosTmpl" type="text/x-jsrender">
+        <div data-role='navbar'>
+            <ul>
+                <li><a href='#clientesPage' data-icon='back' data-iconpos='notext'>Atrás</a></li>
+                <li><a href='#' data-icon='edit' onclick='preventamobile.ui.listaRecibos().aplicarRecibo(3);'>Sync</a></li>
+                <li><a href='#' data-icon='check' onclick='preventamobile.ui.listaRecibos().aplicarRecibo(1);'>Guardar</a></li>
+				<li><a href='#' data-icon='print' onclick='preventamobile.ui.listaRecibos().aplicarRecibo(4)'>Generar</a></li>
+            </ul>
+        </div>
+    </script>
+	 <script id="editaReciboContentTmpl" type="text/x-jsrender">
+        <div data-role='fieldcontain'><label for='textObserva'>Observacion:</label><textarea cols='40' rows='3' name='textObserva' id='textObservaR'>{{:observaciones}}</textarea></div>
+        <div data-role='fieldcontain' class='ui-hidden-accessible'><label id='reciboId'>{{:pedidoId}}</label>  </div>
+        <div data-role='fieldcontain'><label>Fecha: {{:fecha}} - {{:horaIn}}</label></div>
+        <div data-role='fieldcontain'>
+			<label for='total'>Total:</label>
+			<input type="text" readonly="readonly" value='$ {{:total}}' name='total' id='total' />
+		</div>
+			
+		<legend>PAGOS RECIBIDOS</legend>
+		<div data-role='fieldcontain'>
+			<label for='pagoEfectivo'>Efectivo:</label><input type="text" value='$ {{:pagoEfectivo}}' name='pagoEfectivo' id='pagoEfectivoR' {{if impreso == 1}} readonly="readonly" {{/if}}/></div>
+		<div data-role='fieldcontain'>
+			<label for='pagoCheque'>Cheque:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoCheque' id='pagoChequeR' {{if impreso == 1}} readonly="readonly" {{/if}}/></div>
+		<div data-role='fieldcontain'>
+			<label for='pagoTransferencia'>Transferencia:</label><input type="text" value='$ {{:pagoTransferencia}}' name='pagoTransferencia' id='pagoTransferenciaR' {{if impreso == 1}} readonly="readonly" {{/if}} /></div>
+		
+    </script>
+	
+	<!-- #endregion -->
     <!-- #region Templates Pedidos -->
     <script id="headerEditaPedidosTmpl" type="text/x-jsrender">
         <div data-role='navbar'>
@@ -413,13 +446,15 @@
 		<div data-role='fieldcontain'><label for='total'>Bonificacion General:</label><input type="text" readonly="readonly" value='$ {{:bonifpedido}}' name='bonifpedido' id='bonifpedido' onchange="preventamobile.ui.listaArticulosPedido().recalcularBonificacionGral();" /></div>
 		<div data-role='fieldcontain'><label for='total'>Total Percibido:</label><input type="text" readonly="readonly" value='$ {{:perceiibb}}' name='perceiibb' id='perceiibb' /></div>
 		
+		<!--
 		<legend>PAGOS RECIBIDOS</legend>
 		<div data-role='fieldcontain'>
 			<label for='pagoEfectivo'>Efectivo:</label>
 			<input type="text" value='$ {{:pagoEfectivo}}' name='pagoEfectivo' id='pagoEfectivo' {{if impreso == 1}} readonly="readonly" {{/if}}/>
 		</div>
 		<div data-role='fieldcontain'><label for='pagoCheque'>Cheque:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoCheque' id='pagoCheque' {{if impreso == 1}} readonly="readonly" {{/if}} /></div>
-		<div data-role='fieldcontain'><label for='pagoTransferencia'>Transferencia:</label><input type="text" value='$ {{:pagoCheque}}' name='pagoTransferencia' id='pagoTransferencia' {{if impreso == 1}} readonly="readonly" {{/if}} /></div>
+		<div data-role='fieldcontain'><label for='pagoTransferencia'>Transferencia:</label><input type="text" value='$ {{:pagoTransferencia}}' name='pagoTransferencia' id='pagoTransferencia' {{if impreso == 1}} readonly="readonly" {{/if}} /></div>
+		-->
 		
     </script>
     <script id="headerEditaLineaPedidoTmpl" type="text/x-jsrender">
@@ -760,7 +795,7 @@
                     <li><a href='#homePage' data-icon='home' data-iconpos='notext'>Inicio</a></li>
                     <li><a href='#editaPedidosPage' data-icon='back'>Atras</a></li>
                     <li><a href='#' data-icon='check' onclick='preventamobile.ui.gridCargaRapidaArticulo().guardarListaRapida()'>Guardar</a></li>
-                    <li><a href='#' data-icon='grid' onclick='preventamobile.ui.cliente().linkDestino()'>Pedidos</a></li>
+                    <li><a href='#' data-icon='grid' onclick='preventamobile.ui.cliente().linkDestino(0);'>Pedidos</a></li>
                 </ul>
             </div>
         </div>
@@ -795,6 +830,27 @@
         <div data-theme="a" data-role="content" id="imprimirPedidoContent">
         </div>
     </div>
+	<!-- Pagina Editar Recibos -->
+    <div data-theme="a" data-role="page" id="editaRecibosPage" data-title="Edita Recibos">
+        <div data-theme="a" data-role="header" id="headerEditaRecibos">
+        </div>
+        <div data-theme="a" data-role="content" id="editaRecibosContent">
+        </div>
+    </div>
+	 <!-- Pagina Mostrar Recibo antes de imprimir -->
+    <div data-theme="a" data-role="page" id="imprimirReciboPage" data-title="Recibo_Generar">
+        <div data-theme="a" data-role="header" id="headerimprimirRecibo">
+            <div data-role='navbar'>
+                <ul id='imppednav'>
+                    <li><a href='#homePage' data-icon='home' data-iconpos='notext'>Inicio</a></li>
+					<li><a href='#' data-icon='home' data-iconpos='notext' onclick='preventamobile.ui.imprimirPedido().saveFile()'>Guardar</a></li>
+                    <li><a href='#editaRecibosPage' data-icon='back'>Atrás</a></li>
+                </ul>
+            </div>
+        </div>
+        <div data-theme="a" data-role="content" id="imprimirReciboContent">
+        </div>
+    </div>
     <!-- Pagina Lista Pedidos -->
     <div data-theme="a" data-role="page" id="listaPedidosPage" data-title="Lista Pedidos">
         <div data-theme="a" data-role="header" id="headerlistaPedidos">
@@ -809,6 +865,13 @@
             <a href="#homePage" data-icon="home">Inicio</a>
         </div>
         <div data-theme="a" data-role="content" id="noVentaContent">
+        </div>
+    </div>
+	<!-- Pagina Lista Recibos -->
+    <div data-theme="a" data-role="page" id="listaRecibosPage" data-title="Lista Recibos">
+        <div data-theme="a" data-role="header" id="headerlistaRecibos">
+        </div>
+        <div data-theme="a" data-role="content" id="listaRecibosContent">
         </div>
     </div>
     <!--#endregion-->
