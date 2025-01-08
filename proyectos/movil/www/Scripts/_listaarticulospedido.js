@@ -77,6 +77,10 @@ preventamobile.ui.listaArticulosPedido = function () {
 		
 		if (pedido.siBonificar){
 			
+			if (pedido.bonif1 > 0){
+				alert('Error, la bonificacion establecida para el cliente es de '+pedido.bonif1+'%')
+				return 
+			}
 			$('#ullistartped').empty();
 			lineasPedido = preventamobile.dal().listarPedidoLineas(pedidoId);
 			

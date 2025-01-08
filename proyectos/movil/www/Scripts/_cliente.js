@@ -41,7 +41,9 @@ preventamobile.ui.cliente = function () {
             }
 
             $('#pedidoAnteriorCliente').html(htmlPedidoAnterior).trigger('create');
-
+			
+			//alert(cliente);
+			
             cargarCuentaCorriente(cliente);
 
         } else {
@@ -68,6 +70,7 @@ preventamobile.ui.cliente = function () {
 	}
 	
     cargarCuentaCorriente = function (cliente) {
+		//console.log('cargarCuentaCorriente');
         var htmlCuentaCorrienteCliente = $.templates("#cuentaCorrienteClienteTmpl").render({ cliente: cliente });
         $('#cuentaCorrienteCliente').html(htmlCuentaCorrienteCliente).trigger('create');
     };
@@ -219,16 +222,23 @@ preventamobile.ui.cliente = function () {
     // desactualizada respecto de la data local por un sync
     // Entonces se toman los datos del cliente y se le agregan los datos locales de seleccion de comprobantes
     afectar = function (idCuentaCorriente, numeroCliente) {
-
+		
+		
+		
         var cliente = preventamobile.dal().obtenerCliente(numeroCliente);
+		//console.log('afectar cuentacorriente ',numeroCliente);
         var cuentaCorriente = preventamobile.dal().obtenerCuentaCorriente(cliente); // Cargar info local de cuenta corriente en los datos del cliente
-
+		
+		
+		
         if (cliente && cuentaCorriente) {
 
             cliente.totalCuentaCorrienteSeleccionado = 0;
             cliente.totalCuentaCorrientePendiente = 0;
             cliente.totalCuentaCorriente = 0;
-
+			
+			//console.log('totalizar cuentacorriente');
+			
             $.each(cuentaCorriente, function (index, value) {
 
                 if (value.idOrden === idCuentaCorriente) {
@@ -244,18 +254,22 @@ preventamobile.ui.cliente = function () {
 
             });
 
-            cliente.totalCuentaCorriente =
-                cliente.totalCuentaCorrienteSeleccionado + cliente.totalCuentaCorrientePendiente;
+            cliente.totalCuentaCorriente = cliente.totalCuentaCorrienteSeleccionado + cliente.totalCuentaCorrientePendiente;
 
             cliente.totalCuentaCorrienteSeleccionado = cliente.totalCuentaCorrienteSeleccionado.toFixed(2);
             cliente.totalCuentaCorrientePendiente = cliente.totalCuentaCorrientePendiente.toFixed(2);
             cliente.totalCuentaCorriente = cliente.totalCuentaCorriente.toFixed(2);
             cliente.cuentaCorriente = cuentaCorriente;
-
+			
+			//console.log('guardar cuentacorrientestorge');
             preventamobile.dal().guardarClienteEnStorage(cliente);
+			//console.log('guardar guardarCuentaCorrienteEnStorage');
             preventamobile.dal().guardarCuentaCorrienteEnStorage(cliente.numero.trim(), cuentaCorriente);
-
+			
+			
             cargarCuentaCorriente(cliente);
+			
+			//console.log('salio cargarCuentaCorriente');
         }
 
     };

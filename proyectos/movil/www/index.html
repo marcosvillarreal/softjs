@@ -156,7 +156,8 @@
                     {{for cliente.cuentaCorriente}}
                     <li data-theme='{{if seleccionado}}b{{else}}a{{/if}}' id="cuentaCorrienteLinea{{:idOrden.trim()}}">
                         <a href='#' onclick='preventamobile.ui.cliente().afectar("{{:idOrden.trim()}}","{{:~root.cliente.numero.trim()}}");'>
-                            <br>{{:fecha.substring(0, 10)}}&nbsp;{{:detalle}}
+                            <!--<br>{{:fecha.substring(0, 10)}}&nbsp;{{:detalle}}-->
+							<br>{{:fecha}}&nbsp;{{:detalle}}
                             {{if signo==1}}
                             <span style='font-size:150%;' class='ui-li-count'><b>{{:saldo.replace(",", ".")}}</b></span>
                             {{else}}
@@ -445,7 +446,7 @@
 		</div>
 		<div data-role='fieldcontain'><label for='total'>Bonificacion General:</label><input type="text" readonly="readonly" value='$ {{:bonifpedido}}' name='bonifpedido' id='bonifpedido' onchange="preventamobile.ui.listaArticulosPedido().recalcularBonificacionGral();" /></div>
 		<div data-role='fieldcontain'><label for='total'>Total Percibido:</label><input type="text" readonly="readonly" value='$ {{:perceiibb}}' name='perceiibb' id='perceiibb' /></div>
-		
+		<div data-role='fieldcontain'><label for='total'>Total Percibido:</label><input type="text" readonly="readonly" value='$ {{:perceiva}}' name='perceiva' id='perceiva' /></div>
 		<!--
 		<legend>PAGOS RECIBIDOS</legend>
 		<div data-role='fieldcontain'>

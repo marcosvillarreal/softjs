@@ -210,7 +210,7 @@ preventamobile.dal = function () {
 	
 	getVersionApp = function () {
 
-       return "6.1.0.58";
+       return "6.1.0.60";
 
     }
 	
@@ -548,27 +548,36 @@ preventamobile.dal = function () {
             fueraRuta, vendedores;
 
         if (data.clientes)
+			//console.log('clientes');
             clientes = JSON.hunpack(JSON.parse(data.clientes));
+			//alert(JSON.parse(data.clientes))
 
         if (data.fueraRuta)
+			//console.log('fueraRuta');
             fueraRuta = JSON.hunpack(JSON.parse(data.fueraRuta));
 		
 		if (data.categorias){
+			//console.log('categorias');
             categorias = JSON.hunpack(JSON.parse(data.categorias));
 			//alert(JSON.parse(data.categorias))
 		}	
 		
 		if (data.vendedores){
+			//console.log('vendedores');
             vendedores = JSON.hunpack(JSON.parse(data.vendedores));
 			//alert(JSON.parse(data.vendedores))
 		}
 		
+		
+		
         if (clientes && clientes.length > 0) {
-            guardarLista("Cliente", clientes);
+			//console.log('guardar cliente');
+            guardarLista("Cliente", clientes);			
             for (var index = 0; index < clientes.length; index++) {
                 preventamobile.ui.cliente().afectar('', clientes[index].numero);
             }
         }
+		//console.log('guardando');
         if (fueraRuta && fueraRuta.length > 0) {
             guardarLista("FueraRuta", fueraRuta);
         }
@@ -710,6 +719,7 @@ preventamobile.dal = function () {
 
                 if (value.idOrden === valueLocal.idOrden) {
                     value.seleccionado = valueLocal.seleccionado;
+					//alert(value.seleccionado);
                 };
             });
         });
@@ -1321,8 +1331,11 @@ preventamobile.dal = function () {
         } else {
             var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
 			var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
+			var bonif1Cliente = preventamobile.ui.listaPedidos().obtenerBonifClienteSeleccionado(codigoCliente);
+			var clientePerceIVA = preventamobile.ui.listaPedidos().obtenerPerceIVAClienteSeleccionado(codigoCliente);
 			console.log('Perce IIBB ',porcePerceCliente);
-            pedido = preventamobile.dal().factory().pedido(codigoCliente, id, porcePerceCliente);
+			console.log('Perce IVA ',clientePerceIVA);
+            pedido = preventamobile.dal().factory().pedido(codigoCliente, id, porcePerceCliente,bonif1Cliente,clientePerceIVA);
 			//alert(pedido);
         }
 
@@ -1450,13 +1463,24 @@ preventamobile.dal = function () {
             pedido.costoProveedor = {};
 			pedido.totalNeto = 0;
 			pedido.bonifpedido = '';
-			
-			
+			pedido.perceIVA_3 = 0;
+			pedido.perceIVA_1 = 0;
+			pedido.perceiva = 0;
 			
 			var porcePerce = pedido.porcePerce ? parseFloat(pedido.porcePerce,10) :0;
 			
+			//Si incorporamos la percepcion de IVA, se calcula al final, hay que totalizar y ver si cumple el minimo de 30000
+			
+			var totalPerceIVA3 = 0
+			var totalPerceIVA1 = 0
+			
+			//El calculo de la percepcion de Iva, tiene alicuota al 3 (21 iva)y 1.5 y (10.5 iva)
+			
+			var esExentoPerceIVA = pedido.exentoperceIVA;
+			
 			if (pedido.remito != 0){
 				porcePerce = 0;	
+				esExentoPerceIVA = 'S';
 			}
 			
 			
@@ -1531,6 +1555,14 @@ preventamobile.dal = function () {
 						pedido.totalNeto += (subTotalNeto - netoBonif1 - netoBonif2);
 						pedido.totalNeto = parseInt((pedido.totalNeto + 0.005) *100) / 100;
 						
+						console.log('alicuota de iva ' + (pedido.alicuotaiva));
+						
+						if(pedido.alicuotaiva = 21){
+							totalPerceIVA3 += (subTotalNeto - netoBonif1 - netoBonif2);
+						}else{
+							totalPerceIVA1 += (subTotalNeto - netoBonif1 - netoBonif2);
+						}
+						
 						pedido.costoProveedor[linea.idproveedor] = costoProveedor;
 					}	
 					
@@ -1538,6 +1570,41 @@ preventamobile.dal = function () {
                 }
 
             }
+			console.log('pedido.totalNeto ' + pedido.totalNeto);
+			
+			
+			console.log('EXENTO percepcion de iva ' + (esExentoPerceIVA));
+			
+			//Debemos calcular  exento Percepcion IVA?
+			if (esExentoPerceIVA === 'S'){
+				totalPerceIVA3 = 0;
+				totalPerceIVA1 = 0;
+			};
+						
+			console.log('base percepcion de iva 3% ' + (totalPerceIVA3));
+			console.log('base percepcion de iva 1.5% ' + (totalPerceIVA1));
+			
+			totalPerceIVA3 = parseFloat(((totalPerceIVA3 * 3) / 100).toFixed(3));	
+			totalPerceIVA1 = parseFloat(((totalPerceIVA1 * 1.5) / 100).toFixed(3));	
+			
+			console.log('base percepcion de iva 3% ' + (totalPerceIVA3));
+			console.log('base percepcion de iva 1.5% ' + (totalPerceIVA1));
+			
+			console.log('BASES percepcion de iva  ' + (totalPerceIVA3 + totalPerceIVA1));
+			
+			if(totalPerceIVA3 + totalPerceIVA1 > 3000){
+				//HayPercepion de iva
+				pedido.perceIVA_3 = totalPerceIVA3;
+				pedido.perceIVA_1 = totalPerceIVA1;
+				pedido.perceiva	= totalPerceIVA3 + totalPerceIVA1;
+			}
+			
+			console.log('percepcion de iva 3% ' + (pedido.perceIVA_3));
+			console.log('percepcion de iva 1.5% ' + ( pedido.perceIVA_1));
+			
+			
+			console.log('pedido.percepcion de iva ' + (pedido.perceiva));
+			
 			//Bonificaciones
 			pedido.bonifpedido = SubBonif;
 			pedido.bonifpedido = parseFloat(pedido.bonifpedido).toFixed(2);
@@ -1545,11 +1612,13 @@ preventamobile.dal = function () {
 					
 			//pedido.bonifpedido = importeBonif1;
 			
-			//console.log('pedido.totalNeto ' + pedido.totalNeto);
+			
 			//console.log('perce: ' + parseFloat(porcePerce));
 			//Almacenamos el total de la percepcion
 			pedido.perceiibb = ((pedido.totalNeto * porcePerce) / 100).toFixed(3);
-			pedido.total += parseInt(pedido.perceiibb);
+			
+			//Sumamos al total todas las percepciones
+			pedido.total += parseInt(pedido.perceiibb) + (pedido.perceiva);
 			
             $.each(pedido.costoProveedor,
                 function (index, value) {
@@ -1967,7 +2036,7 @@ preventamobile.dal = function () {
             pedido,
             lineaVariedad;
 
-        pedido = function (codigoCliente, pedidoId ,porcePerceCliente) {
+        pedido = function (codigoCliente, pedidoId ,porcePerceCliente,bonif1Cliente,clientePerceIVA) {
 			
 			//console.log('Perce IIBB ',porcePerceCliente);
 			
@@ -2009,8 +2078,11 @@ preventamobile.dal = function () {
 				listaPrecio: "1",
 				perceIVA_3:"",
 				perceIVA_1:"",
-				perceIVA:"",
-				esRecibo:false
+				perceiva:"",
+				exentoperceIVA:clientePerceIVA,
+				esRecibo:false,
+				bonif1: bonif1Cliente,
+				
             };
         };
 
@@ -2044,7 +2116,7 @@ preventamobile.dal = function () {
 				estopebonif: '1',
 				porceMerma: 0,
 				boniftope:0,
-				alicoutaiva:21
+				alicuotaiva:21
 
             };
         };
@@ -2105,7 +2177,8 @@ preventamobile.dal = function () {
 				totalCuentaCorriente:'',
 				totalCuentaCorrientePendiente:'',
 				totalCuentaCorrienteSeleccionado:'',
-				percibeiva:0
+				percibeiva:0,
+				exentoperceiva:'S'
 			};
 		};
         return {

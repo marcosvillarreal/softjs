@@ -32,8 +32,9 @@ preventamobile.ui.listaPedidos = function () {
         renderPedidoRentablePage,
         pedidoRentablePage,
 		obtenerPerceClienteSeleccionado,
-		obtenerListaPrecioClienteSeleccionado;
-
+		obtenerListaPrecioClienteSeleccionado,
+		obtenerBonifClienteSeleccionado,
+		obtenerPerceIVAClienteSeleccionado;
 
 
     pedidoRentablePage = function (idPedido) {
@@ -74,8 +75,8 @@ preventamobile.ui.listaPedidos = function () {
 		var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
 		// Si hay observaciones para el cliente, mostrarlas
 		var observaciones = obtenerObservacionesClienteSeleccionado(codigoCliente);
-		
-		
+		var bonif1Cliente = obtenerBonifClienteSeleccionado(codigoCliente);
+		var clientePerceIVA = preventamobile.ui.listaPedidos().obtenerPerceIVAClienteSeleccionado(codigoCliente);
 
 	
         if (!hayPedidoSeleccionado()) {
@@ -83,7 +84,7 @@ preventamobile.ui.listaPedidos = function () {
             //var codigoCliente = preventamobile.ui.listaPedidos().obtenerIdClienteSeleccionado();
 			//var porcePerceCliente = preventamobile.ui.listaPedidos().obtenerPerceClienteSeleccionado(codigoCliente);
 			
-            pedido = preventamobile.dal().factory().pedido(codigoCliente,'',porcePerceCliente);
+            pedido = preventamobile.dal().factory().pedido(codigoCliente,'',porcePerceCliente,bonif1Cliente,clientePerceIVA);
 
             
         }
@@ -130,6 +131,23 @@ preventamobile.ui.listaPedidos = function () {
         var cliente = preventamobile.dal().obtenerCliente(id);
         if (cliente && cliente.observaciones) {
             return cliente.observaciones;
+        }
+        return '';
+    }
+	
+	obtenerBonifClienteSeleccionado = function (id) {
+        var cliente = preventamobile.dal().obtenerCliente(id);
+        if (cliente && cliente.bonif1) {
+            return cliente.bonif1;
+        }
+        return '';
+    }
+	
+	obtenerPerceIVAClienteSeleccionado = function (id) {
+        var cliente = preventamobile.dal().obtenerCliente(id);
+		//console.log('Cliente perce iibb ',cliente.porperce);
+        if (cliente && cliente.exentoperceiva) {
+            return cliente.exentoperceiva;
         }
         return '';
     }
@@ -498,7 +516,8 @@ preventamobile.ui.listaPedidos = function () {
 		obtenerPerceClienteSeleccionado: obtenerPerceClienteSeleccionado,
 		obtenerListaPrecioClienteSeleccionado: obtenerListaPrecioClienteSeleccionado,
 		obtenerObservacionesClienteSeleccionado: obtenerObservacionesClienteSeleccionado,
-		
+		obtenerBonifClienteSeleccionado : obtenerBonifClienteSeleccionado,
+		obtenerPerceIVAClienteSeleccionado: obtenerPerceIVAClienteSeleccionado
 		
     };
 };

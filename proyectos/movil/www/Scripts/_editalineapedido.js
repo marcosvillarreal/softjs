@@ -114,7 +114,16 @@ preventamobile.ui.editaLineaPedido = function () {
 		if ($('#articuloTipoBonif').val() == "2"){
 			$('#bonif1').val(options.articulo.bonif1);
 		}
-		
+		//Si el pedido tiene bonif de cliente. No se puede usar otra que esa misma
+		//$('#bonif1').prop('disabled','true')
+		if (pedido.siBonificar == true){			
+			if (Math.round(pedido.bonif1) > 0){
+				console.log('pedido.bonif1',Math.round(pedido.bonif1));
+				$('#bonif1').val(pedido.bonif1);
+				$('#articuloTipoBonif').val(0); //forzamos autocompleta
+				$('#bonif1').prop('disabled','false')
+			}
+		}
         // Mostrar pantalla con detalles
         $.mobile.changePage("#confirmaAltaLineaPedidoPage");
 
@@ -212,6 +221,8 @@ preventamobile.ui.editaLineaPedido = function () {
 		linea.boniftope = articulo.bonif1;
 		linea.estopebonif = articulo.tipobonif;
 		
+		
+		
         // obtener valores de controles y actualizar info de la linea
         var uniVenta;
         var signo;
@@ -239,10 +250,21 @@ preventamobile.ui.editaLineaPedido = function () {
 			linea.kilos		= Math.abs($('#kilos').val()) * signo;
         }
         
+				
 		console.log('siBonificar ',pedido.siBonificar)
 		if (pedido.siBonificar){
 			//0=Nada,1=Se valida tope,2=se autocompleta
 			//console.log('Bonif ', linea.bonif1 );
+			
+			//Si el pedido tiene bonif de cliente. No se puede usar otra que esa misma
+			if (pedido.bonif1 > 0 ){
+				if ( pedido.bonif1!=linea.bonif1){
+					alert('Error, la bonificacion establecida para el cliente es de '+pedido.bonif1+'%')
+				}
+				linea.estopebonif = 0; //forzamos autocompleta
+				linea.bonif1 = pedido.bonif1;
+				
+			}
 			if (linea.estopebonif == '1'){
 				var maxbonif = linea.boniftope;
 				if ( linea.bonif1 > maxbonif) {
@@ -344,7 +366,13 @@ preventamobile.ui.editaLineaPedido = function () {
 		
 		}else{ 			
 			//Validamos que los kilos esten en el valor estimado
+			
+			
+			
 			var pesoEstimado = peso * cantidad;
+			
+			console.log('Peso Estimado',pesoEstimado);
+			console.log('Merma',porceMerma);
 			//alert('porceMerma ' + porceMerma);
 			if ($('#kilos').val() == ''){
 				kilos = 0;

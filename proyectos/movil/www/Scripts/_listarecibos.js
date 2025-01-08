@@ -39,7 +39,7 @@ preventamobile.ui.listaRecibos = function () {
         if (!hayReciboSeleccionado()) {
 
 			
-            recibo = preventamobile.dal().factory().pedido(codigoCliente,'','');
+            recibo = preventamobile.dal().factory().pedido(codigoCliente,'','','');
 
             
         }

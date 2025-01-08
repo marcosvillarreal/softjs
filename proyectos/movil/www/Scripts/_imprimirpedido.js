@@ -195,10 +195,11 @@ preventamobile.ui.imprimirPedido = function () {
 					html = html + "			<tr><font></font>"
 					html = html + "				<td>SubTotal</th><font></font>"
 					
-					var nPerce	= parseInt((pedido.perceiibb));
-					var nBonifT	= parseInt((pedido.bonifpedido));					
+					var nPerce	= parseFloat((pedido.perceiibb));
+					var nBonifT	= parseFloat((pedido.bonifpedido));	
+					var nPerceIVA	= parseFloat((pedido.perceiva));						
 				
-					html = html + "				<td>"+ (pedido.total - nPerce + nBonifT) +"</th><font></font>"
+					html = html + "				<td>"+ (pedido.total - nPerce + nBonifT - nPerceIVA) +"</th><font></font>"
 					html = html + "			</tr><font></font>"
 					
 				//	html = html + "			<tr><font></font>"
@@ -215,6 +216,10 @@ preventamobile.ui.imprimirPedido = function () {
 					html = html + "			<tr><font></font>"
 					html = html + "				<td>Percepcion</th><font></font>"			
 					html = html + "				<td> "+ pedido.perceiibb +"</th><font></font>"
+					html = html + "			</tr><font></font>"
+					html = html + "			<tr><font></font>"
+					html = html + "				<td>Percepcion IVA</th><font></font>"			
+					html = html + "				<td> "+ pedido.perceIVA_3 + pedido.perceIVA_1 +"</th><font></font>"
 					html = html + "			</tr><font></font>"
 				}
 				html = html + "		</tbody><font></font>"
