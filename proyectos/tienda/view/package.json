@@ -11,7 +11,7 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "cordova": "^9.0.0",
     "jspdf": "^1.5.3",
     "jspdf-autotable": "^3.2.11",
